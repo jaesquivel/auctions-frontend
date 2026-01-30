@@ -1,0 +1,139 @@
+{
+  "common": {
+    "appName": "Remates Judiciales",
+    "loading": "Cargando...",
+    "error": "Error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "download": "Descargar",
+    "reload": "Recargar",
+    "actions": "Acciones",
+    "noData": "No hay datos",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No",
+    "close": "Cerrar",
+    "page": "Página",
+    "of": "de",
+    "copyright": "©2026 Ad Nebula LLC., Todos los derechos reservados."
+  },
+  "nav": {
+    "auctions": "Remates",
+    "properties": "Propiedades",
+    "vehicles": "Vehículos",
+    "assets": "Bienes",
+    "edicts": "Edictos",
+    "dataExtraction": "Extracción de Datos",
+    "bulletins": "Boletines Judiciales",
+    "extractedEdicts": "Edictos Extraídos",
+    "extractedAssets": "Bienes Extraídos",
+    "configuration": "Configuración",
+    "tags": "Etiquetas de Propiedades",
+    "territorial": "División Territorial",
+    "generalConfig": "Configuración General",
+    "signOut": "Cerrar Sesión",
+    "profile": "Perfil",
+    "theme": "Tema",
+    "language": "Idioma",
+    "lightMode": "Modo Claro",
+    "darkMode": "Modo Oscuro"
+  },
+  "home": {
+    "title": "Bienvenido a Remates Judiciales",
+    "subtitle": "Plataforma de gestión de bienes en remate judicial",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "learnMore": "Más Información"
+  },
+  "info": {
+    "title": "Información",
+    "description": "Sistema integral para la gestión y seguimiento de bienes en remate judicial."
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "verificationCode": "Código de Verificación",
+    "verificationSent": "Se ha enviado un código a tu correo electrónico"
+  },
+  "properties": {
+    "title": "Propiedades",
+    "addProperty": "Agregar Propiedad",
+    "editProperty": "Editar Propiedad",
+    "deleteProperty": "Eliminar Propiedad",
+    "columns": {
+      "tags": "Etiquetas",
+      "registration": "Matrícula",
+      "location": "Ubicación",
+      "firstDate": "Primera Fecha",
+      "firstBase": "Primera Base",
+      "firstBaseAdj": "Primera Base Adj.",
+      "firstGuarantee": "Primera Garantía",
+      "fiscalValue": "Valor Fiscal",
+      "fiscalValueUsd": "Valor Fiscal USD",
+      "fiscalBaseRatio": "Relación F/B",
+      "marketValue": "Valor Mercado",
+      "appraisalValue": "Valor Avalúo",
+      "area": "Área",
+      "caseNumber": "Número de Caso"
+    }
+  },
+  "vehicles": {
+    "title": "Vehículos",
+    "addVehicle": "Agregar Vehículo",
+    "editVehicle": "Editar Vehículo"
+  },
+  "assets": {
+    "title": "Bienes",
+    "addAsset": "Agregar Bien",
+    "editAsset": "Editar Bien"
+  },
+  "edicts": {
+    "title": "Edictos",
+    "addEdict": "Agregar Edicto",
+    "editEdict": "Editar Edicto"
+  },
+  "bulletins": {
+    "title": "Boletines Judiciales",
+    "addBulletin": "Agregar Boletín",
+    "editBulletin": "Editar Boletín"
+  },
+  "extractedEdicts": {
+    "title": "Edictos Extraídos"
+  },
+  "extractedAssets": {
+    "title": "Bienes Extraídos"
+  },
+  "tags": {
+    "title": "Etiquetas de Propiedades",
+    "addTag": "Agregar Etiqueta",
+    "editTag": "Editar Etiqueta",
+    "columns": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "color": "Color"
+    }
+  },
+  "territorial": {
+    "title": "División Territorial",
+    "provinces": "Provincias",
+    "cantons": "Cantones",
+    "districts": "Distritos",
+    "addProvince": "Agregar Provincia",
+    "addCanton": "Agregar Cantón",
+    "addDistrict": "Agregar Distrito"
+  },
+  "config": {
+    "title": "Configuración General"
+  }
+}

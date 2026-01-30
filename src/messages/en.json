@@ -1,0 +1,139 @@
+{
+  "common": {
+    "appName": "Judicial Auctions",
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "download": "Download",
+    "reload": "Reload",
+    "actions": "Actions",
+    "noData": "No data",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "page": "Page",
+    "of": "of",
+    "copyright": "©2026 Ad Nebula LLC., All rights reserved."
+  },
+  "nav": {
+    "auctions": "Auctions",
+    "properties": "Properties",
+    "vehicles": "Vehicles",
+    "assets": "Assets",
+    "edicts": "Edicts",
+    "dataExtraction": "Data Extraction",
+    "bulletins": "Judicial Bulletins",
+    "extractedEdicts": "Extracted Edicts",
+    "extractedAssets": "Extracted Assets",
+    "configuration": "Configuration",
+    "tags": "Property Tags",
+    "territorial": "Territorial Division",
+    "generalConfig": "General Configuration",
+    "signOut": "Sign Out",
+    "profile": "Profile",
+    "theme": "Theme",
+    "language": "Language",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
+  },
+  "home": {
+    "title": "Welcome to Judicial Auctions",
+    "subtitle": "Platform for managing judicial auction assets",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "learnMore": "Learn More"
+  },
+  "info": {
+    "title": "Information",
+    "description": "Comprehensive system for managing and tracking judicial auction assets."
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "verificationCode": "Verification Code",
+    "verificationSent": "A code has been sent to your email"
+  },
+  "properties": {
+    "title": "Properties",
+    "addProperty": "Add Property",
+    "editProperty": "Edit Property",
+    "deleteProperty": "Delete Property",
+    "columns": {
+      "tags": "Tags",
+      "registration": "Registration",
+      "location": "Location",
+      "firstDate": "First Date",
+      "firstBase": "First Base",
+      "firstBaseAdj": "First Base Adj.",
+      "firstGuarantee": "First Guarantee",
+      "fiscalValue": "Fiscal Value",
+      "fiscalValueUsd": "Fiscal Value USD",
+      "fiscalBaseRatio": "F/B Ratio",
+      "marketValue": "Market Value",
+      "appraisalValue": "Appraisal Value",
+      "area": "Area",
+      "caseNumber": "Case Number"
+    }
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "addVehicle": "Add Vehicle",
+    "editVehicle": "Edit Vehicle"
+  },
+  "assets": {
+    "title": "Assets",
+    "addAsset": "Add Asset",
+    "editAsset": "Edit Asset"
+  },
+  "edicts": {
+    "title": "Edicts",
+    "addEdict": "Add Edict",
+    "editEdict": "Edit Edict"
+  },
+  "bulletins": {
+    "title": "Judicial Bulletins",
+    "addBulletin": "Add Bulletin",
+    "editBulletin": "Edit Bulletin"
+  },
+  "extractedEdicts": {
+    "title": "Extracted Edicts"
+  },
+  "extractedAssets": {
+    "title": "Extracted Assets"
+  },
+  "tags": {
+    "title": "Property Tags",
+    "addTag": "Add Tag",
+    "editTag": "Edit Tag",
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "color": "Color"
+    }
+  },
+  "territorial": {
+    "title": "Territorial Division",
+    "provinces": "Provinces",
+    "cantons": "Cantons",
+    "districts": "Districts",
+    "addProvince": "Add Province",
+    "addCanton": "Add Canton",
+    "addDistrict": "Add District"
+  },
+  "config": {
+    "title": "General Configuration"
+  }
+}
