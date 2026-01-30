@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Gavel, ArrowLeft, Building2, Car, FileText, Shield } from 'lucide-react';
+import { Building2, Car, FileText, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PublicHeader } from '@/components/layout/PublicHeader';
 
 interface InfoPageProps {
   params: Promise<{ locale: string }>;
@@ -23,18 +24,10 @@ export default async function InfoPage({ params }: InfoPageProps) {
 
   return (
     <>
-      <main className="flex-1">
-        {/* Header */}
-        <div className="border-b border-border bg-muted/30">
-          <div className="container mx-auto px-4 py-4">
-            <Link href={`/${locale}`} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-              <Gavel className="h-5 w-5" />
-              <span className="font-semibold">{tCommon('appName')}</span>
-            </Link>
-          </div>
-        </div>
+      {/* Header with language selector */}
+      <PublicHeader />
 
+      <main className="flex-1">
         {/* Content */}
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl mx-auto">

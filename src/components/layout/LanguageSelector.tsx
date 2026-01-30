@@ -1,8 +1,8 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
-import { Languages } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const languages = [
-  { code: 'es', name: 'Español', flag: '🇨🇷' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
   { code: 'en', name: 'English', flag: '🇺🇸' },
 ];
 
@@ -24,7 +24,6 @@ export function LanguageSelector({ collapsed = false }: LanguageSelectorProps) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const t = useTranslations('nav');
 
   const handleLanguageChange = (newLocale: string) => {
     // Replace the locale in the pathname
@@ -44,11 +43,16 @@ export function LanguageSelector({ collapsed = false }: LanguageSelectorProps) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size={collapsed ? 'icon' : 'sm'}
-          className={collapsed ? 'h-9 w-9' : 'justify-start gap-2 w-full'}
+          size="sm"
+          className={collapsed ? 'h-9 w-9 p-0' : 'h-9 gap-1.5 px-3'}
         >
-          <Languages className="h-4 w-4" />
-          {!collapsed && <span>{t('language')}</span>}
+          <span className="text-base">{currentLanguage.flag}</span>
+          {!collapsed && (
+            <>
+              <span>{currentLanguage.name}</span>
+              <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+            </>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

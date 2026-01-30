@@ -44,7 +44,7 @@ export default function EdictsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button className="gap-2"><Plus className="h-4 w-4" />{t('addEdict')}</Button>
+        <Button size="icon"><Plus className="h-4 w-4" /></Button>
       </div>
       <div className="h-[calc(100vh-12rem)]">
         <DataGrid columns={columns} data={paginatedData} keyField="id" pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedEdict} selectedRow={selectedEdict} actions={renderActions} onFilter={() => {}} onReload={() => {}} />

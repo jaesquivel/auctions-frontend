@@ -28,7 +28,7 @@ export function DataGridToolbar({
 
   return (
     <TooltipProvider>
-      <div className="flex items-center justify-between border-t border-border bg-muted/30 px-2 py-1">
+      <div className="flex items-center justify-between border-t border-border bg-muted/30 px-2 py-1 sticky bottom-0 z-10">
         <div className="flex items-center gap-1">
           {onFilter && (
             <Tooltip>
@@ -94,6 +94,12 @@ export function DataGridToolbar({
             </Tooltip>
           )}
         </div>
+
+        {pagination && (
+          <div className="text-xs text-muted-foreground">
+            {pagination.total.toLocaleString()} {t('records')}
+          </div>
+        )}
 
         {pagination && onPageChange && (
           <DataGridPagination

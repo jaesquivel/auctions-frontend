@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/elements": "^0.24.7",
     "@clerk/localizations": "^3.35.3",
     "@clerk/nextjs": "^6.37.1",
     "@radix-ui/react-dialog": "^1.1.15",

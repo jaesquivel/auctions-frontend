@@ -45,12 +45,12 @@ export function DataGrid<T>({
   };
 
   return (
-    <div className="flex flex-col border border-border rounded-md overflow-hidden bg-card">
-      <ScrollArea className="flex-1">
+    <div className="flex flex-col h-full border border-border rounded-md overflow-hidden bg-card">
+      <ScrollArea className="flex-1 min-h-0">
         <div className="min-w-max">
           {/* Header */}
           <div className="flex bg-muted/50 border-b border-border sticky top-0 z-10">
-            {columns.map((column, index) => (
+            {columns.map((column) => (
               <div
                 key={column.id}
                 className={cn(
@@ -66,7 +66,7 @@ export function DataGrid<T>({
             ))}
             {actions && (
               <div
-                className="px-3 py-2 text-xs font-semibold sticky right-0 bg-muted/50 border-l border-border"
+                className="px-3 py-2 text-xs font-semibold sticky right-0 z-20 bg-muted border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]"
                 style={{ width: 80, minWidth: 80 }}
               />
             )}
@@ -86,7 +86,7 @@ export function DataGrid<T>({
               <div
                 key={String(row[keyField])}
                 className={cn(
-                  'flex border-b border-border last:border-b-0 cursor-pointer transition-colors',
+                  'flex border-b border-border cursor-pointer transition-colors',
                   'hover:bg-accent/50',
                   isSelected(row) && 'bg-accent'
                 )}
@@ -112,7 +112,10 @@ export function DataGrid<T>({
                 ))}
                 {actions && (
                   <div
-                    className="px-2 py-1 flex items-center justify-center sticky right-0 bg-card border-l border-border"
+                    className={cn(
+                      'px-2 py-1 flex items-center justify-center sticky right-0 z-20 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]',
+                      isSelected(row) ? 'bg-accent' : 'bg-card'
+                    )}
                     style={{ width: 80, minWidth: 80, height: 32 }}
                     onClick={(e) => e.stopPropagation()}
                   >

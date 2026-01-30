@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Gavel, ArrowRight, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PublicHeader } from '@/components/layout/PublicHeader';
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -15,6 +16,9 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <>
+      {/* Header with language selector */}
+      <PublicHeader />
+
       {/* Hero Section */}
       <main className="flex-1 flex items-center justify-center bg-gradient-to-b from-background to-muted/30">
         <div className="container mx-auto px-4 py-16 text-center">
