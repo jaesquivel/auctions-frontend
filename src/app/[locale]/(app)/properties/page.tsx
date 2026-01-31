@@ -1,30 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { TagList } from '@/components/ui/tag-badge';
-import { mockProperties } from '@/mocks';
+import { propertiesService } from '@/services/properties';
 import { formatCurrency, formatDate, formatArea, formatRatio } from '@/lib/formatters';
 import type { PropertySummary } from '@/types';
 
 export default function PropertiesPage() {
   const t = useTranslations('properties');
-  const tCommon = useTranslations('common');
 
+  const [data, setData] = useState<PropertySummary[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState<PropertySummary | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 20,
-    total: mockProperties.length,
+    total: 0,
   });
 
-  // Calculate paginated data
-  const startIndex = (pagination.page - 1) * pagination.pageSize;
-  const endIndex = startIndex + pagination.pageSize;
-  const paginatedData = mockProperties.slice(startIndex, endIndex);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await propertiesService.getAll({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      });
+      setData(response.data);
+      setPagination((prev) => ({ ...prev, total: response.total }));
+    } catch (error) {
+      console.error('Failed to fetch properties:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.page, pagination.pageSize]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const columns: ColumnDef<PropertySummary>[] = [
     {
@@ -149,8 +165,9 @@ export default function PropertiesPage() {
       <div className="h-[calc(100vh-12rem)]">
         <DataGrid
           columns={columns}
-          data={paginatedData}
+          data={data}
           keyField="id"
+          loading={loading}
           pagination={pagination}
           onPageChange={handlePageChange}
           onRowSelect={setSelectedProperty}
@@ -159,7 +176,7 @@ export default function PropertiesPage() {
           onFilter={() => console.log('Filter clicked')}
           onEditFilters={() => console.log('Edit filters clicked')}
           onDownload={() => console.log('Download clicked')}
-          onReload={() => console.log('Reload clicked')}
+          onReload={fetchData}
         />
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { config } from './config';
+import { showErrorToast, showNetworkErrorToast } from './toast';
 
 export class ApiError extends Error {
   constructor(
@@ -13,16 +14,20 @@ export class ApiError extends Error {
 
 interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: unknown;
+  /** If true, suppress error toast notification */
+  silent?: boolean;
 }
 
 async function getAuthToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
 
   try {
-    // Dynamic import to avoid SSR issues
-    const { auth } = await import('@clerk/nextjs/client');
-    const token = await auth?.getToken?.();
-    return token || null;
+    // Access Clerk from window object for client-side token retrieval
+    const clerk = (window as { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
+    if (!clerk?.session) return null;
+
+    const token = await clerk.session.getToken();
+    return token;
   } catch {
     return null;
   }
@@ -32,7 +37,7 @@ async function request<T>(
   endpoint: string,
   options: RequestOptions = {}
 ): Promise<T> {
-  const { body, headers: customHeaders, ...restOptions } = options;
+  const { body, headers: customHeaders, silent, ...restOptions } = options;
 
   const token = await getAuthToken();
 
@@ -62,7 +67,13 @@ async function request<T>(
 
     if (!response.ok) {
       const errorBody = await response.text();
-      throw new ApiError(response.status, response.statusText, errorBody);
+      const error = new ApiError(response.status, response.statusText, errorBody);
+
+      if (!silent) {
+        showErrorToast(response.status, errorBody);
+      }
+
+      throw error;
     }
 
     // Handle empty responses
@@ -76,7 +87,16 @@ async function request<T>(
     if (error instanceof ApiError) throw error;
 
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new ApiError(408, 'Request Timeout', 'Request timed out');
+      const timeoutError = new ApiError(408, 'Request Timeout', 'Request timed out');
+      if (!silent) {
+        showErrorToast(408);
+      }
+      throw timeoutError;
+    }
+
+    // Network error or other unexpected error
+    if (!silent && error instanceof Error) {
+      showNetworkErrorToast();
     }
 
     throw error;

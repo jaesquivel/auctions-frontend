@@ -14,7 +14,7 @@ export const bulletinsService = {
   async getAll(filters: BulletinFilters = {}): Promise<PaginatedResponse<Bulletin>> {
     const { page = 1, pageSize = 20 } = filters;
 
-    if (config.USE_MOCK_API) {
+    if (config.useMock.bulletins) {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const startIndex = (page - 1) * pageSize;
@@ -33,7 +33,7 @@ export const bulletinsService = {
   },
 
   async getById(id: string): Promise<Bulletin | null> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.bulletins) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockBulletins.find((b) => b.id === id) || null;
     }
@@ -42,7 +42,7 @@ export const bulletinsService = {
   },
 
   async create(data: Partial<Bulletin>): Promise<Bulletin> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.bulletins) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return { ...data, id: crypto.randomUUID(), createdAt: new Date().toISOString() } as Bulletin;
     }
@@ -51,7 +51,7 @@ export const bulletinsService = {
   },
 
   async update(id: string, data: Partial<Bulletin>): Promise<Bulletin> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.bulletins) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockBulletins.find((b) => b.id === id);
       return { ...existing, ...data } as Bulletin;
@@ -61,7 +61,7 @@ export const bulletinsService = {
   },
 
   async delete(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.bulletins) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }

@@ -14,7 +14,7 @@ export const vehiclesService = {
   async getAll(filters: VehicleFilters = {}): Promise<PaginatedResponse<VehicleSummary>> {
     const { page = 1, pageSize = 20 } = filters;
 
-    if (config.USE_MOCK_API) {
+    if (config.useMock.vehicles) {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const startIndex = (page - 1) * pageSize;
@@ -33,7 +33,7 @@ export const vehiclesService = {
   },
 
   async getById(id: string): Promise<VehicleSummary | null> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.vehicles) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockVehicles.find((v) => v.id === id) || null;
     }
@@ -42,7 +42,7 @@ export const vehiclesService = {
   },
 
   async create(data: Partial<VehicleSummary>): Promise<VehicleSummary> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.vehicles) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return { ...data, id: crypto.randomUUID() } as VehicleSummary;
     }
@@ -51,7 +51,7 @@ export const vehiclesService = {
   },
 
   async update(id: string, data: Partial<VehicleSummary>): Promise<VehicleSummary> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.vehicles) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockVehicles.find((v) => v.id === id);
       return { ...existing, ...data } as VehicleSummary;
@@ -61,7 +61,7 @@ export const vehiclesService = {
   },
 
   async delete(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.vehicles) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }

@@ -14,7 +14,7 @@ export const edictsService = {
   async getAll(filters: EdictFilters = {}): Promise<PaginatedResponse<Edict>> {
     const { page = 1, pageSize = 20 } = filters;
 
-    if (config.USE_MOCK_API) {
+    if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const startIndex = (page - 1) * pageSize;
@@ -33,7 +33,7 @@ export const edictsService = {
   },
 
   async getById(id: string): Promise<Edict | null> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockEdicts.find((e) => e.id === id) || null;
     }
@@ -42,7 +42,7 @@ export const edictsService = {
   },
 
   async create(data: Partial<Edict>): Promise<Edict> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return { ...data, id: crypto.randomUUID() } as Edict;
     }
@@ -51,7 +51,7 @@ export const edictsService = {
   },
 
   async update(id: string, data: Partial<Edict>): Promise<Edict> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockEdicts.find((e) => e.id === id);
       return { ...existing, ...data } as Edict;
@@ -61,7 +61,7 @@ export const edictsService = {
   },
 
   async delete(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }

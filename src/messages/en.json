@@ -23,6 +23,21 @@
     "records": "records",
     "copyright": "©2026 Ad Nebula LLC., All rights reserved."
   },
+  "errors": {
+    "badRequest": "Invalid request",
+    "unauthorized": "Unauthorized. Please sign in again.",
+    "forbidden": "You do not have permission to perform this action",
+    "notFound": "Resource not found",
+    "timeout": "The request took too long",
+    "conflict": "Conflict with the current state of the resource",
+    "validationError": "The submitted data is invalid",
+    "tooManyRequests": "Too many requests. Please wait a moment.",
+    "serverError": "Internal server error",
+    "badGateway": "The server is not available",
+    "serviceUnavailable": "Service temporarily unavailable",
+    "defaultError": "Server error ({status})",
+    "networkError": "Connection error. Check your internet connection."
+  },
   "nav": {
     "auctions": "Auctions",
     "properties": "Properties",

@@ -1,29 +1,68 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
-import { mockProvinces, mockCantons, mockDistricts } from '@/mocks';
+import { territorialService } from '@/services/territorial';
 import type { Province, Canton, District } from '@/types';
 
 export default function TerritorialPage() {
   const t = useTranslations('territorial');
 
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [cantons, setCantons] = useState<Canton[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [loadingProvinces, setLoadingProvinces] = useState(true);
+  const [loadingCantons, setLoadingCantons] = useState(false);
+  const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
   const [selectedCanton, setSelectedCanton] = useState<Canton | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
 
-  // Filter cantons by selected province
-  const filteredCantons = selectedProvince
-    ? mockCantons.filter((c) => c.provinceId === selectedProvince.id)
-    : [];
+  // Fetch provinces on mount
+  const fetchProvinces = useCallback(async () => {
+    setLoadingProvinces(true);
+    try {
+      const data = await territorialService.getProvinces();
+      setProvinces(data);
+    } catch (error) {
+      console.error('Failed to fetch provinces:', error);
+    } finally {
+      setLoadingProvinces(false);
+    }
+  }, []);
 
-  // Filter districts by selected canton
-  const filteredDistricts = selectedCanton
-    ? mockDistricts.filter((d) => d.cantonId === selectedCanton.id)
-    : [];
+  useEffect(() => {
+    fetchProvinces();
+  }, [fetchProvinces]);
+
+  // Fetch cantons when province is selected
+  const fetchCantons = useCallback(async (provinceId: string) => {
+    setLoadingCantons(true);
+    try {
+      const data = await territorialService.getCantons(provinceId);
+      setCantons(data);
+    } catch (error) {
+      console.error('Failed to fetch cantons:', error);
+    } finally {
+      setLoadingCantons(false);
+    }
+  }, []);
+
+  // Fetch districts when canton is selected
+  const fetchDistricts = useCallback(async (cantonId: string) => {
+    setLoadingDistricts(true);
+    try {
+      const data = await territorialService.getDistricts(cantonId);
+      setDistricts(data);
+    } catch (error) {
+      console.error('Failed to fetch districts:', error);
+    } finally {
+      setLoadingDistricts(false);
+    }
+  }, []);
 
   const provinceColumns: ColumnDef<Province>[] = [
     { id: 'num', header: '#', width: 50, align: 'center', accessorFn: (row) => row.num.toString() },
@@ -43,7 +82,7 @@ export default function TerritorialPage() {
     { id: 'name', header: 'Nombre', width: 200, accessorKey: 'name' },
   ];
 
-  const renderProvinceActions = (row: Province) => (
+  const renderActions = () => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
@@ -54,11 +93,16 @@ export default function TerritorialPage() {
     setSelectedProvince(province);
     setSelectedCanton(null);
     setSelectedDistrict(null);
+    setCantons([]);
+    setDistricts([]);
+    fetchCantons(province.id);
   };
 
   const handleCantonSelect = (canton: Canton) => {
     setSelectedCanton(canton);
     setSelectedDistrict(null);
+    setDistricts([]);
+    fetchDistricts(canton.id);
   };
 
   return (
@@ -75,11 +119,13 @@ export default function TerritorialPage() {
           <div className="h-[calc(100vh-16rem)]">
             <DataGrid
               columns={provinceColumns}
-              data={mockProvinces}
+              data={provinces}
               keyField="id"
+              loading={loadingProvinces}
               onRowSelect={handleProvinceSelect}
               selectedRow={selectedProvince}
-              actions={renderProvinceActions}
+              actions={renderActions}
+              onReload={fetchProvinces}
             />
           </div>
         </div>
@@ -93,11 +139,13 @@ export default function TerritorialPage() {
           <div className="h-[calc(100vh-16rem)]">
             <DataGrid
               columns={cantonColumns}
-              data={filteredCantons}
+              data={cantons}
               keyField="id"
+              loading={loadingCantons}
               onRowSelect={handleCantonSelect}
               selectedRow={selectedCanton}
-              actions={renderProvinceActions}
+              actions={renderActions}
+              onReload={selectedProvince ? () => fetchCantons(selectedProvince.id) : undefined}
             />
           </div>
         </div>
@@ -111,11 +159,13 @@ export default function TerritorialPage() {
           <div className="h-[calc(100vh-16rem)]">
             <DataGrid
               columns={districtColumns}
-              data={filteredDistricts}
+              data={districts}
               keyField="id"
+              loading={loadingDistricts}
               onRowSelect={setSelectedDistrict}
               selectedRow={selectedDistrict}
-              actions={renderProvinceActions}
+              actions={renderActions}
+              onReload={selectedCanton ? () => fetchDistricts(selectedCanton.id) : undefined}
             />
           </div>
         </div>

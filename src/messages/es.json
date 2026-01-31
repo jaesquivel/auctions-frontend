@@ -23,6 +23,21 @@
     "records": "registros",
     "copyright": "©2026 Ad Nebula LLC., Todos los derechos reservados."
   },
+  "errors": {
+    "badRequest": "Solicitud inválida",
+    "unauthorized": "No autorizado. Por favor inicie sesión nuevamente.",
+    "forbidden": "No tiene permisos para realizar esta acción",
+    "notFound": "Recurso no encontrado",
+    "timeout": "La solicitud tardó demasiado tiempo",
+    "conflict": "Conflicto con el estado actual del recurso",
+    "validationError": "Los datos enviados no son válidos",
+    "tooManyRequests": "Demasiadas solicitudes. Por favor espere un momento.",
+    "serverError": "Error interno del servidor",
+    "badGateway": "El servidor no está disponible",
+    "serviceUnavailable": "Servicio temporalmente no disponible",
+    "defaultError": "Error del servidor ({status})",
+    "networkError": "Error de conexión. Verifique su conexión a internet."
+  },
   "nav": {
     "auctions": "Remates",
     "properties": "Propiedades",

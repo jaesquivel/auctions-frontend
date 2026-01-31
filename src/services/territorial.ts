@@ -1,49 +1,49 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockProvinces, mockCantons, mockDistricts } from '@/mocks';
-import type { GeoProvince, GeoCanton, GeoDistrict } from '@/types';
+import type { Province, Canton, District } from '@/types';
 
 export const territorialService = {
   // Provinces
-  async getProvinces(): Promise<GeoProvince[]> {
-    if (config.USE_MOCK_API) {
+  async getProvinces(): Promise<Province[]> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return mockProvinces;
     }
 
-    return apiClient.get<GeoProvince[]>('/geo/provinces');
+    return apiClient.get<Province[]>('/geo/provinces');
   },
 
-  async getProvinceById(id: string): Promise<GeoProvince | null> {
-    if (config.USE_MOCK_API) {
+  async getProvinceById(id: string): Promise<Province | null> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockProvinces.find((p) => p.id === id) || null;
     }
 
-    return apiClient.get<GeoProvince>(`/geo/provinces/${id}`);
+    return apiClient.get<Province>(`/geo/provinces/${id}`);
   },
 
-  async createProvince(data: Partial<GeoProvince>): Promise<GeoProvince> {
-    if (config.USE_MOCK_API) {
+  async createProvince(data: Partial<Province>): Promise<Province> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as GeoProvince;
+      return { ...data, id: crypto.randomUUID() } as Province;
     }
 
-    return apiClient.post<GeoProvince>('/geo/provinces', data);
+    return apiClient.post<Province>('/geo/provinces', data);
   },
 
-  async updateProvince(id: string, data: Partial<GeoProvince>): Promise<GeoProvince> {
-    if (config.USE_MOCK_API) {
+  async updateProvince(id: string, data: Partial<Province>): Promise<Province> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockProvinces.find((p) => p.id === id);
-      return { ...existing, ...data } as GeoProvince;
+      return { ...existing, ...data } as Province;
     }
 
-    return apiClient.put<GeoProvince>(`/geo/provinces/${id}`, data);
+    return apiClient.put<Province>(`/geo/provinces/${id}`, data);
   },
 
   async deleteProvince(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }
@@ -52,8 +52,8 @@ export const territorialService = {
   },
 
   // Cantons
-  async getCantons(provinceId?: string): Promise<GeoCanton[]> {
-    if (config.USE_MOCK_API) {
+  async getCantons(provinceId?: string): Promise<Canton[]> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       if (provinceId) {
         return mockCantons.filter((c) => c.provinceId === provinceId);
@@ -62,39 +62,39 @@ export const territorialService = {
     }
 
     const endpoint = provinceId ? `/geo/provinces/${provinceId}/cantons` : '/geo/cantons';
-    return apiClient.get<GeoCanton[]>(endpoint);
+    return apiClient.get<Canton[]>(endpoint);
   },
 
-  async getCantonById(id: string): Promise<GeoCanton | null> {
-    if (config.USE_MOCK_API) {
+  async getCantonById(id: string): Promise<Canton | null> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockCantons.find((c) => c.id === id) || null;
     }
 
-    return apiClient.get<GeoCanton>(`/geo/cantons/${id}`);
+    return apiClient.get<Canton>(`/geo/cantons/${id}`);
   },
 
-  async createCanton(data: Partial<GeoCanton>): Promise<GeoCanton> {
-    if (config.USE_MOCK_API) {
+  async createCanton(data: Partial<Canton>): Promise<Canton> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as GeoCanton;
+      return { ...data, id: crypto.randomUUID() } as Canton;
     }
 
-    return apiClient.post<GeoCanton>('/geo/cantons', data);
+    return apiClient.post<Canton>('/geo/cantons', data);
   },
 
-  async updateCanton(id: string, data: Partial<GeoCanton>): Promise<GeoCanton> {
-    if (config.USE_MOCK_API) {
+  async updateCanton(id: string, data: Partial<Canton>): Promise<Canton> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockCantons.find((c) => c.id === id);
-      return { ...existing, ...data } as GeoCanton;
+      return { ...existing, ...data } as Canton;
     }
 
-    return apiClient.put<GeoCanton>(`/geo/cantons/${id}`, data);
+    return apiClient.put<Canton>(`/geo/cantons/${id}`, data);
   },
 
   async deleteCanton(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }
@@ -103,8 +103,8 @@ export const territorialService = {
   },
 
   // Districts
-  async getDistricts(cantonId?: string): Promise<GeoDistrict[]> {
-    if (config.USE_MOCK_API) {
+  async getDistricts(cantonId?: string): Promise<District[]> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       if (cantonId) {
         return mockDistricts.filter((d) => d.cantonId === cantonId);
@@ -113,39 +113,39 @@ export const territorialService = {
     }
 
     const endpoint = cantonId ? `/geo/cantons/${cantonId}/districts` : '/geo/districts';
-    return apiClient.get<GeoDistrict[]>(endpoint);
+    return apiClient.get<District[]>(endpoint);
   },
 
-  async getDistrictById(id: string): Promise<GeoDistrict | null> {
-    if (config.USE_MOCK_API) {
+  async getDistrictById(id: string): Promise<District | null> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockDistricts.find((d) => d.id === id) || null;
     }
 
-    return apiClient.get<GeoDistrict>(`/geo/districts/${id}`);
+    return apiClient.get<District>(`/geo/districts/${id}`);
   },
 
-  async createDistrict(data: Partial<GeoDistrict>): Promise<GeoDistrict> {
-    if (config.USE_MOCK_API) {
+  async createDistrict(data: Partial<District>): Promise<District> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as GeoDistrict;
+      return { ...data, id: crypto.randomUUID() } as District;
     }
 
-    return apiClient.post<GeoDistrict>('/geo/districts', data);
+    return apiClient.post<District>('/geo/districts', data);
   },
 
-  async updateDistrict(id: string, data: Partial<GeoDistrict>): Promise<GeoDistrict> {
-    if (config.USE_MOCK_API) {
+  async updateDistrict(id: string, data: Partial<District>): Promise<District> {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockDistricts.find((d) => d.id === id);
-      return { ...existing, ...data } as GeoDistrict;
+      return { ...existing, ...data } as District;
     }
 
-    return apiClient.put<GeoDistrict>(`/geo/districts/${id}`, data);
+    return apiClient.put<District>(`/geo/districts/${id}`, data);
   },
 
   async deleteDistrict(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }

@@ -21,7 +21,7 @@ export const propertiesService = {
   async getAll(filters: PropertyFilters = {}): Promise<PaginatedResponse<PropertySummary>> {
     const { page = 1, pageSize = 20 } = filters;
 
-    if (config.USE_MOCK_API) {
+    if (config.useMock.properties) {
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -49,7 +49,7 @@ export const propertiesService = {
   },
 
   async getById(id: string): Promise<PropertySummary | null> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockProperties.find((p) => p.id === id) || null;
     }
@@ -58,7 +58,7 @@ export const propertiesService = {
   },
 
   async create(data: Partial<PropertySummary>): Promise<PropertySummary> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const newProperty = { ...data, id: crypto.randomUUID() } as PropertySummary;
       return newProperty;
@@ -68,7 +68,7 @@ export const propertiesService = {
   },
 
   async update(id: string, data: Partial<PropertySummary>): Promise<PropertySummary> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockProperties.find((p) => p.id === id);
       return { ...existing, ...data } as PropertySummary;
@@ -78,7 +78,7 @@ export const propertiesService = {
   },
 
   async delete(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }

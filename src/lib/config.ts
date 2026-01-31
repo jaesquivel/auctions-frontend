@@ -2,15 +2,23 @@
  * Application configuration
  *
  * Controls whether API calls use mock data or the real backend.
- * Set USE_MOCK_API to false to use the real backend API.
+ * Each service can be configured independently.
  */
 
 export const config = {
   /**
-   * When true, all API calls return mock data.
-   * When false, all API calls go to the real backend.
+   * Per-service mock API configuration.
+   * Set to false to use real backend for that specific service.
    */
-  USE_MOCK_API: true,
+  useMock: {
+    properties: true,
+    edicts: true,
+    tags: false,
+    vehicles: true,
+    assets: true,
+    bulletins: true,
+    territorial: true,
+  },
 
   /**
    * Backend API base URL

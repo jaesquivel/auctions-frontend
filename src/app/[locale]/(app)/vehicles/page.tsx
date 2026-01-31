@@ -1,26 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
-import { mockVehicles } from '@/mocks';
+import { vehiclesService } from '@/services/vehicles';
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import type { VehicleSummary } from '@/types';
 
 export default function VehiclesPage() {
   const t = useTranslations('vehicles');
 
+  const [data, setData] = useState<VehicleSummary[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleSummary | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 20,
-    total: mockVehicles.length,
+    total: 0,
   });
 
-  const startIndex = (pagination.page - 1) * pagination.pageSize;
-  const paginatedData = mockVehicles.slice(startIndex, startIndex + pagination.pageSize);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await vehiclesService.getAll({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      });
+      setData(response.data);
+      setPagination((prev) => ({ ...prev, total: response.total }));
+    } catch (error) {
+      console.error('Failed to fetch vehicles:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.page, pagination.pageSize]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const columns: ColumnDef<VehicleSummary>[] = [
     { id: 'plate', header: 'Placa', width: 100, accessorKey: 'plate' },
@@ -34,7 +53,6 @@ export default function VehiclesPage() {
 
   const renderActions = (row: VehicleSummary) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
     </div>
@@ -47,7 +65,7 @@ export default function VehiclesPage() {
         <Button size="icon"><Plus className="h-4 w-4" /></Button>
       </div>
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={paginatedData} keyField="id" pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedVehicle} selectedRow={selectedVehicle} actions={renderActions} onFilter={() => {}} onReload={() => {}} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedVehicle} selectedRow={selectedVehicle} actions={renderActions} onFilter={() => {}} onReload={fetchData} />
       </div>
     </div>
   );

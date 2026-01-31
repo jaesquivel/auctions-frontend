@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Eye, Check, X } from 'lucide-react';
+import { Eye, Check, X, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { mockExtractedEdicts } from '@/mocks';
@@ -31,7 +31,10 @@ export default function ExtractedEdictsPage() {
   ];
 
   const renderActions = (row: ExtractedEdict) => (
-    <Button variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-4 w-4" /></Button>
+    <div className="flex items-center gap-1">
+      <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
+    </div>
   );
 
   return (

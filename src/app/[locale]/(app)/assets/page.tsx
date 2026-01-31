@@ -1,26 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
-import { mockAssets } from '@/mocks';
+import { assetsService } from '@/services/assets';
 import { formatCurrency, formatDate, formatArea } from '@/lib/formatters';
 import type { Asset } from '@/types';
 
 export default function AssetsPage() {
   const t = useTranslations('assets');
 
+  const [data, setData] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 20,
-    total: mockAssets.length,
+    total: 0,
   });
 
-  const startIndex = (pagination.page - 1) * pagination.pageSize;
-  const paginatedData = mockAssets.slice(startIndex, startIndex + pagination.pageSize);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await assetsService.getAll({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      });
+      setData(response.data);
+      setPagination((prev) => ({ ...prev, total: response.total }));
+    } catch (error) {
+      console.error('Failed to fetch assets:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.page, pagination.pageSize]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const columns: ColumnDef<Asset>[] = [
     { id: 'registration', header: 'Matrícula', width: 100, accessorFn: (row) => row.registration || '-' },
@@ -34,7 +53,6 @@ export default function AssetsPage() {
 
   const renderActions = (row: Asset) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
     </div>
@@ -47,7 +65,7 @@ export default function AssetsPage() {
         <Button size="icon"><Plus className="h-4 w-4" /></Button>
       </div>
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={paginatedData} keyField="id" pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedAsset} selectedRow={selectedAsset} actions={renderActions} onFilter={() => {}} onReload={() => {}} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedAsset} selectedRow={selectedAsset} actions={renderActions} onFilter={() => {}} onReload={fetchData} />
       </div>
     </div>
   );

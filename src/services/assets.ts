@@ -14,7 +14,7 @@ export const assetsService = {
   async getAll(filters: AssetFilters = {}): Promise<PaginatedResponse<Asset>> {
     const { page = 1, pageSize = 20 } = filters;
 
-    if (config.USE_MOCK_API) {
+    if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const startIndex = (page - 1) * pageSize;
@@ -33,7 +33,7 @@ export const assetsService = {
   },
 
   async getById(id: string): Promise<Asset | null> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 50));
       return mockAssets.find((a) => a.id === id) || null;
     }
@@ -42,7 +42,7 @@ export const assetsService = {
   },
 
   async create(data: Partial<Asset>): Promise<Asset> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return { ...data, id: crypto.randomUUID() } as Asset;
     }
@@ -51,7 +51,7 @@ export const assetsService = {
   },
 
   async update(id: string, data: Partial<Asset>): Promise<Asset> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockAssets.find((a) => a.id === id);
       return { ...existing, ...data } as Asset;
@@ -61,7 +61,7 @@ export const assetsService = {
   },
 
   async delete(id: string): Promise<void> {
-    if (config.USE_MOCK_API) {
+    if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
     }
