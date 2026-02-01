@@ -1,9 +1,12 @@
 "use client";
 
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { DataGridToolbar } from "./DataGridToolbar";
 import type { DataGridProps, ColumnDef } from "./types";
+
+const MIN_COLUMN_WIDTH = 50;
 
 export function DataGrid<T>({
   columns,
@@ -21,6 +24,73 @@ export function DataGrid<T>({
   onReload,
 }: DataGridProps<T>) {
   const t = useTranslations("common");
+
+  // Track column widths (initialized from column definitions)
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
+    columns.reduce(
+      (acc, col) => ({ ...acc, [col.id]: col.width || 150 }),
+      {}
+    )
+  );
+
+  // Resize state
+  const [resizing, setResizing] = useState<string | null>(null);
+  const resizeStartX = useRef(0);
+  const resizeStartWidth = useRef(0);
+
+  // Update widths when columns change
+  useEffect(() => {
+    setColumnWidths((prev) => {
+      const newWidths = { ...prev };
+      columns.forEach((col) => {
+        if (!(col.id in newWidths)) {
+          newWidths[col.id] = col.width || 150;
+        }
+      });
+      return newWidths;
+    });
+  }, [columns]);
+
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent, columnId: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setResizing(columnId);
+      resizeStartX.current = e.clientX;
+      resizeStartWidth.current = columnWidths[columnId] || 150;
+    },
+    [columnWidths]
+  );
+
+  const handleResizeMove = useCallback(
+    (e: MouseEvent) => {
+      if (!resizing) return;
+      const delta = e.clientX - resizeStartX.current;
+      const newWidth = Math.max(MIN_COLUMN_WIDTH, resizeStartWidth.current + delta);
+      setColumnWidths((prev) => ({ ...prev, [resizing]: newWidth }));
+    },
+    [resizing]
+  );
+
+  const handleResizeEnd = useCallback(() => {
+    setResizing(null);
+  }, []);
+
+  // Attach global mouse events during resize
+  useEffect(() => {
+    if (resizing) {
+      document.addEventListener("mousemove", handleResizeMove);
+      document.addEventListener("mouseup", handleResizeEnd);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+      return () => {
+        document.removeEventListener("mousemove", handleResizeMove);
+        document.removeEventListener("mouseup", handleResizeEnd);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      };
+    }
+  }, [resizing, handleResizeMove, handleResizeEnd]);
 
   const getCellValue = (row: T, column: ColumnDef<T>) => {
     if (column.accessorFn) {
@@ -43,6 +113,8 @@ export function DataGrid<T>({
     return row[keyField] === selectedRow[keyField];
   };
 
+  const getColumnWidth = (columnId: string) => columnWidths[columnId] || 150;
+
   return (
     <div className="flex flex-col h-full border border-border rounded-md overflow-hidden bg-card">
       {/* Scrollable content area */}
@@ -54,17 +126,25 @@ export function DataGrid<T>({
               <div
                 key={column.id}
                 className={cn(
-                  "px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider truncate",
+                  "relative px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider truncate",
                   "border-r border-border",
                   column.align === "center" && "text-center",
-                  column.align === "right" && "text-right",
+                  column.align === "right" && "text-right"
                 )}
                 style={{
-                  width: column.width || 150,
-                  minWidth: column.width || 150,
+                  width: getColumnWidth(column.id),
+                  minWidth: MIN_COLUMN_WIDTH,
                 }}
               >
                 {column.header}
+                {/* Resize handle */}
+                <div
+                  className={cn(
+                    "absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/50 transition-colors",
+                    resizing === column.id && "bg-primary"
+                  )}
+                  onMouseDown={(e) => handleResizeStart(e, column.id)}
+                />
               </div>
             ))}
             {/* Actions header - sticky to right */}
@@ -94,7 +174,7 @@ export function DataGrid<T>({
                 className={cn(
                   "flex border-b border-border cursor-pointer transition-colors",
                   "hover:bg-accent/50",
-                  isSelected(row) && "bg-accent",
+                  isSelected(row) && "bg-accent"
                 )}
                 onClick={() => handleRowClick(row)}
               >
@@ -104,11 +184,11 @@ export function DataGrid<T>({
                     className={cn(
                       "px-3 py-1.5 text-sm truncate border-r border-border",
                       column.align === "center" && "text-center",
-                      column.align === "right" && "text-right",
+                      column.align === "right" && "text-right"
                     )}
                     style={{
-                      width: column.width || 150,
-                      minWidth: column.width || 150,
+                      width: getColumnWidth(column.id),
+                      minWidth: MIN_COLUMN_WIDTH,
                       height: 32,
                       lineHeight: "20px",
                     }}
@@ -121,7 +201,7 @@ export function DataGrid<T>({
                   <div
                     className={cn(
                       "px-2 flex items-center justify-center sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]",
-                      isSelected(row) ? "bg-accent" : "bg-card",
+                      isSelected(row) ? "bg-accent" : "bg-card"
                     )}
                     style={{ width: 80, minWidth: 80, height: 32 }}
                     onClick={(e) => e.stopPropagation()}
