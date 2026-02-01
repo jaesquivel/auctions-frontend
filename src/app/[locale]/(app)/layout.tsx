@@ -20,7 +20,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-col overflow-hidden">
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between h-14 px-4 border-b border-border bg-background">
           <Link href={`/${locale}/properties`} className="flex items-center gap-2">
