@@ -16,6 +16,13 @@ export interface PaginationState {
   total: number;
 }
 
+export type SortDirection = 'asc' | 'desc';
+
+export interface SortState {
+  columnId: string;
+  direction: SortDirection;
+}
+
 export interface DataGridProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
@@ -30,4 +37,6 @@ export interface DataGridProps<T> {
   onEditFilters?: () => void;
   onDownload?: () => void;
   onReload?: () => void;
+  sort?: SortState | null;
+  onSort?: (sort: SortState | null) => void;
 }

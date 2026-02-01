@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { TagList } from '@/components/ui/tag-badge';
 import { propertiesService } from '@/services/properties';
@@ -21,6 +21,7 @@ export default function PropertiesPage() {
     pageSize: 20,
     total: 0,
   });
+  const [sort, setSort] = useState<SortState | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -47,24 +48,27 @@ export default function PropertiesPage() {
       id: 'tags',
       header: t('columns.tags'),
       width: 150,
-      accessorFn: (row) => <TagList tags={row.tags} max={2} />,
+      accessorFn: (row) => <TagList tags={row.tags} max={10} />,
     },
     {
       id: 'registration',
       header: t('columns.registration'),
       width: 100,
+      sortable: true,
       accessorFn: (row) => row.registrationFull || '-',
     },
     {
       id: 'location',
       header: t('columns.location'),
       width: 200,
+      sortable: true,
       accessorFn: (row) => row.geoLocation || '-',
     },
     {
       id: 'firstDate',
       header: t('columns.firstDate'),
       width: 140,
+      sortable: true,
       accessorFn: (row) => formatDate(row.asset.firstAuctionTs),
     },
     {
@@ -72,6 +76,7 @@ export default function PropertiesPage() {
       header: t('columns.firstBase'),
       width: 130,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatCurrency(row.asset.firstAuctionBase, row.asset.currency),
     },
     {
@@ -79,6 +84,7 @@ export default function PropertiesPage() {
       header: t('columns.firstBaseAdj'),
       width: 130,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatCurrency(row.firstAuctionBaseAdj, row.asset.currency),
     },
     {
@@ -86,6 +92,7 @@ export default function PropertiesPage() {
       header: t('columns.firstGuarantee'),
       width: 130,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatCurrency(row.firstAuctionGuarantee, row.asset.currency),
     },
     {
@@ -93,6 +100,7 @@ export default function PropertiesPage() {
       header: t('columns.fiscalValue'),
       width: 130,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatCurrency(row.fiscalValue, 'CRC'),
     },
     {
@@ -100,6 +108,7 @@ export default function PropertiesPage() {
       header: t('columns.fiscalValueUsd'),
       width: 120,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatCurrency(row.fiscalValueUsd, 'USD'),
     },
     {
@@ -107,6 +116,7 @@ export default function PropertiesPage() {
       header: t('columns.fiscalBaseRatio'),
       width: 90,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatRatio(row.fiscalBaseRatio),
     },
     {
@@ -114,6 +124,7 @@ export default function PropertiesPage() {
       header: t('columns.marketValue'),
       width: 130,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatCurrency(row.marketValue, 'CRC'),
     },
     {
@@ -121,6 +132,7 @@ export default function PropertiesPage() {
       header: t('columns.appraisalValue'),
       width: 130,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatCurrency(row.appraisalValue, 'CRC'),
     },
     {
@@ -128,12 +140,14 @@ export default function PropertiesPage() {
       header: t('columns.area'),
       width: 100,
       align: 'right',
+      sortable: true,
       accessorFn: (row) => formatArea(row.asset.area),
     },
     {
       id: 'caseNumber',
       header: t('columns.caseNumber'),
       width: 160,
+      sortable: true,
       accessorFn: (row) => row.edict.caseNumber,
     },
   ];
@@ -177,6 +191,8 @@ export default function PropertiesPage() {
           onEditFilters={() => console.log('Edit filters clicked')}
           onDownload={() => console.log('Download clicked')}
           onReload={fetchData}
+          sort={sort}
+          onSort={setSort}
         />
       </div>
     </div>

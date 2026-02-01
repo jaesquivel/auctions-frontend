@@ -2,9 +2,10 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DataGridToolbar } from "./DataGridToolbar";
-import type { DataGridProps, ColumnDef } from "./types";
+import type { DataGridProps, ColumnDef, SortState } from "./types";
 
 const MIN_COLUMN_WIDTH = 50;
 
@@ -22,6 +23,8 @@ export function DataGrid<T>({
   onEditFilters,
   onDownload,
   onReload,
+  sort,
+  onSort,
 }: DataGridProps<T>) {
   const t = useTranslations("common");
 
@@ -115,6 +118,31 @@ export function DataGrid<T>({
 
   const getColumnWidth = (columnId: string) => columnWidths[columnId] || 150;
 
+  const handleSort = (columnId: string) => {
+    if (!onSort) return;
+
+    if (!sort || sort.columnId !== columnId) {
+      // New column or no current sort - start with ascending
+      onSort({ columnId, direction: "asc" });
+    } else if (sort.direction === "asc") {
+      // Currently ascending - switch to descending
+      onSort({ columnId, direction: "desc" });
+    } else {
+      // Currently descending - clear sort
+      onSort(null);
+    }
+  };
+
+  const getSortIcon = (columnId: string) => {
+    if (!sort || sort.columnId !== columnId) {
+      return <ArrowUpDown className="h-3 w-3 opacity-50" />;
+    }
+    if (sort.direction === "asc") {
+      return <ArrowUp className="h-3 w-3" />;
+    }
+    return <ArrowDown className="h-3 w-3" />;
+  };
+
   return (
     <div className="flex flex-col h-full border border-border rounded-md overflow-hidden bg-card">
       {/* Scrollable content area */}
@@ -126,17 +154,26 @@ export function DataGrid<T>({
               <div
                 key={column.id}
                 className={cn(
-                  "relative px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider truncate",
+                  "relative px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider",
                   "border-r border-border",
                   column.align === "center" && "text-center",
-                  column.align === "right" && "text-right"
+                  column.align === "right" && "text-right",
+                  column.sortable && "cursor-pointer hover:bg-muted-foreground/10 select-none"
                 )}
                 style={{
                   width: getColumnWidth(column.id),
                   minWidth: MIN_COLUMN_WIDTH,
                 }}
+                onClick={column.sortable ? () => handleSort(column.id) : undefined}
               >
-                {column.header}
+                <div className={cn(
+                  "flex items-center gap-1",
+                  column.align === "center" && "justify-center",
+                  column.align === "right" && "justify-end"
+                )}>
+                  <span className="truncate">{column.header}</span>
+                  {column.sortable && getSortIcon(column.id)}
+                </div>
                 {/* Resize handle */}
                 <div
                   className={cn(
