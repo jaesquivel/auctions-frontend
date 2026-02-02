@@ -6,8 +6,10 @@ import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { ProvinceForm } from '@/components/forms/ProvinceForm';
+import { CantonForm } from '@/components/forms/CantonForm';
+import { DistrictForm } from '@/components/forms/DistrictForm';
 import { territorialService } from '@/services/territorial';
-import type { Province, Canton, District, ProvinceCreateRequest } from '@/types';
+import type { Province, Canton, District, ProvinceCreateRequest, CantonCreateRequest, DistrictCreateRequest } from '@/types';
 
 export default function TerritorialPage() {
   const t = useTranslations('territorial');
@@ -25,6 +27,14 @@ export default function TerritorialPage() {
   // Province modal state
   const [provinceModalOpen, setProvinceModalOpen] = useState(false);
   const [editingProvince, setEditingProvince] = useState<Province | null>(null);
+
+  // Canton modal state
+  const [cantonModalOpen, setCantonModalOpen] = useState(false);
+  const [editingCanton, setEditingCanton] = useState<Canton | null>(null);
+
+  // District modal state
+  const [districtModalOpen, setDistrictModalOpen] = useState(false);
+  const [editingDistrict, setEditingDistrict] = useState<District | null>(null);
 
   // Fetch provinces on mount
   const fetchProvinces = useCallback(async () => {
@@ -122,17 +132,77 @@ export default function TerritorialPage() {
     </div>
   );
 
-  const renderCantonActions = () => (
+  // Canton handlers
+  const handleAddCanton = () => {
+    setEditingCanton(null);
+    setCantonModalOpen(true);
+  };
+
+  const handleEditCanton = (canton: Canton) => {
+    setEditingCanton(canton);
+    setCantonModalOpen(true);
+  };
+
+  const handleCantonSubmit = async (data: CantonCreateRequest) => {
+    try {
+      if (editingCanton) {
+        await territorialService.updateCanton(editingCanton.id, data);
+      } else {
+        await territorialService.createCanton(data);
+      }
+      if (selectedProvince) {
+        fetchCantons(selectedProvince.id);
+      }
+    } catch (error) {
+      console.error('Failed to save canton:', error);
+    }
+  };
+
+  const renderCantonActions = (canton: Canton) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditCanton(canton)}>
+        <Edit className="h-4 w-4" />
+      </Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+        <Trash2 className="h-4 w-4" />
+      </Button>
     </div>
   );
 
-  const renderDistrictActions = () => (
+  // District handlers
+  const handleAddDistrict = () => {
+    setEditingDistrict(null);
+    setDistrictModalOpen(true);
+  };
+
+  const handleEditDistrict = (district: District) => {
+    setEditingDistrict(district);
+    setDistrictModalOpen(true);
+  };
+
+  const handleDistrictSubmit = async (data: DistrictCreateRequest) => {
+    try {
+      if (editingDistrict) {
+        await territorialService.updateDistrict(editingDistrict.id, data);
+      } else {
+        await territorialService.createDistrict(data);
+      }
+      if (selectedCanton) {
+        fetchDistricts(selectedCanton.id);
+      }
+    } catch (error) {
+      console.error('Failed to save district:', error);
+    }
+  };
+
+  const renderDistrictActions = (district: District) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditDistrict(district)}>
+        <Edit className="h-4 w-4" />
+      </Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+        <Trash2 className="h-4 w-4" />
+      </Button>
     </div>
   );
 
@@ -184,7 +254,7 @@ export default function TerritorialPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{t('cantons')}</h2>
-              <Button size="sm" className="gap-1" disabled={!selectedProvince}>
+              <Button size="sm" className="gap-1" disabled={!selectedProvince} onClick={handleAddCanton}>
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
@@ -206,7 +276,7 @@ export default function TerritorialPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{t('districts')}</h2>
-              <Button size="sm" className="gap-1" disabled={!selectedCanton}>
+              <Button size="sm" className="gap-1" disabled={!selectedCanton} onClick={handleAddDistrict}>
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
@@ -232,6 +302,26 @@ export default function TerritorialPage() {
         province={editingProvince}
         onSubmit={handleProvinceSubmit}
       />
+
+      {selectedProvince && (
+        <CantonForm
+          open={cantonModalOpen}
+          onOpenChange={setCantonModalOpen}
+          canton={editingCanton}
+          province={selectedProvince}
+          onSubmit={handleCantonSubmit}
+        />
+      )}
+
+      {selectedCanton && (
+        <DistrictForm
+          open={districtModalOpen}
+          onOpenChange={setDistrictModalOpen}
+          district={editingDistrict}
+          canton={selectedCanton}
+          onSubmit={handleDistrictSubmit}
+        />
+      )}
     </>
   );
 }

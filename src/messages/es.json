@@ -155,7 +155,9 @@
       "num": "Número",
       "code": "Código",
       "name": "Nombre",
-      "nameSearch": "Nombre Búsqueda"
+      "nameSearch": "Nombre Búsqueda",
+      "area": "Área (km²)",
+      "altitude": "Altitud (m)"
     }
   },
   "config": {
