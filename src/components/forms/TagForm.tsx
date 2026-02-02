@@ -54,7 +54,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
           <label className="text-sm font-medium">{t('columns.name')}</label>
           <Input
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             placeholder="e.g., Residencial"
             required
             maxLength={30}
@@ -65,7 +65,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
           <label className="text-sm font-medium">{t('columns.description')}</label>
           <Input
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
             placeholder="Optional description"
           />
         </div>
@@ -76,12 +76,12 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
             <input
               type="color"
               value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+              onChange={(e) => setFormData((prev) => ({ ...prev, color: e.target.value }))}
               className="h-10 w-14 rounded border border-input cursor-pointer"
             />
             <Input
               value={formData.color}
-              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+              onChange={(e) => setFormData((prev) => ({ ...prev, color: e.target.value }))}
               placeholder="#RRGGBB"
               pattern="^#[0-9A-Fa-f]{6}$"
               className="flex-1"
