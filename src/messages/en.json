@@ -146,8 +146,17 @@
     "cantons": "Cantons",
     "districts": "Districts",
     "addProvince": "Add Province",
+    "editProvince": "Edit Province",
     "addCanton": "Add Canton",
-    "addDistrict": "Add District"
+    "editCanton": "Edit Canton",
+    "addDistrict": "Add District",
+    "editDistrict": "Edit District",
+    "columns": {
+      "num": "Number",
+      "code": "Code",
+      "name": "Name",
+      "nameSearch": "Search Name"
+    }
   },
   "config": {
     "title": "General Configuration"

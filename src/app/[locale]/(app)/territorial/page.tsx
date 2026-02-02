@@ -5,8 +5,9 @@ import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
+import { ProvinceForm } from '@/components/forms/ProvinceForm';
 import { territorialService } from '@/services/territorial';
-import type { Province, Canton, District } from '@/types';
+import type { Province, Canton, District, ProvinceCreateRequest } from '@/types';
 
 export default function TerritorialPage() {
   const t = useTranslations('territorial');
@@ -20,6 +21,10 @@ export default function TerritorialPage() {
   const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
   const [selectedCanton, setSelectedCanton] = useState<Canton | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
+
+  // Province modal state
+  const [provinceModalOpen, setProvinceModalOpen] = useState(false);
+  const [editingProvince, setEditingProvince] = useState<Province | null>(null);
 
   // Fetch provinces on mount
   const fetchProvinces = useCallback(async () => {
@@ -66,23 +71,65 @@ export default function TerritorialPage() {
 
   const provinceColumns: ColumnDef<Province>[] = [
     { id: 'num', header: '#', width: 50, align: 'center', accessorFn: (row) => row.num.toString() },
-    { id: 'code', header: 'Código', width: 80, accessorKey: 'code' },
-    { id: 'name', header: 'Nombre', width: 150, accessorKey: 'name' },
+    { id: 'code', header: t('columns.code'), width: 80, accessorKey: 'code' },
+    { id: 'name', header: t('columns.name'), width: 150, accessorKey: 'name' }
   ];
 
   const cantonColumns: ColumnDef<Canton>[] = [
     { id: 'num', header: '#', width: 50, align: 'center', accessorFn: (row) => row.num.toString() },
-    { id: 'code', header: 'Código', width: 80, accessorKey: 'code' },
-    { id: 'name', header: 'Nombre', width: 150, accessorKey: 'name' },
+    { id: 'code', header: t('columns.code'), width: 80, accessorKey: 'code' },
+    { id: 'name', header: t('columns.name'), width: 150, accessorKey: 'name' }
   ];
 
   const districtColumns: ColumnDef<District>[] = [
     { id: 'num', header: '#', width: 50, align: 'center', accessorFn: (row) => row.num.toString() },
-    { id: 'code', header: 'Código', width: 80, accessorKey: 'code' },
-    { id: 'name', header: 'Nombre', width: 200, accessorKey: 'name' },
+    { id: 'code', header: t('columns.code'), width: 80, accessorKey: 'code' },
+    { id: 'name', header: t('columns.name'), width: 150, accessorKey: 'name' }
   ];
 
-  const renderActions = () => (
+  // Province handlers
+  const handleAddProvince = () => {
+    setEditingProvince(null);
+    setProvinceModalOpen(true);
+  };
+
+  const handleEditProvince = (province: Province) => {
+    setEditingProvince(province);
+    setProvinceModalOpen(true);
+  };
+
+  const handleProvinceSubmit = async (data: ProvinceCreateRequest) => {
+    try {
+      if (editingProvince) {
+        await territorialService.updateProvince(editingProvince.id, data);
+      } else {
+        await territorialService.createProvince(data);
+      }
+      fetchProvinces();
+    } catch (error) {
+      console.error('Failed to save province:', error);
+    }
+  };
+
+  const renderProvinceActions = (province: Province) => (
+    <div className="flex items-center gap-1">
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditProvince(province)}>
+        <Edit className="h-4 w-4" />
+      </Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+
+  const renderCantonActions = () => (
+    <div className="flex items-center gap-1">
+      <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
+    </div>
+  );
+
+  const renderDistrictActions = () => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
@@ -106,70 +153,85 @@ export default function TerritorialPage() {
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('title')}</h1>
+    <>
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Provinces */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">{t('provinces')}</h2>
-            <Button size="sm" className="gap-1"><Plus className="h-3 w-3" /></Button>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Provinces */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">{t('provinces')}</h2>
+              <Button size="sm" className="gap-1" onClick={handleAddProvince}>
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+            <div className="h-[calc(100vh-16rem)]">
+              <DataGrid
+                columns={provinceColumns}
+                data={provinces}
+                keyField="id"
+                loading={loadingProvinces}
+                onRowSelect={handleProvinceSelect}
+                selectedRow={selectedProvince}
+                actions={renderProvinceActions}
+                onReload={fetchProvinces}
+              />
+            </div>
           </div>
-          <div className="h-[calc(100vh-16rem)]">
-            <DataGrid
-              columns={provinceColumns}
-              data={provinces}
-              keyField="id"
-              loading={loadingProvinces}
-              onRowSelect={handleProvinceSelect}
-              selectedRow={selectedProvince}
-              actions={renderActions}
-              onReload={fetchProvinces}
-            />
-          </div>
-        </div>
 
-        {/* Cantons */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">{t('cantons')}</h2>
-            <Button size="sm" className="gap-1" disabled={!selectedProvince}><Plus className="h-3 w-3" /></Button>
+          {/* Cantons */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">{t('cantons')}</h2>
+              <Button size="sm" className="gap-1" disabled={!selectedProvince}>
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+            <div className="h-[calc(100vh-16rem)]">
+              <DataGrid
+                columns={cantonColumns}
+                data={cantons}
+                keyField="id"
+                loading={loadingCantons}
+                onRowSelect={handleCantonSelect}
+                selectedRow={selectedCanton}
+                actions={renderCantonActions}
+                onReload={selectedProvince ? () => fetchCantons(selectedProvince.id) : undefined}
+              />
+            </div>
           </div>
-          <div className="h-[calc(100vh-16rem)]">
-            <DataGrid
-              columns={cantonColumns}
-              data={cantons}
-              keyField="id"
-              loading={loadingCantons}
-              onRowSelect={handleCantonSelect}
-              selectedRow={selectedCanton}
-              actions={renderActions}
-              onReload={selectedProvince ? () => fetchCantons(selectedProvince.id) : undefined}
-            />
-          </div>
-        </div>
 
-        {/* Districts */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">{t('districts')}</h2>
-            <Button size="sm" className="gap-1" disabled={!selectedCanton}><Plus className="h-3 w-3" /></Button>
-          </div>
-          <div className="h-[calc(100vh-16rem)]">
-            <DataGrid
-              columns={districtColumns}
-              data={districts}
-              keyField="id"
-              loading={loadingDistricts}
-              onRowSelect={setSelectedDistrict}
-              selectedRow={selectedDistrict}
-              actions={renderActions}
-              onReload={selectedCanton ? () => fetchDistricts(selectedCanton.id) : undefined}
-            />
+          {/* Districts */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">{t('districts')}</h2>
+              <Button size="sm" className="gap-1" disabled={!selectedCanton}>
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+            <div className="h-[calc(100vh-16rem)]">
+              <DataGrid
+                columns={districtColumns}
+                data={districts}
+                keyField="id"
+                loading={loadingDistricts}
+                onRowSelect={setSelectedDistrict}
+                selectedRow={selectedDistrict}
+                actions={renderDistrictActions}
+                onReload={selectedCanton ? () => fetchDistricts(selectedCanton.id) : undefined}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <ProvinceForm
+        open={provinceModalOpen}
+        onOpenChange={setProvinceModalOpen}
+        province={editingProvince}
+        onSubmit={handleProvinceSubmit}
+      />
+    </>
   );
 }

@@ -17,7 +17,7 @@ export const config = {
     vehicles: true,
     assets: true,
     bulletins: true,
-    territorial: true,
+    territorial: false,
   },
 
   /**

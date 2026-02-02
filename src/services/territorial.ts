@@ -11,7 +11,7 @@ export const territorialService = {
       return mockProvinces;
     }
 
-    return apiClient.get<Province[]>('/geo/provinces');
+    return apiClient.get<Province[]>('/provinces');
   },
 
   async getProvinceById(id: string): Promise<Province | null> {
@@ -20,7 +20,7 @@ export const territorialService = {
       return mockProvinces.find((p) => p.id === id) || null;
     }
 
-    return apiClient.get<Province>(`/geo/provinces/${id}`);
+    return apiClient.get<Province>(`/provinces/${id}`);
   },
 
   async createProvince(data: Partial<Province>): Promise<Province> {
@@ -29,7 +29,7 @@ export const territorialService = {
       return { ...data, id: crypto.randomUUID() } as Province;
     }
 
-    return apiClient.post<Province>('/geo/provinces', data);
+    return apiClient.post<Province>('/provinces', data);
   },
 
   async updateProvince(id: string, data: Partial<Province>): Promise<Province> {
@@ -39,7 +39,7 @@ export const territorialService = {
       return { ...existing, ...data } as Province;
     }
 
-    return apiClient.put<Province>(`/geo/provinces/${id}`, data);
+    return apiClient.put<Province>(`/provinces/${id}`, data);
   },
 
   async deleteProvince(id: string): Promise<void> {
@@ -48,7 +48,7 @@ export const territorialService = {
       return;
     }
 
-    return apiClient.delete(`/geo/provinces/${id}`);
+    return apiClient.delete(`/provinces/${id}`);
   },
 
   // Cantons
@@ -61,7 +61,7 @@ export const territorialService = {
       return mockCantons;
     }
 
-    const endpoint = provinceId ? `/geo/provinces/${provinceId}/cantons` : '/geo/cantons';
+    const endpoint = provinceId ? `/provinces/${provinceId}/cantons` : '/cantons';
     return apiClient.get<Canton[]>(endpoint);
   },
 
@@ -71,7 +71,7 @@ export const territorialService = {
       return mockCantons.find((c) => c.id === id) || null;
     }
 
-    return apiClient.get<Canton>(`/geo/cantons/${id}`);
+    return apiClient.get<Canton>(`/cantons/${id}`);
   },
 
   async createCanton(data: Partial<Canton>): Promise<Canton> {
@@ -80,7 +80,7 @@ export const territorialService = {
       return { ...data, id: crypto.randomUUID() } as Canton;
     }
 
-    return apiClient.post<Canton>('/geo/cantons', data);
+    return apiClient.post<Canton>('/cantons', data);
   },
 
   async updateCanton(id: string, data: Partial<Canton>): Promise<Canton> {
@@ -90,7 +90,7 @@ export const territorialService = {
       return { ...existing, ...data } as Canton;
     }
 
-    return apiClient.put<Canton>(`/geo/cantons/${id}`, data);
+    return apiClient.put<Canton>(`/cantons/${id}`, data);
   },
 
   async deleteCanton(id: string): Promise<void> {
@@ -99,7 +99,7 @@ export const territorialService = {
       return;
     }
 
-    return apiClient.delete(`/geo/cantons/${id}`);
+    return apiClient.delete(`/cantons/${id}`);
   },
 
   // Districts
@@ -112,7 +112,7 @@ export const territorialService = {
       return mockDistricts;
     }
 
-    const endpoint = cantonId ? `/geo/cantons/${cantonId}/districts` : '/geo/districts';
+    const endpoint = cantonId ? `/cantons/${cantonId}/districts` : '/districts';
     return apiClient.get<District[]>(endpoint);
   },
 
@@ -122,7 +122,7 @@ export const territorialService = {
       return mockDistricts.find((d) => d.id === id) || null;
     }
 
-    return apiClient.get<District>(`/geo/districts/${id}`);
+    return apiClient.get<District>(`/districts/${id}`);
   },
 
   async createDistrict(data: Partial<District>): Promise<District> {
@@ -131,7 +131,7 @@ export const territorialService = {
       return { ...data, id: crypto.randomUUID() } as District;
     }
 
-    return apiClient.post<District>('/geo/districts', data);
+    return apiClient.post<District>('/districts', data);
   },
 
   async updateDistrict(id: string, data: Partial<District>): Promise<District> {
@@ -141,7 +141,7 @@ export const territorialService = {
       return { ...existing, ...data } as District;
     }
 
-    return apiClient.put<District>(`/geo/districts/${id}`, data);
+    return apiClient.put<District>(`/districts/${id}`, data);
   },
 
   async deleteDistrict(id: string): Promise<void> {
@@ -150,6 +150,6 @@ export const territorialService = {
       return;
     }
 
-    return apiClient.delete(`/geo/districts/${id}`);
+    return apiClient.delete(`/districts/${id}`);
   },
 };

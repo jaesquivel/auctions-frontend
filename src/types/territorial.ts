@@ -52,6 +52,7 @@ export interface ProvinceCreateRequest {
   code: string;
   num: number;
   name: string;
+  nameSearch?: string;
 }
 
 export interface CantonCreateRequest {
