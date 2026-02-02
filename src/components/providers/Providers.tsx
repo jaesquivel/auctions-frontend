@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider, useTheme } from 'next-themes';
+import { dark } from '@clerk/themes';
 import { esES, enUS } from '@clerk/localizations';
 import { setToastLocale } from '@/lib/toast';
 
@@ -16,6 +17,21 @@ const clerkLocalizations = {
   en: enUS,
 };
 
+function ClerkWithTheme({ children, locale }: ProvidersProps) {
+  const { resolvedTheme } = useTheme();
+
+  return (
+    <ClerkProvider
+      localization={clerkLocalizations[locale as keyof typeof clerkLocalizations] || esES}
+      appearance={{
+        baseTheme: resolvedTheme === 'dark' ? dark : undefined,
+      }}
+    >
+      {children}
+    </ClerkProvider>
+  );
+}
+
 export function Providers({ children, locale }: ProvidersProps) {
   // Sync toast locale with app locale
   useEffect(() => {
@@ -23,17 +39,15 @@ export function Providers({ children, locale }: ProvidersProps) {
   }, [locale]);
 
   return (
-    <ClerkProvider
-      localization={clerkLocalizations[locale as keyof typeof clerkLocalizations] || esES}
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem
+      disableTransitionOnChange
     >
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
+      <ClerkWithTheme locale={locale}>
         {children}
-      </ThemeProvider>
-    </ClerkProvider>
+      </ClerkWithTheme>
+    </ThemeProvider>
   );
 }

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { Gavel } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
+import { ThemeToggle } from './ThemeToggle';
 
 interface PublicHeaderProps {
   showLogo?: boolean;
@@ -25,7 +26,10 @@ export function PublicHeader({ showLogo = true }: PublicHeaderProps) {
         ) : (
           <div />
         )}
-        <LanguageSelector />
+        <div className="flex items-center gap-2">
+          <ThemeToggle collapsed />
+          <LanguageSelector />
+        </div>
       </div>
     </header>
   );
