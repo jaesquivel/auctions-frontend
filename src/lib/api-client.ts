@@ -1,5 +1,6 @@
 import { config } from './config';
 import { showErrorToast, showNetworkErrorToast } from './toast';
+import { setApiAvailable } from './api-status';
 
 export class ApiError extends Error {
   constructor(
@@ -65,6 +66,9 @@ async function request<T>(
 
     clearTimeout(timeoutId);
 
+    // API is reachable
+    setApiAvailable(true);
+
     if (!response.ok) {
       const errorBody = await response.text();
       const error = new ApiError(response.status, response.statusText, errorBody);
@@ -87,6 +91,8 @@ async function request<T>(
     if (error instanceof ApiError) throw error;
 
     if (error instanceof Error && error.name === 'AbortError') {
+      // Timeout - API may be unavailable
+      setApiAvailable(false);
       const timeoutError = new ApiError(408, 'Request Timeout', 'Request timed out');
       if (!silent) {
         showErrorToast(408);
@@ -94,7 +100,8 @@ async function request<T>(
       throw timeoutError;
     }
 
-    // Network error or other unexpected error
+    // Network error - API is unavailable
+    setApiAvailable(false);
     if (!silent && error instanceof Error) {
       showNetworkErrorToast();
     }

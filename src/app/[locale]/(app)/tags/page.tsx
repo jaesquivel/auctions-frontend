@@ -71,9 +71,7 @@ export default function TagsPage() {
 
   const columns: ColumnDef<PropertyTag>[] = [
     { id: 'name', header: t('columns.name'), width: 150, accessorFn: (row) => <TagBadge name={row.name} color={row.color} /> },
-    { id: 'description', header: t('columns.description'), width: 300, accessorFn: (row) => row.description || '-' },
-    { id: 'color', header: t('columns.color'), width: 100, accessorFn: (row) => <div className="flex items-center gap-2"><div className="w-4 h-4 rounded" style={{ backgroundColor: row.color }} /><span className="text-xs font-mono">{row.color}</span></div> },
-    { id: 'createdAt', header: 'Fecha', width: 140, accessorFn: (row) => formatDate(row.createdAt) },
+    { id: 'description', header: t('columns.description'), width: 300, accessorFn: (row) => row.description || '-' }
   ];
 
   const renderActions = (row: PropertyTag) => (
