@@ -44,8 +44,8 @@ export default function AssetsPage() {
   const columns: ColumnDef<Asset>[] = [
     { id: 'registration', header: 'Matrícula', width: 100, accessorFn: (row) => row.registration || '-' },
     { id: 'type', header: 'Tipo', width: 150, accessorFn: (row) => row.type || '-' },
-    { id: 'province', header: 'Provincia', width: 120, accessorFn: (row) => row.geoProvince?.name || '-' },
-    { id: 'canton', header: 'Cantón', width: 120, accessorFn: (row) => row.geoCanton?.name || '-' },
+    { id: 'tdProvince', header: 'Provincia', width: 120, accessorFn: (row) => row.tdProvince?.name || '-' },
+    { id: 'tdCanton', header: 'Cantón', width: 120, accessorFn: (row) => row.tdCanton?.name || '-' },
     { id: 'area', header: 'Área', width: 100, align: 'right', accessorFn: (row) => formatArea(row.area) },
     { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, accessorFn: (row) => formatDate(row.firstAuctionTs) },
     { id: 'firstAuctionBase', header: 'Base', width: 130, align: 'right', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },

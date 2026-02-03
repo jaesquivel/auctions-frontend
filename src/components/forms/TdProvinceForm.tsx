@@ -7,17 +7,17 @@ import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { provinceSchema, type ProvinceFormData } from '@/lib/validations/territorial';
-import type { Province, ProvinceCreateRequest } from '@/types';
+import { tdProvinceSchema, type TdProvinceFormData } from '@/lib/validations/territorial';
+import type { TdProvince, TdProvinceCreateRequest } from '@/types';
 
-interface ProvinceFormProps {
+interface TdProvinceFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  province?: Province | null;
-  onSubmit: (data: ProvinceCreateRequest) => Promise<void>;
+  tdProvince?: TdProvince | null;
+  onSubmit: (data: TdProvinceCreateRequest) => Promise<void>;
 }
 
-export function ProvinceForm({ open, onOpenChange, province, onSubmit }: ProvinceFormProps) {
+export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit }: TdProvinceFormProps) {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
   const tValidation = useTranslations('validation');
@@ -30,27 +30,27 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ProvinceFormData>({
-    resolver: zodResolver(provinceSchema),
+  } = useForm<TdProvinceFormData>({
+    resolver: zodResolver(tdProvinceSchema),
     defaultValues: {
-      num: province?.num || 1,
-      code: province?.code || '',
-      name: province?.name || '',
+      num: tdProvince?.num || 1,
+      code: tdProvince?.code || '',
+      name: tdProvince?.name || '',
     },
   });
 
   useEffect(() => {
     if (open) {
       reset({
-        num: province?.num || 1,
-        code: province?.code || '',
-        name: province?.name || '',
+        num: tdProvince?.num || 1,
+        code: tdProvince?.code || '',
+        name: tdProvince?.name || '',
       });
       setServerError(null);
     }
-  }, [open, province, reset]);
+  }, [open, tdProvince, reset]);
 
-  const onFormSubmit = async (data: ProvinceFormData) => {
+  const onFormSubmit = async (data: TdProvinceFormData) => {
     setServerError(null);
     setIsSubmitting(true);
     try {
@@ -73,13 +73,13 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
     return tValidation(key as 'required' | 'minNumber' | 'maxNumber' | 'maxLength' | 'invalidNumber');
   };
 
-  const isEdit = !!province;
+  const isEdit = !!tdProvince;
 
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editProvince') : t('addProvince')}
+      title={isEdit ? t('editTdProvince') : t('addProvince')}
       size="sm"
       footer={
         <div className="flex gap-2 justify-end">

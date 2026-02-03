@@ -1,7 +1,7 @@
 import type { PropertySummary } from '@/types';
 import { mockEdicts } from './edicts';
 import { mockTags } from './tags';
-import { mockProvinces, mockCantons, mockDistricts } from './territorial';
+import { mockTdProvinces, mockTdCantons, mockTdDistricts } from './territorial';
 
 // Helper to get random items from array
 function getRandomItems<T>(arr: T[], count: number): T[] {
@@ -17,9 +17,9 @@ function randomCurrency(min: number, max: number): number {
 // Generate 35 properties
 export const mockProperties: PropertySummary[] = Array.from({ length: 35 }, (_, i) => {
   const edict = mockEdicts[i % mockEdicts.length];
-  const province = mockProvinces[i % mockProvinces.length];
-  const canton = mockCantons.find(c => c.provinceId === province.id) || mockCantons[0];
-  const district = mockDistricts.find(d => d.cantonId === canton.id) || mockDistricts[0];
+  const tdProvince = mockTdProvinces[i % mockTdProvinces.length];
+  const tdCanton = mockTdCantons.find(c => c.tdProvinceId === tdProvince.id) || mockTdCantons[0];
+  const tdDistrict = mockTdDistricts.find(d => d.tdCantonId === tdCanton.id) || mockTdDistricts[0];
 
   const fiscalValue = randomCurrency(20000000, 500000000);
   const exchangeRate = 515;
@@ -35,8 +35,8 @@ export const mockProperties: PropertySummary[] = Array.from({ length: 35 }, (_, 
     fiscalValueUsd: Math.round(fiscalValue / exchangeRate),
     firstAuctionBaseAdj: Math.round(firstAuctionBase * (1 + margin / 100)),
     firstAuctionGuarantee: Math.round(firstAuctionBase / 2),
-    registrationFull: `${province.num}-${100000 + i}`,
-    geoLocation: `${province.name}, ${canton.name}, ${district.name}`,
+    registrationFull: `${tdProvince.num}-${100000 + i}`,
+    tdLocation: `${tdProvince.name}, ${tdCanton.name}, ${tdDistrict.name}`,
     fiscalBaseRatio: Math.round((fiscalValue / (firstAuctionBase * exchangeRate)) * 100) / 100,
     edict: { id: edict.id, caseNumber: edict.caseNumber },
     asset: {
@@ -50,9 +50,9 @@ export const mockProperties: PropertySummary[] = Array.from({ length: 35 }, (_, 
       horizontal: i % 5 === 0 ? 'H' : null,
       area: randomCurrency(100, 5000),
       rights: '100%',
-      geoProvince: { num: province.num, name: province.name },
-      geoCanton: { num: canton.num, name: canton.name },
-      geoDistrict: { num: district.num, name: district.name },
+      tdProvince: { num: tdProvince.num, name: tdProvince.name },
+      tdCanton: { num: tdCanton.num, name: tdCanton.name },
+      tdDistrict: { num: tdDistrict.num, name: tdDistrict.name },
     },
     tags: getRandomItems(mockTags, Math.floor(Math.random() * 3) + 1).map(t => ({
       id: t.id,

@@ -1,6 +1,6 @@
-// Geographic/Territorial Division types
+// Territorial Division types
 
-export interface Province {
+export interface TdProvince {
   id: string;
   code: string;
   num: number;
@@ -9,28 +9,28 @@ export interface Province {
   createdAt: string;
 }
 
-export interface ProvinceSummary {
+export interface TdProvinceSummary {
   num: number;
   name: string;
 }
 
-export interface Canton {
+export interface TdCanton {
   id: string;
   code: string;
   num: number;
   name: string;
   nameSearch: string;
-  provinceId: string;
-  province?: ProvinceSummary;
+  tdProvinceId: string;
+  tdProvince?: TdProvinceSummary;
   createdAt: string;
 }
 
-export interface CantonSummary {
+export interface TdCantonSummary {
   num: number;
   name: string;
 }
 
-export interface District {
+export interface TdDistrict {
   id: string;
   code: string;
   num: number;
@@ -38,34 +38,34 @@ export interface District {
   nameSearch: string;
   area: number | null;
   altitude: number | null;
-  cantonId: string;
-  canton?: CantonSummary;
+  tdCantonId: string;
+  tdCanton?: TdCantonSummary;
   createdAt: string;
 }
 
-export interface DistrictSummary {
+export interface TdDistrictSummary {
   num: number;
   name: string;
 }
 
-export interface ProvinceCreateRequest {
+export interface TdProvinceCreateRequest {
   code: string;
   num: number;
   name: string;
 }
 
-export interface CantonCreateRequest {
+export interface TdCantonCreateRequest {
   code: string;
   num: number;
   name: string;
-  provinceId: string;
+  tdProvinceId: string;
 }
 
-export interface DistrictCreateRequest {
+export interface TdDistrictCreateRequest {
   code: string;
   num: number;
   name: string;
-  cantonId: string;
+  tdCantonId: string;
   area?: number;
   altitude?: number;
 }

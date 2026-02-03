@@ -7,18 +7,18 @@ import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cantonSchema, type CantonFormData } from '@/lib/validations/territorial';
-import type { Canton, CantonCreateRequest, Province } from '@/types';
+import { tdCantonSchema, type TdCantonFormData } from '@/lib/validations/territorial';
+import type { TdCanton, TdCreateRequest, TdProvince } from '@/types';
 
-interface CantonFormProps {
+interface TdCantonFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  canton?: Canton | null;
-  province: Province;
-  onSubmit: (data: CantonCreateRequest) => Promise<void>;
+  tdCanton?: TdCanton | null;
+  tdProvince: TdProvince;
+  onSubmit: (data: TdCantonCreateRequest) => Promise<void>;
 }
 
-export function CantonForm({ open, onOpenChange, canton, province, onSubmit }: CantonFormProps) {
+export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmit }: TdCantonFormProps) {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
   const tValidation = useTranslations('validation');
@@ -31,31 +31,31 @@ export function CantonForm({ open, onOpenChange, canton, province, onSubmit }: C
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CantonFormData>({
-    resolver: zodResolver(cantonSchema),
+  } = useForm<TdCantonFormData>({
+    resolver: zodResolver(tdCantonSchema),
     defaultValues: {
-      num: canton?.num || 1,
-      code: canton?.code || '',
-      name: canton?.name || '',
+      num: tdCanton?.num || 1,
+      code: tdCanton?.code || '',
+      name: tdCanton?.name || '',
     },
   });
 
   useEffect(() => {
     if (open) {
       reset({
-        num: canton?.num || 1,
-        code: canton?.code || '',
-        name: canton?.name || '',
+        num: tdCanton?.num || 1,
+        code: tdCanton?.code || '',
+        name: tdCanton?.name || '',
       });
       setServerError(null);
     }
-  }, [open, canton, reset]);
+  }, [open, tdCanton, reset]);
 
-  const onFormSubmit = async (data: CantonFormData) => {
+  const onFormSubmit = async (data: TdCantonFormData) => {
     setServerError(null);
     setIsSubmitting(true);
     try {
-      await onSubmit({ ...data, provinceId: province.id });
+      await onSubmit({ ...data, tdProvinceId: tdProvince.id });
       onOpenChange(false);
     } catch (error) {
       if (error instanceof Error) {
@@ -74,13 +74,13 @@ export function CantonForm({ open, onOpenChange, canton, province, onSubmit }: C
     return tValidation(key as 'required' | 'minNumber' | 'maxNumber' | 'maxLength' | 'invalidNumber');
   };
 
-  const isEdit = !!canton;
+  const isEdit = !!tdCanton;
 
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editCanton') : t('addCanton')}
+      title={isEdit ? t('editTdCanton') : t('addTdCanton')}
       size="sm"
       footer={
         <div className="flex gap-2 justify-end">
@@ -101,8 +101,8 @@ export function CantonForm({ open, onOpenChange, canton, province, onSubmit }: C
         )}
 
         <div className="p-3 bg-muted rounded-md">
-          <span className="text-sm text-muted-foreground">{t('provinces')}: </span>
-          <span className="text-sm font-medium">{province.name}</span>
+          <span className="text-sm text-muted-foreground">{t('tdProvinces')}: </span>
+          <span className="text-sm font-medium">{tdProvince.name}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

@@ -1,5 +1,5 @@
 // Asset types
-import type { ProvinceSummary, CantonSummary, DistrictSummary } from './territorial';
+import type { TdProvinceSummary, TdCantonSummary, TdDistrictSummary } from './territorial';
 import type { Currency } from './common';
 
 export interface Asset {
@@ -21,10 +21,10 @@ export interface Asset {
   subRegistration: string | null;
   plate: string | null;
   type: string | null;
-  // Geographic
-  geoProvince: ProvinceSummary | null;
-  geoCanton: CantonSummary | null;
-  geoDistrict: DistrictSummary | null;
+  // Territorial Division
+  tdProvince: TdProvinceSummary | null;
+  tdCanton: TdCantonSummary | null;
+  tdDistrict: TdDistrictSummary | null;
   // Details
   area: number | null;
   description: string | null;
@@ -44,9 +44,9 @@ export interface AssetSummary {
   horizontal: string | null;
   area: number | null;
   rights: string | null;
-  geoProvince: ProvinceSummary | null;
-  geoCanton: CantonSummary | null;
-  geoDistrict: DistrictSummary | null;
+  tdProvince: TdProvinceSummary | null;
+  tdCanton: TdCantonSummary | null;
+  tdDistrict: TdDistrictSummary | null;
 }
 
 export interface AssetCreateRequest {
@@ -66,9 +66,9 @@ export interface AssetCreateRequest {
   subRegistration?: string;
   plate?: string;
   type?: string;
-  geoProvinceId?: string;
-  geoCantonId?: string;
-  geoDistrictId?: string;
+  tdProvinceId?: string;
+  tdCantonId?: string;
+  tdDistrictId?: string;
   area?: number;
   description?: string;
   rights?: string;
@@ -90,9 +90,9 @@ export interface AssetUpdateRequest {
   subRegistration?: string;
   plate?: string;
   type?: string;
-  geoProvinceId?: string;
-  geoCantonId?: string;
-  geoDistrictId?: string;
+  tdProvinceId?: string;
+  tdCantonId?: string;
+  tdDistrictId?: string;
   area?: number;
   description?: string;
   rights?: string;

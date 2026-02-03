@@ -7,18 +7,18 @@ import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { districtSchema, type DistrictFormData } from '@/lib/validations/territorial';
-import type { District, DistrictCreateRequest, Canton } from '@/types';
+import { tdDistrictSchema, type TdDistrictFormData } from '@/lib/validations/territorial';
+import type { TdDistrict, TdDistrictCreateRequest, TdCanton } from '@/types';
 
-interface DistrictFormProps {
+interface TdDistrictFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  district?: District | null;
-  canton: Canton;
-  onSubmit: (data: DistrictCreateRequest) => Promise<void>;
+  tdDistrict?: TdDistrict | null;
+  tdCanton: TdCanton;
+  onSubmit: (data: TdDistrictCreateRequest) => Promise<void>;
 }
 
-export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }: DistrictFormProps) {
+export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSubmit }: TdDistrictFormProps) {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
   const tValidation = useTranslations('validation');
@@ -31,35 +31,35 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<DistrictFormData>({
-    resolver: zodResolver(districtSchema),
+  } = useForm<TdDistrictFormData>({
+    resolver: zodResolver(tdDistrictSchema),
     defaultValues: {
-      num: district?.num || 1,
-      code: district?.code || '',
-      name: district?.name || '',
-      area: district?.area || undefined,
-      altitude: district?.altitude || undefined,
+      num: tdDistrict?.num || 1,
+      code: tdDistrict?.code || '',
+      name: tdDistrict?.name || '',
+      area: tdDistrict?.area || undefined,
+      altitude: tdDistrict?.altitude || undefined,
     },
   });
 
   useEffect(() => {
     if (open) {
       reset({
-        num: district?.num || 1,
-        code: district?.code || '',
-        name: district?.name || '',
-        area: district?.area || undefined,
-        altitude: district?.altitude || undefined,
+        num: tdDistrict?.num || 1,
+        code: tdDistrict?.code || '',
+        name: tdDistrict?.name || '',
+        area: tdDistrict?.area || undefined,
+        altitude: tdDistrict?.altitude || undefined,
       });
       setServerError(null);
     }
-  }, [open, district, reset]);
+  }, [open, tdDistrict, reset]);
 
-  const onFormSubmit = async (data: DistrictFormData) => {
+  const onFormSubmit = async (data: TdDistrictFormData) => {
     setServerError(null);
     setIsSubmitting(true);
     try {
-      await onSubmit({ ...data, cantonId: canton.id });
+      await onSubmit({ ...data, tdCantonId: tdCanton.id });
       onOpenChange(false);
     } catch (error) {
       if (error instanceof Error) {
@@ -78,13 +78,13 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
     return tValidation(key as 'required' | 'minNumber' | 'maxNumber' | 'maxLength' | 'invalidNumber');
   };
 
-  const isEdit = !!district;
+  const isEdit = !!tdDistrict;
 
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editDistrict') : t('addDistrict')}
+      title={isEdit ? t('editTdDistrict') : t('addDistrict')}
       size="sm"
       footer={
         <div className="flex gap-2 justify-end">
@@ -105,8 +105,8 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
         )}
 
         <div className="p-3 bg-muted rounded-md">
-          <span className="text-sm text-muted-foreground">{t('cantons')}: </span>
-          <span className="text-sm font-medium">{canton.name}</span>
+          <span className="text-sm text-muted-foreground">{t('tdCantons')}: </span>
+          <span className="text-sm font-medium">{tdCanton.name}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

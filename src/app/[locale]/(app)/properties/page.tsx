@@ -62,7 +62,7 @@ export default function PropertiesPage() {
       header: t('columns.location'),
       width: 200,
       sortable: true,
-      accessorFn: (row) => row.geoLocation || '-',
+      accessorFn: (row) => row.tdLocation || '-',
     },
     {
       id: 'firstDate',

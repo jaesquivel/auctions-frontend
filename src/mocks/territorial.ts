@@ -1,7 +1,7 @@
-import type { Province, Canton, District } from '@/types';
+import type { TdProvince, TdCanton, TdDistrict } from '@/types';
 
 // Costa Rica provinces (7)
-export const mockProvinces: Province[] = [
+export const mockTdProvinces: TdProvince[] = [
   { id: 'p1', code: '01', num: 1, name: 'San José', nameSearch: 'san jose', createdAt: '2024-01-01T00:00:00Z' },
   { id: 'p2', code: '02', num: 2, name: 'Alajuela', nameSearch: 'alajuela', createdAt: '2024-01-01T00:00:00Z' },
   { id: 'p3', code: '03', num: 3, name: 'Cartago', nameSearch: 'cartago', createdAt: '2024-01-01T00:00:00Z' },
@@ -12,7 +12,7 @@ export const mockProvinces: Province[] = [
 ];
 
 // 10 cantons per province (only showing first 3 provinces for brevity, but all are generated)
-const cantonNames: Record<string, string[]> = {
+const tdCantonNames: Record<string, string[]> = {
   p1: ['San José', 'Escazú', 'Desamparados', 'Puriscal', 'Tarrazú', 'Aserrí', 'Mora', 'Goicoechea', 'Santa Ana', 'Alajuelita'],
   p2: ['Alajuela', 'San Ramón', 'Grecia', 'San Mateo', 'Atenas', 'Naranjo', 'Palmares', 'Poás', 'Orotina', 'San Carlos'],
   p3: ['Cartago', 'Paraíso', 'La Unión', 'Jiménez', 'Turrialba', 'Alvarado', 'Oreamuno', 'El Guarco', 'La Suiza', 'Pacayas'],
@@ -22,42 +22,42 @@ const cantonNames: Record<string, string[]> = {
   p7: ['Limón', 'Pococí', 'Siquirres', 'Talamanca', 'Matina', 'Guácimo', 'Bataan', 'Valle La Estrella', 'Cahuita', 'Bribri'],
 };
 
-export const mockCantons: Canton[] = [];
-let cantonId = 1;
-mockProvinces.forEach((province) => {
-  const names = cantonNames[province.id] || [];
+export const mockTdCantons: TdCanton[] = [];
+let tdCantonId = 1;
+mockTdProvinces.forEach((tdProvince) => {
+  const names = tdCantonNames[tdPid] || [];
   names.forEach((name, index) => {
-    mockCantons.push({
-      id: `c${cantonId}`,
-      code: `${province.code}${String(index + 1).padStart(2, '0')}`,
+    mockTdCantons.push({
+      id: `c${tdCantonId}`,
+      code: `${tdProvince.code}${String(index + 1).padStart(2, '0')}`,
       num: index + 1,
       name,
       nameSearch: name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-      provinceId: province.id,
-      province: { num: province.num, name: province.name },
+      tdProvinceId: tdProvince.id,
+      tdProvince: { num: tdProvince.num, name: tdProvince.name },
       createdAt: '2024-01-01T00:00:00Z',
     });
-    cantonId++;
+    tdCantonId++;
   });
 });
 
 // 10 districts per canton (generating dynamically)
-export const mockDistricts: District[] = [];
-let districtId = 1;
-mockCantons.forEach((canton) => {
+export const mockTdDistricts: TdDistrict[] = [];
+let tdDistrictId = 1;
+mockTdCantons.forEach((tdCanton) => {
   for (let i = 1; i <= 10; i++) {
-    mockDistricts.push({
-      id: `d${districtId}`,
-      code: `${canton.code}${String(i).padStart(2, '0')}`,
+    mockTdDistricts.push({
+      id: `d${tdDistricId}`,
+      code: `${tdCanton.code}${String(i).padStart(2, '0')}`,
       num: i,
-      name: `Distrito ${i} de ${canton.name}`,
-      nameSearch: `distrito ${i} de ${canton.name}`.toLowerCase(),
+      name: `Distrito ${i} de ${tdCanton.name}`,
+      nameSearch: `distrito ${i} de ${tdCanton.name}`.toLowerCase(),
       area: Math.floor(Math.random() * 100) + 10,
       altitude: Math.floor(Math.random() * 2000) + 100,
-      cantonId: canton.id,
-      canton: { num: canton.num, name: canton.name },
+      tdCantonId: tdCanton.id,
+      tdCanton: { num: tdCanton.num, name: tdCanton.name },
       createdAt: '2024-01-01T00:00:00Z',
     });
-    districtId++;
+    tdDistricId++;
   }
 });

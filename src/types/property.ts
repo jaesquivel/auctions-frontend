@@ -30,7 +30,7 @@ export interface Property {
   firstAuctionBaseAdj: number | null;
   firstAuctionGuarantee: number | null;
   registrationFull: string | null;
-  geoLocation: string | null;
+  tdLocation: string | null;
   fiscalBaseRatio: number | null;
   // Details
   observations: string | null;
@@ -62,7 +62,7 @@ export interface PropertySummary {
   firstAuctionBaseAdj: number | null;
   firstAuctionGuarantee: number | null;
   registrationFull: string | null;
-  geoLocation: string | null;
+  tdLocation: string | null;
   fiscalBaseRatio: number | null;
   edict: EdictSummary;
   asset: AssetSummary;

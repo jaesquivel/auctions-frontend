@@ -1,45 +1,45 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
-import { mockProvinces, mockCantons, mockDistricts } from '@/mocks';
-import type { Province, Canton, District } from '@/types';
+import { mockTdProvinces, mockTdCantons, mockTdDistricts } from '@/mocks';
+import type { TdProvince, TdCanton, TdDistrict } from '@/types';
 
 export const territorialService = {
-  // Provinces
-  async getProvinces(): Promise<Province[]> {
+  // TdProvinces
+  async getTdProvinces(): Promise<TdProvince[]> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return mockProvinces;
+      return mockTdProvinces;
     }
 
-    return apiClient.get<Province[]>('/provinces');
+    return apiClient.get<TdProvince[]>('/td-provinces');
   },
 
-  async getProvinceById(id: string): Promise<Province | null> {
+  async getTdProvinceById(id: string): Promise<TdProvince | null> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return mockProvinces.find((p) => p.id === id) || null;
+      return mockTdProvinces.find((p) => p.id === id) || null;
     }
 
-    return apiClient.get<Province>(`/provinces/${id}`);
+    return apiClient.get<TdProvince>(`/td-provinces/${id}`);
   },
 
-  async createProvince(data: Partial<Province>): Promise<Province> {
+  async createProvince(data: Partial<TdProvince>): Promise<TdProvince> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as Province;
+      return { ...data, id: crypto.randomUUID() } as TdProvince;
     }
 
-    return apiClient.post<Province>('/provinces', data);
+    return apiClient.post<TdProvince>('/td-provinces', data);
   },
 
-  async updateProvince(id: string, data: Partial<Province>): Promise<Province> {
+  async updateProvince(id: string, data: Partial<TdProvince>): Promise<TdProvince> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      const existing = mockProvinces.find((p) => p.id === id);
-      return { ...existing, ...data } as Province;
+      const existing = mockTdProvinces.find((p) => p.id === id);
+      return { ...existing, ...data } as TdProvince;
     }
 
-    return apiClient.put<Province>(`/provinces/${id}`, data);
+    return apiClient.put<TdProvince>(`/td-provinces/${id}`, data);
   },
 
   async deleteProvince(id: string): Promise<void> {
@@ -48,49 +48,49 @@ export const territorialService = {
       return;
     }
 
-    return apiClient.delete(`/provinces/${id}`);
+    return apiClient.delete(`/td-provinces/${id}`);
   },
 
-  // Cantons
-  async getCantons(provinceId?: string): Promise<Canton[]> {
+  // TdCantons
+  async getTdCantons(tdProvinceId?: string): Promise<TdCanton[]> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      if (provinceId) {
-        return mockCantons.filter((c) => c.provinceId === provinceId);
+      if (tdProvinceId) {
+        return mockTdCantons.filter((c) => c.tdProvinceId === tdProvinceId);
       }
-      return mockCantons;
+      return mockTdCantons;
     }
 
-    const endpoint = provinceId ? `/provinces/${provinceId}/cantons` : '/cantons';
-    return apiClient.get<Canton[]>(endpoint);
+    const endpoint = tdProvinceId ? `/td-provinces/${tdProvinceId}/td-cantons` : '/td-cantons';
+    return apiClient.get<TdCanton[]>(endpoint);
   },
 
-  async getCantonById(id: string): Promise<Canton | null> {
+  async getTdCantonById(id: string): Promise<TdCanton | null> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return mockCantons.find((c) => c.id === id) || null;
+      return mockTdCantons.find((c) => c.id === id) || null;
     }
 
-    return apiClient.get<Canton>(`/cantons/${id}`);
+    return apiClient.get<TdCanton>(`/td-cantons/${id}`);
   },
 
-  async createCanton(data: Partial<Canton>): Promise<Canton> {
+  async createCanton(data: Partial<TdCanton>): Promise<TdCanton> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as Canton;
+      return { ...data, id: crypto.randomUUID() } as TdCanton;
     }
 
-    return apiClient.post<Canton>('/cantons', data);
+    return apiClient.post<TdCanton>('/td-cantons', data);
   },
 
-  async updateCanton(id: string, data: Partial<Canton>): Promise<Canton> {
+  async updateCanton(id: string, data: Partial<TdCanton>): Promise<TdCanton> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      const existing = mockCantons.find((c) => c.id === id);
-      return { ...existing, ...data } as Canton;
+      const existing = mockTdCantons.find((c) => c.id === id);
+      return { ...existing, ...data } as TdCanton;
     }
 
-    return apiClient.put<Canton>(`/cantons/${id}`, data);
+    return apiClient.put<TdCanton>(`/td-cantons/${id}`, data);
   },
 
   async deleteCanton(id: string): Promise<void> {
@@ -99,49 +99,49 @@ export const territorialService = {
       return;
     }
 
-    return apiClient.delete(`/cantons/${id}`);
+    return apiClient.delete(`/td-cantons/${id}`);
   },
 
-  // Districts
-  async getDistricts(cantonId?: string): Promise<District[]> {
+  // TdDistricts
+  async getTdDistricts(tdCantonId?: string): Promise<TdDistrict[]> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      if (cantonId) {
-        return mockDistricts.filter((d) => d.cantonId === cantonId);
+      if (tdCantonId) {
+        return mockTdDistricts.filter((d) => d.tdCantonId === tdCantonId);
       }
-      return mockDistricts;
+      return mockTdDistricts;
     }
 
-    const endpoint = cantonId ? `/cantons/${cantonId}/districts` : '/districts';
-    return apiClient.get<District[]>(endpoint);
+    const endpoint = tdCantonId ? `/td-cantons/${tdCantonId}/td-districts` : '/td-districts';
+    return apiClient.get<TdDistrict[]>(endpoint);
   },
 
-  async getDistrictById(id: string): Promise<District | null> {
+  async getTdDistrictById(id: string): Promise<TdDistrict | null> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return mockDistricts.find((d) => d.id === id) || null;
+      return mockTdDistricts.find((d) => d.id === id) || null;
     }
 
-    return apiClient.get<District>(`/districts/${id}`);
+    return apiClient.get<TdDistrict>(`/td-districts/${id}`);
   },
 
-  async createDistrict(data: Partial<District>): Promise<District> {
+  async createDistrict(data: Partial<TdDistrict>): Promise<TdDistrict> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as District;
+      return { ...data, id: crypto.randomUUID() } as TdDistrict;
     }
 
-    return apiClient.post<District>('/districts', data);
+    return apiClient.post<TdDistrict>('/td-districts', data);
   },
 
-  async updateDistrict(id: string, data: Partial<District>): Promise<District> {
+  async updateDistrict(id: string, data: Partial<TdDistrict>): Promise<TdDistrict> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      const existing = mockDistricts.find((d) => d.id === id);
-      return { ...existing, ...data } as District;
+      const existing = mockTdDistricts.find((d) => d.id === id);
+      return { ...existing, ...data } as TdDistrict;
     }
 
-    return apiClient.put<District>(`/districts/${id}`, data);
+    return apiClient.put<TdDistrict>(`/td-districts/${id}`, data);
   },
 
   async deleteDistrict(id: string): Promise<void> {
@@ -150,6 +150,6 @@ export const territorialService = {
       return;
     }
 
-    return apiClient.delete(`/districts/${id}`);
+    return apiClient.delete(`/td-districts/${id}`);
   },
 };

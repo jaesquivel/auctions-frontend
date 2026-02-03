@@ -1,12 +1,12 @@
 import type { Asset } from '@/types';
 import { mockEdicts } from './edicts';
-import { mockProvinces, mockCantons, mockDistricts } from './territorial';
+import { mockTdProvinces, mockTdCantons, mockTdDistricts } from './territorial';
 
 export const mockAssets: Asset[] = Array.from({ length: 35 }, (_, i) => {
   const edict = mockEdicts[i % mockEdicts.length];
-  const province = mockProvinces[i % mockProvinces.length];
-  const canton = mockCantons.find(c => c.provinceId === province.id) || mockCantons[0];
-  const district = mockDistricts.find(d => d.cantonId === canton.id) || mockDistricts[0];
+  const tdProvince = mockTdProvinces[i % mockTdProvinces.length];
+  const tdCanton = mockTdCantons.find(c => c.tdProvinceId === tdProvince.id) || mockTdCantons[0];
+  const district = mockTdDistricts.find(d => d.tdCantonId === tdCanton.id) || mockTdDistricts[0];
 
   const firstBase = Math.floor(Math.random() * 400000000) + 15000000;
   const secondBase = Math.floor(firstBase * 0.75);
@@ -29,11 +29,11 @@ export const mockAssets: Asset[] = Array.from({ length: 35 }, (_, i) => {
     subRegistration: null,
     plate: null,
     type: i % 2 === 0 ? 'Terreno con edificación' : 'Terreno',
-    geoProvince: { num: province.num, name: province.name },
-    geoCanton: { num: canton.num, name: canton.name },
-    geoDistrict: { num: district.num, name: district.name },
+    tdProvince: { num: tdProvince.num, name: tdProvince.name },
+    tdCanton: { num: tdCanton.num, name: tdCanton.name },
+    tdDistrict: { num: tdDistrict.num, name: tdDistrict.name },
     area: Math.floor(Math.random() * 5000) + 100,
-    description: `Propiedad ubicada en ${province.name}, ${canton.name}. ${i % 2 === 0 ? 'Incluye construcción.' : 'Lote baldío.'}`,
+    description: `Propiedad ubicada en ${tdProvince.name}, ${tdCanton.name}. ${i % 2 === 0 ? 'Incluye construcción.' : 'Lote baldío.'}`,
     rights: '100%',
     edictId: edict.id,
     createdAt: `2024-0${(i % 9) + 1}-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`,
