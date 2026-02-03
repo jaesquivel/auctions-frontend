@@ -74,7 +74,7 @@ export const territorialService = {
     return apiClient.get<TdCanton>(`/td-cantons/${id}`);
   },
 
-  async createCanton(data: Partial<TdCanton>): Promise<TdCanton> {
+  async createTdCanton(data: Partial<TdCanton>): Promise<TdCanton> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return { ...data, id: crypto.randomUUID() } as TdCanton;
@@ -83,7 +83,7 @@ export const territorialService = {
     return apiClient.post<TdCanton>('/td-cantons', data);
   },
 
-  async updateCanton(id: string, data: Partial<TdCanton>): Promise<TdCanton> {
+  async updateTdCanton(id: string, data: Partial<TdCanton>): Promise<TdCanton> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockTdCantons.find((c) => c.id === id);
@@ -93,7 +93,7 @@ export const territorialService = {
     return apiClient.put<TdCanton>(`/td-cantons/${id}`, data);
   },
 
-  async deleteCanton(id: string): Promise<void> {
+  async deleteTdCanton(id: string): Promise<void> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;
@@ -125,7 +125,7 @@ export const territorialService = {
     return apiClient.get<TdDistrict>(`/td-districts/${id}`);
   },
 
-  async createDistrict(data: Partial<TdDistrict>): Promise<TdDistrict> {
+  async createTdDistrict(data: Partial<TdDistrict>): Promise<TdDistrict> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return { ...data, id: crypto.randomUUID() } as TdDistrict;
@@ -134,7 +134,7 @@ export const territorialService = {
     return apiClient.post<TdDistrict>('/td-districts', data);
   },
 
-  async updateDistrict(id: string, data: Partial<TdDistrict>): Promise<TdDistrict> {
+  async updateTdDistrict(id: string, data: Partial<TdDistrict>): Promise<TdDistrict> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockTdDistricts.find((d) => d.id === id);
@@ -144,7 +144,7 @@ export const territorialService = {
     return apiClient.put<TdDistrict>(`/td-districts/${id}`, data);
   },
 
-  async deleteDistrict(id: string): Promise<void> {
+  async deleteTdDistrict(id: string): Promise<void> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;

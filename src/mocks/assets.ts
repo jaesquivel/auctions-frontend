@@ -6,7 +6,7 @@ export const mockAssets: Asset[] = Array.from({ length: 35 }, (_, i) => {
   const edict = mockEdicts[i % mockEdicts.length];
   const tdProvince = mockTdProvinces[i % mockTdProvinces.length];
   const tdCanton = mockTdCantons.find(c => c.tdProvinceId === tdProvince.id) || mockTdCantons[0];
-  const district = mockTdDistricts.find(d => d.tdCantonId === tdCanton.id) || mockTdDistricts[0];
+  const tdDistrict = mockTdDistricts.find(d => d.tdCantonId === tdCanton.id) || mockTdDistricts[0];
 
   const firstBase = Math.floor(Math.random() * 400000000) + 15000000;
   const secondBase = Math.floor(firstBase * 0.75);
