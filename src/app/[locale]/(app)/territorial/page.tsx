@@ -42,7 +42,7 @@ export default function TerritorialPage() {
   const [editingTdCanton, setEditingTdCanton] = useState<TdCanton | null>(null);
 
   // TdDistrict modal state
-  const [tdDistricModalOpen, setTdDistrictModalOpen] = useState(false);
+  const [tdDistrictModalOpen, setTdDistrictModalOpen] = useState(false);
   const [editingTdDistrict, setEditingTdDistrict] = useState<TdDistrict | null>(null);
 
   // Delete confirmation state
@@ -82,14 +82,14 @@ export default function TerritorialPage() {
     }
   }, []);
 
-  // Fetch tdDistrics when tdCanton is selected
+  // Fetch tdDistricts when tdCanton is selected
   const fetchTdDistricts = useCallback(async (tdCantonId: string) => {
     setLoadingTdDistricts(true);
     try {
       const data = await territorialService.getTdDistricts(tdCantonId);
       setTdDistricts(data);
     } catch (error) {
-      console.error('Failed to fetch tdDistrics:', error);
+      console.error('Failed to fetch tdDistricts:', error);
     } finally {
       setLoadingTdDistricts(false);
     }
@@ -107,7 +107,7 @@ export default function TerritorialPage() {
     { id: 'name', header: t('columns.name'), width: 150, accessorKey: 'name' }
   ];
 
-  const tdDistricColumns: ColumnDef<TdDistrict>[] = [
+  const tdDistrictColumns: ColumnDef<TdDistrict>[] = [
     { id: 'num', header: '#', width: 50, align: 'center', accessorFn: (row) => row.num.toString() },
     { id: 'code', header: t('columns.code'), width: 80, accessorKey: 'code' },
     { id: 'name', header: t('columns.name'), width: 150, accessorKey: 'name' }
@@ -193,12 +193,12 @@ export default function TerritorialPage() {
     setTdDistrictModalOpen(true);
   };
 
-  const handleEditTdDistrict = (tdDistric: TdDistrict) => {
-    setEditingTdDistrict(tdDistric);
+  const handleEditTdDistrict = (tdDistrict: TdDistrict) => {
+    setEditingTdDistrict(tdDistrict);
     setTdDistrictModalOpen(true);
   };
 
-  const handleTdDistrictsubmit = async (data: TdDistrictCreateRequest) => {
+  const handleTdDistrictSubmit = async (data: TdDistrictCreateRequest) => {
     if (editingTdDistrict) {
       await territorialService.updateTdDistrict(editingTdDistrict.id, data);
     } else {
@@ -209,17 +209,17 @@ export default function TerritorialPage() {
     }
   };
 
-  const handleDeleteTdDistrict = (tdDistric: TdDistrict) => {
-    setDeletingTdDistrict(tdDistric);
+  const handleDeleteTdDistrict = (tdDistrict: TdDistrict) => {
+    setDeletingTdDistrict(tdDistrict);
     setDeleteConfirmOpen(true);
   };
 
-  const renderTdDistrictActions = (tdDistric: TdDistrict) => (
+  const renderTdDistrictActions = (tdDistrict: TdDistrict) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdDistrict(tdDistric)}>
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdDistrict(tdDistrict)}>
         <Edit className="h-4 w-4" />
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdDistrict(tdDistric)}>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdDistrict(tdDistrict)}>
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
@@ -293,10 +293,10 @@ export default function TerritorialPage() {
 
   const deletingItem = deletingTdProvince || deletingTdCanton || deletingTdDistrict;
   const deletingItemType = deletingTdProvince
-    ? t('tdProvinces')
+    ? t('provinces')
     : deletingTdCanton
-      ? t('tdCantons')
-      : t('tdDistrics');
+      ? t('cantons')
+      : t('districts');
 
   return (
     <>
@@ -307,7 +307,7 @@ export default function TerritorialPage() {
           {/* TdProvinces */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{t('tdProvinces')}</h2>
+              <h2 className="text-lg font-semibold">{t('provinces')}</h2>
               <Button size="sm" className="gap-1" onClick={handleAddTdProvince}>
                 <Plus className="h-3 w-3" />
               </Button>
@@ -329,7 +329,7 @@ export default function TerritorialPage() {
           {/* TdCantons */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{t('tdCantons')}</h2>
+              <h2 className="text-lg font-semibold">{t('cantons')}</h2>
               <Button size="sm" className="gap-1" disabled={!selectedTdProvince} onClick={handleAddTdCanton}>
                 <Plus className="h-3 w-3" />
               </Button>
@@ -351,15 +351,15 @@ export default function TerritorialPage() {
           {/* TdDistricts */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{t('tdDistrics')}</h2>
+              <h2 className="text-lg font-semibold">{t('districts')}</h2>
               <Button size="sm" className="gap-1" disabled={!selectedTdCanton} onClick={handleAddTdDistrict}>
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
             <div className="h-[calc(100vh-16rem)]">
               <DataGrid
-                columns={tdDistricColumns}
-                data={tdDistrics}
+                columns={tdDistrictColumns}
+                data={tdDistricts}
                 keyField="id"
                 loading={loadingTdDistricts}
                 onRowSelect={setSelectedTdDistrict}
@@ -393,7 +393,7 @@ export default function TerritorialPage() {
         <TdDistrictForm
           open={tdDistrictModalOpen}
           onOpenChange={setTdDistrictModalOpen}
-          tdDistric={editingTdDistrict}
+          tdDistrict={editingTdDistrict}
           tdCanton={selectedTdCanton}
           onSubmit={handleTdDistrictSubmit}
         />

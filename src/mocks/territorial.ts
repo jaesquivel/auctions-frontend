@@ -25,7 +25,7 @@ const tdCantonNames: Record<string, string[]> = {
 export const mockTdCantons: TdCanton[] = [];
 let tdCantonId = 1;
 mockTdProvinces.forEach((tdProvince) => {
-  const names = tdCantonNames[tdPid] || [];
+  const names = tdCantonNames[tdProvince.id] || [];
   names.forEach((name, index) => {
     mockTdCantons.push({
       id: `c${tdCantonId}`,
@@ -47,7 +47,7 @@ let tdDistrictId = 1;
 mockTdCantons.forEach((tdCanton) => {
   for (let i = 1; i <= 10; i++) {
     mockTdDistricts.push({
-      id: `d${tdDistricId}`,
+      id: `d${tdDistrictId}`,
       code: `${tdCanton.code}${String(i).padStart(2, '0')}`,
       num: i,
       name: `Distrito ${i} de ${tdCanton.name}`,
@@ -58,6 +58,6 @@ mockTdCantons.forEach((tdCanton) => {
       tdCanton: { num: tdCanton.num, name: tdCanton.name },
       createdAt: '2024-01-01T00:00:00Z',
     });
-    tdDistricId++;
+    tdDistrictId++;
   }
 });

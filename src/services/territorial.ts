@@ -23,7 +23,7 @@ export const territorialService = {
     return apiClient.get<TdProvince>(`/td-provinces/${id}`);
   },
 
-  async createProvince(data: Partial<TdProvince>): Promise<TdProvince> {
+  async createTdProvince(data: Partial<TdProvince>): Promise<TdProvince> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return { ...data, id: crypto.randomUUID() } as TdProvince;
@@ -32,7 +32,7 @@ export const territorialService = {
     return apiClient.post<TdProvince>('/td-provinces', data);
   },
 
-  async updateProvince(id: string, data: Partial<TdProvince>): Promise<TdProvince> {
+  async updateTdProvince(id: string, data: Partial<TdProvince>): Promise<TdProvince> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       const existing = mockTdProvinces.find((p) => p.id === id);
@@ -42,7 +42,7 @@ export const territorialService = {
     return apiClient.put<TdProvince>(`/td-provinces/${id}`, data);
   },
 
-  async deleteProvince(id: string): Promise<void> {
+  async deleteTdProvince(id: string): Promise<void> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       return;

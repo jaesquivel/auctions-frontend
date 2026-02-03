@@ -8,7 +8,7 @@ import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { tdCantonSchema, type TdCantonFormData } from '@/lib/validations/territorial';
-import type { TdCanton, TdCreateRequest, TdProvince } from '@/types';
+import type { TdCanton, TdCantonCreateRequest, TdProvince } from '@/types';
 
 interface TdCantonFormProps {
   open: boolean;
@@ -80,7 +80,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editTdCanton') : t('addTdCanton')}
+      title={isEdit ? t('editCanton') : t('addCanton')}
       size="sm"
       footer={
         <div className="flex gap-2 justify-end">
@@ -101,7 +101,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
         )}
 
         <div className="p-3 bg-muted rounded-md">
-          <span className="text-sm text-muted-foreground">{t('tdProvinces')}: </span>
+          <span className="text-sm text-muted-foreground">{t('provinces')}: </span>
           <span className="text-sm font-medium">{tdProvince.name}</span>
         </div>
 

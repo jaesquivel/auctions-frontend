@@ -84,7 +84,7 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editTdDistrict') : t('addDistrict')}
+      title={isEdit ? t('editDistrict') : t('addDistrict')}
       size="sm"
       footer={
         <div className="flex gap-2 justify-end">
@@ -105,7 +105,7 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
         )}
 
         <div className="p-3 bg-muted rounded-md">
-          <span className="text-sm text-muted-foreground">{t('tdCantons')}: </span>
+          <span className="text-sm text-muted-foreground">{t('cantons')}: </span>
           <span className="text-sm font-medium">{tdCanton.name}</span>
         </div>
 

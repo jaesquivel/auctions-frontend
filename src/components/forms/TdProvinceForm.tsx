@@ -79,7 +79,7 @@ export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit }: TdP
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editTdProvince') : t('addProvince')}
+      title={isEdit ? t('editProvince') : t('addProvince')}
       size="sm"
       footer={
         <div className="flex gap-2 justify-end">
