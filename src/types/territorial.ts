@@ -52,14 +52,12 @@ export interface ProvinceCreateRequest {
   code: string;
   num: number;
   name: string;
-  nameSearch?: string;
 }
 
 export interface CantonCreateRequest {
   code: string;
   num: number;
   name: string;
-  nameSearch?: string;
   provinceId: string;
 }
 
@@ -67,7 +65,6 @@ export interface DistrictCreateRequest {
   code: string;
   num: number;
   name: string;
-  nameSearch?: string;
   cantonId: string;
   area?: number;
   altitude?: number;

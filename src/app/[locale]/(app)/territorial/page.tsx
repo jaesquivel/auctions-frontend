@@ -5,6 +5,14 @@ import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { ProvinceForm } from '@/components/forms/ProvinceForm';
 import { CantonForm } from '@/components/forms/CantonForm';
 import { DistrictForm } from '@/components/forms/DistrictForm';
@@ -13,6 +21,7 @@ import type { Province, Canton, District, ProvinceCreateRequest, CantonCreateReq
 
 export default function TerritorialPage() {
   const t = useTranslations('territorial');
+  const tCommon = useTranslations('common');
 
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [cantons, setCantons] = useState<Canton[]>([]);
@@ -35,6 +44,13 @@ export default function TerritorialPage() {
   // District modal state
   const [districtModalOpen, setDistrictModalOpen] = useState(false);
   const [editingDistrict, setEditingDistrict] = useState<District | null>(null);
+
+  // Delete confirmation state
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deletingProvince, setDeletingProvince] = useState<Province | null>(null);
+  const [deletingCanton, setDeletingCanton] = useState<Canton | null>(null);
+  const [deletingDistrict, setDeletingDistrict] = useState<District | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch provinces on mount
   const fetchProvinces = useCallback(async () => {
@@ -117,12 +133,17 @@ export default function TerritorialPage() {
     fetchProvinces();
   };
 
+  const handleDeleteProvince = (province: Province) => {
+    setDeletingProvince(province);
+    setDeleteConfirmOpen(true);
+  };
+
   const renderProvinceActions = (province: Province) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditProvince(province)}>
         <Edit className="h-4 w-4" />
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteProvince(province)}>
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
@@ -150,12 +171,17 @@ export default function TerritorialPage() {
     }
   };
 
+  const handleDeleteCanton = (canton: Canton) => {
+    setDeletingCanton(canton);
+    setDeleteConfirmOpen(true);
+  };
+
   const renderCantonActions = (canton: Canton) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditCanton(canton)}>
         <Edit className="h-4 w-4" />
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteCanton(canton)}>
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
@@ -183,12 +209,17 @@ export default function TerritorialPage() {
     }
   };
 
+  const handleDeleteDistrict = (district: District) => {
+    setDeletingDistrict(district);
+    setDeleteConfirmOpen(true);
+  };
+
   const renderDistrictActions = (district: District) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditDistrict(district)}>
         <Edit className="h-4 w-4" />
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteDistrict(district)}>
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
@@ -209,6 +240,63 @@ export default function TerritorialPage() {
     setDistricts([]);
     fetchDistricts(canton.id);
   };
+
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      if (deletingProvince) {
+        await territorialService.deleteProvince(deletingProvince.id);
+        if (selectedProvince?.id === deletingProvince.id) {
+          setSelectedProvince(null);
+          setSelectedCanton(null);
+          setSelectedDistrict(null);
+          setCantons([]);
+          setDistricts([]);
+        }
+        fetchProvinces();
+      } else if (deletingCanton) {
+        await territorialService.deleteCanton(deletingCanton.id);
+        if (selectedCanton?.id === deletingCanton.id) {
+          setSelectedCanton(null);
+          setSelectedDistrict(null);
+          setDistricts([]);
+        }
+        if (selectedProvince) {
+          fetchCantons(selectedProvince.id);
+        }
+      } else if (deletingDistrict) {
+        await territorialService.deleteDistrict(deletingDistrict.id);
+        if (selectedDistrict?.id === deletingDistrict.id) {
+          setSelectedDistrict(null);
+        }
+        if (selectedCanton) {
+          fetchDistricts(selectedCanton.id);
+        }
+      }
+      setDeleteConfirmOpen(false);
+    } catch (error) {
+      console.error('Failed to delete:', error);
+    } finally {
+      setIsDeleting(false);
+      setDeletingProvince(null);
+      setDeletingCanton(null);
+      setDeletingDistrict(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmOpen(false);
+    setDeletingProvince(null);
+    setDeletingCanton(null);
+    setDeletingDistrict(null);
+  };
+
+  const deletingItem = deletingProvince || deletingCanton || deletingDistrict;
+  const deletingItemType = deletingProvince
+    ? t('provinces')
+    : deletingCanton
+      ? t('cantons')
+      : t('districts');
 
   return (
     <>
@@ -310,6 +398,25 @@ export default function TerritorialPage() {
           onSubmit={handleDistrictSubmit}
         />
       )}
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={handleCancelDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{tCommon('confirm')}</DialogTitle>
+            <DialogDescription>
+              {t('confirmDelete', { type: deletingItemType, name: deletingItem?.name ?? '' })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelDelete} disabled={isDeleting}>
+              {tCommon('cancel')}
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete} disabled={isDeleting}>
+              {isDeleting ? tCommon('loading') : tCommon('delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

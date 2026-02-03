@@ -151,6 +151,7 @@
     "editCanton": "Editar Cantón",
     "addDistrict": "Agregar Distrito",
     "editDistrict": "Editar Distrito",
+    "confirmDelete": "¿Está seguro que desea eliminar {name}?",
     "columns": {
       "num": "Número",
       "code": "Código",
@@ -165,7 +166,8 @@
   },
   "validation": {
     "required": "Este campo es requerido",
-    "minNumber": "El valor debe ser mayor o igual a 1",
+    "minNumber": "El valor es menor al mínimo permitido",
+    "maxNumber": "El valor excede el máximo permitido",
     "maxLength": "El valor excede la longitud máxima permitida",
     "invalidNumber": "Ingrese un número válido"
   }

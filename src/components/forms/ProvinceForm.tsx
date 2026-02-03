@@ -36,7 +36,6 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
       num: province?.num || 1,
       code: province?.code || '',
       name: province?.name || '',
-      nameSearch: province?.nameSearch || '',
     },
   });
 
@@ -46,7 +45,6 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
         num: province?.num || 1,
         code: province?.code || '',
         name: province?.name || '',
-        nameSearch: province?.nameSearch || '',
       });
       setServerError(null);
     }
@@ -72,7 +70,7 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
   const getErrorMessage = (error: { message?: string } | undefined) => {
     if (!error?.message) return null;
     const key = error.message.replace('validation.', '');
-    return tValidation(key as 'required' | 'minNumber' | 'maxLength' | 'invalidNumber');
+    return tValidation(key as 'required' | 'minNumber' | 'maxNumber' | 'maxLength' | 'invalidNumber');
   };
 
   const isEdit = !!province;
@@ -106,6 +104,8 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
             <label className="text-sm font-medium">{t('columns.num')}</label>
             <Input
               type="number"
+              min={0}
+              max={32767}
               {...register('num', { valueAsNumber: true })}
               className={errors.num ? 'border-destructive' : ''}
             />
@@ -118,7 +118,7 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
             <label className="text-sm font-medium">{t('columns.code')}</label>
             <Input
               {...register('code')}
-              maxLength={10}
+              maxLength={2}
               className={errors.code ? 'border-destructive' : ''}
             />
             {errors.code && (
@@ -131,23 +131,11 @@ export function ProvinceForm({ open, onOpenChange, province, onSubmit }: Provinc
           <label className="text-sm font-medium">{t('columns.name')}</label>
           <Input
             {...register('name')}
-            maxLength={100}
+            maxLength={2048}
             className={errors.name ? 'border-destructive' : ''}
           />
           {errors.name && (
             <p className="text-xs text-destructive">{getErrorMessage(errors.name)}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t('columns.nameSearch')}</label>
-          <Input
-            {...register('nameSearch')}
-            maxLength={100}
-            className={errors.nameSearch ? 'border-destructive' : ''}
-          />
-          {errors.nameSearch && (
-            <p className="text-xs text-destructive">{getErrorMessage(errors.nameSearch)}</p>
           )}
         </div>
       </form>

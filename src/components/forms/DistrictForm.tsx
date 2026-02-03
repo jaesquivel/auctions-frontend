@@ -37,7 +37,6 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
       num: district?.num || 1,
       code: district?.code || '',
       name: district?.name || '',
-      nameSearch: district?.nameSearch || '',
       area: district?.area || undefined,
       altitude: district?.altitude || undefined,
     },
@@ -49,7 +48,6 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
         num: district?.num || 1,
         code: district?.code || '',
         name: district?.name || '',
-        nameSearch: district?.nameSearch || '',
         area: district?.area || undefined,
         altitude: district?.altitude || undefined,
       });
@@ -77,7 +75,7 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
   const getErrorMessage = (error: { message?: string } | undefined) => {
     if (!error?.message) return null;
     const key = error.message.replace('validation.', '');
-    return tValidation(key as 'required' | 'minNumber' | 'maxLength' | 'invalidNumber');
+    return tValidation(key as 'required' | 'minNumber' | 'maxNumber' | 'maxLength' | 'invalidNumber');
   };
 
   const isEdit = !!district;
@@ -116,6 +114,8 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
             <label className="text-sm font-medium">{t('columns.num')}</label>
             <Input
               type="number"
+              min={0}
+              max={32767}
               {...register('num', { valueAsNumber: true })}
               className={errors.num ? 'border-destructive' : ''}
             />
@@ -128,7 +128,7 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
             <label className="text-sm font-medium">{t('columns.code')}</label>
             <Input
               {...register('code')}
-              maxLength={10}
+              maxLength={7}
               className={errors.code ? 'border-destructive' : ''}
             />
             {errors.code && (
@@ -141,23 +141,11 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
           <label className="text-sm font-medium">{t('columns.name')}</label>
           <Input
             {...register('name')}
-            maxLength={100}
+            maxLength={2048}
             className={errors.name ? 'border-destructive' : ''}
           />
           {errors.name && (
             <p className="text-xs text-destructive">{getErrorMessage(errors.name)}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t('columns.nameSearch')}</label>
-          <Input
-            {...register('nameSearch')}
-            maxLength={100}
-            className={errors.nameSearch ? 'border-destructive' : ''}
-          />
-          {errors.nameSearch && (
-            <p className="text-xs text-destructive">{getErrorMessage(errors.nameSearch)}</p>
           )}
         </div>
 
@@ -167,6 +155,8 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
             <Input
               type="number"
               step="0.01"
+              min={0}
+              max={99999999.99}
               {...register('area', { valueAsNumber: true })}
               className={errors.area ? 'border-destructive' : ''}
             />
@@ -179,6 +169,9 @@ export function DistrictForm({ open, onOpenChange, district, canton, onSubmit }:
             <label className="text-sm font-medium">{t('columns.altitude')}</label>
             <Input
               type="number"
+              step="0.01"
+              min={0}
+              max={9999.99}
               {...register('altitude', { valueAsNumber: true })}
               className={errors.altitude ? 'border-destructive' : ''}
             />
