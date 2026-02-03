@@ -162,5 +162,11 @@
   },
   "config": {
     "title": "Configuración General"
+  },
+  "validation": {
+    "required": "Este campo es requerido",
+    "minNumber": "El valor debe ser mayor o igual a 1",
+    "maxLength": "El valor excede la longitud máxima permitida",
+    "invalidNumber": "Ingrese un número válido"
   }
 }

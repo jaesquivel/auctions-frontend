@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { cantonSchema, type CantonFormData } from '@/lib/validations/territorial';
 import type { Canton, CantonCreateRequest, Province } from '@/types';
 
 interface CantonFormProps {
@@ -12,35 +15,65 @@ interface CantonFormProps {
   onOpenChange: (open: boolean) => void;
   canton?: Canton | null;
   province: Province;
-  onSubmit: (data: CantonCreateRequest) => void;
+  onSubmit: (data: CantonCreateRequest) => Promise<void>;
 }
 
 export function CantonForm({ open, onOpenChange, canton, province, onSubmit }: CantonFormProps) {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
+  const tValidation = useTranslations('validation');
 
-  const [formData, setFormData] = useState<Omit<CantonCreateRequest, 'provinceId'>>({
-    num: canton?.num || 0,
-    code: canton?.code || '',
-    name: canton?.name || '',
-    nameSearch: canton?.nameSearch || '',
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CantonFormData>({
+    resolver: zodResolver(cantonSchema),
+    defaultValues: {
+      num: canton?.num || 1,
+      code: canton?.code || '',
+      name: canton?.name || '',
+      nameSearch: canton?.nameSearch || '',
+    },
   });
 
   useEffect(() => {
     if (open) {
-      setFormData({
-        num: canton?.num || 0,
+      reset({
+        num: canton?.num || 1,
         code: canton?.code || '',
         name: canton?.name || '',
         nameSearch: canton?.nameSearch || '',
       });
+      setServerError(null);
     }
-  }, [open, canton]);
+  }, [open, canton, reset]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({ ...formData, provinceId: province.id });
-    onOpenChange(false);
+  const onFormSubmit = async (data: CantonFormData) => {
+    setServerError(null);
+    setIsSubmitting(true);
+    try {
+      await onSubmit({ ...data, provinceId: province.id });
+      onOpenChange(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        setServerError(error.message);
+      } else {
+        setServerError('An unexpected error occurred');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getErrorMessage = (error: { message?: string } | undefined) => {
+    if (!error?.message) return null;
+    const key = error.message.replace('validation.', '');
+    return tValidation(key as 'required' | 'minNumber' | 'maxLength' | 'invalidNumber');
   };
 
   const isEdit = !!canton;
@@ -53,16 +86,22 @@ export function CantonForm({ open, onOpenChange, canton, province, onSubmit }: C
       size="sm"
       footer={
         <div className="flex gap-2 justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             {tCommon('cancel')}
           </Button>
-          <Button onClick={handleSubmit}>
-            {tCommon('save')}
+          <Button onClick={handleSubmit(onFormSubmit)} disabled={isSubmitting}>
+            {isSubmitting ? tCommon('loading') : tCommon('save')}
           </Button>
         </div>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
+        {serverError && (
+          <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+            {serverError}
+          </div>
+        )}
+
         <div className="p-3 bg-muted rounded-md">
           <span className="text-sm text-muted-foreground">{t('provinces')}: </span>
           <span className="text-sm font-medium">{province.name}</span>
@@ -73,41 +112,49 @@ export function CantonForm({ open, onOpenChange, canton, province, onSubmit }: C
             <label className="text-sm font-medium">{t('columns.num')}</label>
             <Input
               type="number"
-              value={formData.num}
-              onChange={(e) => setFormData((prev) => ({ ...prev, num: parseInt(e.target.value) || 0 }))}
-              required
-              min={1}
+              {...register('num', { valueAsNumber: true })}
+              className={errors.num ? 'border-destructive' : ''}
             />
+            {errors.num && (
+              <p className="text-xs text-destructive">{getErrorMessage(errors.num)}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">{t('columns.code')}</label>
             <Input
-              value={formData.code}
-              onChange={(e) => setFormData((prev) => ({ ...prev, code: e.target.value }))}
-              required
+              {...register('code')}
               maxLength={10}
+              className={errors.code ? 'border-destructive' : ''}
             />
+            {errors.code && (
+              <p className="text-xs text-destructive">{getErrorMessage(errors.code)}</p>
+            )}
           </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium">{t('columns.name')}</label>
           <Input
-            value={formData.name}
-            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-            required
+            {...register('name')}
             maxLength={100}
+            className={errors.name ? 'border-destructive' : ''}
           />
+          {errors.name && (
+            <p className="text-xs text-destructive">{getErrorMessage(errors.name)}</p>
+          )}
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium">{t('columns.nameSearch')}</label>
           <Input
-            value={formData.nameSearch}
-            onChange={(e) => setFormData((prev) => ({ ...prev, nameSearch: e.target.value }))}
+            {...register('nameSearch')}
             maxLength={100}
+            className={errors.nameSearch ? 'border-destructive' : ''}
           />
+          {errors.nameSearch && (
+            <p className="text-xs text-destructive">{getErrorMessage(errors.nameSearch)}</p>
+          )}
         </div>
       </form>
     </Modal>

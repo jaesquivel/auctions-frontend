@@ -162,5 +162,11 @@
   },
   "config": {
     "title": "General Configuration"
+  },
+  "validation": {
+    "required": "This field is required",
+    "minNumber": "Value must be at least 1",
+    "maxLength": "Value exceeds maximum length",
+    "invalidNumber": "Enter a valid number"
   }
 }

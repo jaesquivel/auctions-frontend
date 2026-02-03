@@ -109,16 +109,12 @@ export default function TerritorialPage() {
   };
 
   const handleProvinceSubmit = async (data: ProvinceCreateRequest) => {
-    try {
-      if (editingProvince) {
-        await territorialService.updateProvince(editingProvince.id, data);
-      } else {
-        await territorialService.createProvince(data);
-      }
-      fetchProvinces();
-    } catch (error) {
-      console.error('Failed to save province:', error);
+    if (editingProvince) {
+      await territorialService.updateProvince(editingProvince.id, data);
+    } else {
+      await territorialService.createProvince(data);
     }
+    fetchProvinces();
   };
 
   const renderProvinceActions = (province: Province) => (
@@ -144,17 +140,13 @@ export default function TerritorialPage() {
   };
 
   const handleCantonSubmit = async (data: CantonCreateRequest) => {
-    try {
-      if (editingCanton) {
-        await territorialService.updateCanton(editingCanton.id, data);
-      } else {
-        await territorialService.createCanton(data);
-      }
-      if (selectedProvince) {
-        fetchCantons(selectedProvince.id);
-      }
-    } catch (error) {
-      console.error('Failed to save canton:', error);
+    if (editingCanton) {
+      await territorialService.updateCanton(editingCanton.id, data);
+    } else {
+      await territorialService.createCanton(data);
+    }
+    if (selectedProvince) {
+      fetchCantons(selectedProvince.id);
     }
   };
 
@@ -181,17 +173,13 @@ export default function TerritorialPage() {
   };
 
   const handleDistrictSubmit = async (data: DistrictCreateRequest) => {
-    try {
-      if (editingDistrict) {
-        await territorialService.updateDistrict(editingDistrict.id, data);
-      } else {
-        await territorialService.createDistrict(data);
-      }
-      if (selectedCanton) {
-        fetchDistricts(selectedCanton.id);
-      }
-    } catch (error) {
-      console.error('Failed to save district:', error);
+    if (editingDistrict) {
+      await territorialService.updateDistrict(editingDistrict.id, data);
+    } else {
+      await territorialService.createDistrict(data);
+    }
+    if (selectedCanton) {
+      fetchDistricts(selectedCanton.id);
     }
   };
 
