@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Gavel,
+  Code2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,8 @@ interface NavItem {
   icon: React.ElementType;
   children?: NavItem[];
 }
+
+const isDev = process.env.NODE_ENV === 'development';
 
 const navItems: NavItem[] = [
   {
@@ -62,6 +65,7 @@ const navItems: NavItem[] = [
       { titleKey: 'tags', href: '/tags', icon: Tags },
       { titleKey: 'territorial', href: '/territorial', icon: MapPin },
       { titleKey: 'generalConfig', href: '/config', icon: Settings },
+      ...(isDev ? [{ titleKey: 'dev', href: '/dev', icon: Code2 }] : []),
     ],
   },
 ];
