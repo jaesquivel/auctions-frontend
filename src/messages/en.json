@@ -135,6 +135,7 @@
     "title": "Property Tags",
     "addTag": "Add Tag",
     "editTag": "Edit Tag",
+    "viewTag": "View Tag",
     "columns": {
       "name": "Name",
       "description": "Description",

@@ -135,6 +135,7 @@
     "title": "Etiquetas de Propiedades",
     "addTag": "Agregar Etiqueta",
     "editTag": "Editar Etiqueta",
+    "viewTag": "Ver Etiqueta",
     "columns": {
       "name": "Nombre",
       "description": "Descripción",

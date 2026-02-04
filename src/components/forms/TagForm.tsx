@@ -21,9 +21,10 @@ interface TagFormProps {
   onOpenChange: (open: boolean) => void;
   tag?: PropertyTag | null;
   onSubmit: (data: PropertyTagCreateRequest | PropertyTagUpdateRequest) => void;
+  readOnly?: boolean;
 }
 
-export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
+export function TagForm({ open, onOpenChange, tag, onSubmit, readOnly = false }: TagFormProps) {
   const t = useTranslations('tags');
   const tCommon = useTranslations('common');
 
@@ -41,21 +42,34 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
 
   const isEdit = !!tag;
 
+  const getTitle = () => {
+    if (readOnly) return t('viewTag');
+    return isEdit ? t('editTag') : t('addTag');
+  };
+
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editTag') : t('addTag')}
+      title={getTitle()}
       size="sm"
       footer={
-        <div className="flex gap-2 justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {tCommon('cancel')}
-          </Button>
-          <Button onClick={handleSubmit}>
-            {tCommon('save')}
-          </Button>
-        </div>
+        readOnly ? (
+          <div className="flex justify-end">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              {tCommon('close')}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-2 justify-end">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              {tCommon('cancel')}
+            </Button>
+            <Button onClick={handleSubmit}>
+              {tCommon('save')}
+            </Button>
+          </div>
+        )
       }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -67,6 +81,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
             placeholder="e.g., Residencial"
             required
             maxLength={30}
+            disabled={readOnly}
           />
         </div>
 
@@ -76,6 +91,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
             value={formData.description}
             onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
             placeholder="Optional description"
+            disabled={readOnly}
           />
         </div>
 
@@ -86,12 +102,14 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
               <button
                 key={color}
                 type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, color }))}
+                onClick={() => !readOnly && setFormData((prev) => ({ ...prev, color }))}
+                disabled={readOnly}
                 className={cn(
                   'h-6 w-6 rounded border-2 transition-all',
                   formData.color.toUpperCase() === color.toUpperCase()
                     ? 'border-foreground scale-110'
-                    : 'border-transparent hover:scale-105'
+                    : 'border-transparent hover:scale-105',
+                  readOnly && 'cursor-not-allowed opacity-70'
                 )}
                 style={{ backgroundColor: color }}
               >
@@ -106,6 +124,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit }: TagFormProps) {
             onChange={(e) => setFormData((prev) => ({ ...prev, color: e.target.value }))}
             placeholder="#RRGGBB"
             pattern="^#[0-9A-Fa-f]{6}$"
+            disabled={readOnly}
           />
         </div>
       </form>

@@ -2,17 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { TagBadge } from '@/components/ui/tag-badge';
 import { TagForm } from '@/components/forms/TagForm';
 import { tagsService } from '@/services/tags';
-import { formatDate } from '@/lib/formatters';
+import { useUserRole } from '@/hooks';
 import type { PropertyTag, PropertyTagCreateRequest, PropertyTagUpdateRequest } from '@/types';
 
 export default function TagsPage() {
   const t = useTranslations('tags');
+  const { canManageTags } = useUserRole();
 
   const [data, setData] = useState<PropertyTag[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,10 +75,21 @@ export default function TagsPage() {
     { id: 'description', header: t('columns.description'), width: 300, accessorFn: (row) => row.description || '-' }
   ];
 
+  const handleView = (tag: PropertyTag) => {
+    setEditingTag(tag);
+    setFormOpen(true);
+  };
+
   const renderActions = (row: PropertyTag) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      {canManageTags ? (
+        <>
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+        </>
+      ) : (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
+      )}
     </div>
   );
 
@@ -85,7 +97,9 @@ export default function TagsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button size="icon" onClick={handleAdd}><Plus className="h-4 w-4" /></Button>
+        {canManageTags && (
+          <Button size="icon" onClick={handleAdd}><Plus className="h-4 w-4" /></Button>
+        )}
       </div>
       <div className="h-[calc(100vh-12rem)]">
         <DataGrid columns={columns} data={data} keyField="id" loading={loading} onRowSelect={setSelectedTag} selectedRow={selectedTag} actions={renderActions} onReload={fetchData} />
@@ -97,6 +111,7 @@ export default function TagsPage() {
         onOpenChange={setFormOpen}
         tag={editingTag}
         onSubmit={handleSubmit}
+        readOnly={!canManageTags}
       />
     </div>
   );
