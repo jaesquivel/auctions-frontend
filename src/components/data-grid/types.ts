@@ -23,6 +23,8 @@ export interface SortState {
   direction: SortDirection;
 }
 
+export const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
+
 export interface DataGridProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
@@ -30,6 +32,7 @@ export interface DataGridProps<T> {
   loading?: boolean;
   pagination?: PaginationState;
   onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
   onRowSelect?: (row: T) => void;
   selectedRow?: T | null;
   actions?: (row: T) => ReactNode;

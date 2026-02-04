@@ -160,6 +160,10 @@ export default function PropertiesPage() {
     setPagination((prev) => ({ ...prev, page }));
   };
 
+  const handlePageSizeChange = (pageSize: number) => {
+    setPagination((prev) => ({ ...prev, pageSize, page: 1 }));
+  };
+
   const handleDelete = async (property: PropertySummary) => {
     if (!confirm(t('confirmDelete'))) return;
     setDeleteError(null);
@@ -208,6 +212,7 @@ export default function PropertiesPage() {
           loading={loading}
           pagination={pagination}
           onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
           onRowSelect={setSelectedProperty}
           selectedRow={selectedProperty}
           actions={renderActions}

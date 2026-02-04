@@ -16,6 +16,7 @@ export function DataGrid<T>({
   loading = false,
   pagination,
   onPageChange,
+  onPageSizeChange,
   onRowSelect,
   selectedRow,
   actions,
@@ -256,6 +257,7 @@ export function DataGrid<T>({
       <DataGridToolbar
         pagination={pagination}
         onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
         onFilter={onFilter}
         onEditFilters={onEditFilters}
         onDownload={onDownload}

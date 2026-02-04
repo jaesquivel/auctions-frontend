@@ -90,7 +90,7 @@ export default function AssetsPage() {
       )}
 
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedAsset} selectedRow={selectedAsset} actions={renderActions} onFilter={() => {}} onReload={fetchData} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedAsset} selectedRow={selectedAsset} actions={renderActions} onFilter={() => {}} onReload={fetchData} />
       </div>
     </div>
   );

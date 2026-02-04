@@ -123,7 +123,7 @@ export default function BulletinsPage() {
       )}
 
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedBulletin} selectedRow={selectedBulletin} actions={renderActions} onReload={fetchData} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedBulletin} selectedRow={selectedBulletin} actions={renderActions} onReload={fetchData} />
       </div>
 
       <BulletinForm

@@ -3,13 +3,21 @@
 import { Filter, SlidersHorizontal, Download, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useTranslations } from 'next-intl';
 import { DataGridPagination } from './DataGridPagination';
-import type { PaginationState } from './types';
+import { PAGE_SIZE_OPTIONS, type PaginationState } from './types';
 
 interface DataGridToolbarProps {
   pagination?: PaginationState;
   onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
   onFilter?: () => void;
   onEditFilters?: () => void;
   onDownload?: () => void;
@@ -19,6 +27,7 @@ interface DataGridToolbarProps {
 export function DataGridToolbar({
   pagination,
   onPageChange,
+  onPageSizeChange,
   onFilter,
   onEditFilters,
   onDownload,
@@ -96,8 +105,30 @@ export function DataGridToolbar({
         </div>
 
         {pagination && (
-          <div className="text-xs text-muted-foreground">
-            {pagination.total.toLocaleString()} {t('records')}
+          <div className="flex items-center gap-3">
+            <div className="text-xs text-muted-foreground">
+              {pagination.total.toLocaleString()} {t('records')}
+            </div>
+            {onPageSizeChange && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground">{t('rowsPerPage')}:</span>
+                <Select
+                  value={pagination.pageSize.toString()}
+                  onValueChange={(value) => onPageSizeChange(parseInt(value, 10))}
+                >
+                  <SelectTrigger className="h-7 w-[70px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PAGE_SIZE_OPTIONS.map((size) => (
+                      <SelectItem key={size} value={size.toString()}>
+                        {size}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         )}
 
