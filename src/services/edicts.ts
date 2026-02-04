@@ -1,35 +1,47 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockEdicts } from '@/mocks';
-import type { Edict } from '@/types';
-import type { PaginatedResponse } from './properties';
+import type { Edict, SpringPage } from '@/types';
 
 export interface EdictFilters {
-  page?: number;
-  pageSize?: number;
+  page?: number;  // 0-indexed
+  size?: number;
+  sort?: string;
   search?: string;
 }
 
 export const edictsService = {
-  async getAll(filters: EdictFilters = {}): Promise<PaginatedResponse<Edict>> {
-    const { page = 1, pageSize = 20 } = filters;
+  async getAll(filters: EdictFilters = {}): Promise<SpringPage<Edict>> {
+    const { page = 0, size = 20 } = filters;
 
     if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const startIndex = (page - 1) * pageSize;
-      const data = mockEdicts.slice(startIndex, startIndex + pageSize);
+      const startIndex = page * size;
+      const content = mockEdicts.slice(startIndex, startIndex + size);
+      const totalElements = mockEdicts.length;
+      const totalPages = Math.ceil(totalElements / size);
 
-      return { data, total: mockEdicts.length, page, pageSize };
+      return {
+        content,
+        totalElements,
+        totalPages,
+        size,
+        number: page,
+        first: page === 0,
+        last: page >= totalPages - 1,
+        empty: content.length === 0,
+        numberOfElements: content.length,
+      };
     }
 
     const params = new URLSearchParams();
-    if (filters.page) params.set('page', filters.page.toString());
-    if (filters.pageSize) params.set('pageSize', filters.pageSize.toString());
+    params.set('page', page.toString());
+    params.set('size', size.toString());
+    if (filters.sort) params.set('sort', filters.sort);
     if (filters.search) params.set('search', filters.search);
 
-    const queryString = params.toString();
-    return apiClient.get<PaginatedResponse<Edict>>(`/edicts${queryString ? `?${queryString}` : ''}`);
+    return apiClient.get<SpringPage<Edict>>(`/edicts?${params.toString()}`);
   },
 
   async getById(id: string): Promise<Edict | null> {

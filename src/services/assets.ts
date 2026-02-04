@@ -1,35 +1,47 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockAssets } from '@/mocks';
-import type { Asset } from '@/types';
-import type { PaginatedResponse } from './properties';
+import type { Asset, SpringPage } from '@/types';
 
 export interface AssetFilters {
-  page?: number;
-  pageSize?: number;
+  page?: number;  // 0-indexed
+  size?: number;
+  sort?: string;
   search?: string;
 }
 
 export const assetsService = {
-  async getAll(filters: AssetFilters = {}): Promise<PaginatedResponse<Asset>> {
-    const { page = 1, pageSize = 20 } = filters;
+  async getAll(filters: AssetFilters = {}): Promise<SpringPage<Asset>> {
+    const { page = 0, size = 20 } = filters;
 
     if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const startIndex = (page - 1) * pageSize;
-      const data = mockAssets.slice(startIndex, startIndex + pageSize);
+      const startIndex = page * size;
+      const content = mockAssets.slice(startIndex, startIndex + size);
+      const totalElements = mockAssets.length;
+      const totalPages = Math.ceil(totalElements / size);
 
-      return { data, total: mockAssets.length, page, pageSize };
+      return {
+        content,
+        totalElements,
+        totalPages,
+        size,
+        number: page,
+        first: page === 0,
+        last: page >= totalPages - 1,
+        empty: content.length === 0,
+        numberOfElements: content.length,
+      };
     }
 
     const params = new URLSearchParams();
-    if (filters.page) params.set('page', filters.page.toString());
-    if (filters.pageSize) params.set('pageSize', filters.pageSize.toString());
+    params.set('page', page.toString());
+    params.set('size', size.toString());
+    if (filters.sort) params.set('sort', filters.sort);
     if (filters.search) params.set('search', filters.search);
 
-    const queryString = params.toString();
-    return apiClient.get<PaginatedResponse<Asset>>(`/assets${queryString ? `?${queryString}` : ''}`);
+    return apiClient.get<SpringPage<Asset>>(`/assets?${params.toString()}`);
   },
 
   async getById(id: string): Promise<Asset | null> {

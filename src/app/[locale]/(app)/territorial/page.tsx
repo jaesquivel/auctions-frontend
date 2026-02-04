@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,8 @@ import { TdProvinceForm } from '@/components/forms/TdProvinceForm';
 import { TdCantonForm } from '@/components/forms/TdCantonForm';
 import { TdDistrictForm } from '@/components/forms/TdDistrictForm';
 import { territorialService } from '@/services/territorial';
+import { ApiError } from '@/lib/api-client';
+import { getErrorMessage } from '@/lib/toast';
 import { useUserRole } from '@/hooks';
 import type { TdProvince, TdCanton, TdDistrict, TdProvinceCreateRequest, TdCantonCreateRequest, TdDistrictCreateRequest } from '@/types';
 
@@ -53,6 +56,7 @@ export default function TerritorialPage() {
   const [deletingTdCanton, setDeletingTdCanton] = useState<TdCanton | null>(null);
   const [deletingTdDistrict, setDeletingTdDistrict] = useState<TdDistrict | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Fetch tdProvinces on mount
   const fetchTdProvinces = useCallback(async () => {
@@ -251,6 +255,7 @@ export default function TerritorialPage() {
 
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
+    setDeleteError(null);
     try {
       if (deletingTdProvince) {
         await territorialService.deleteTdProvince(deletingTdProvince.id);
@@ -284,6 +289,10 @@ export default function TerritorialPage() {
       setDeleteConfirmOpen(false);
     } catch (error) {
       console.error('Failed to delete:', error);
+      if (error instanceof ApiError && error.status === 409) {
+        setDeleteError(getErrorMessage(error.status, error.message));
+        setDeleteConfirmOpen(false);
+      }
     } finally {
       setIsDeleting(false);
       setDeletingTdProvince(null);
@@ -310,6 +319,12 @@ export default function TerritorialPage() {
     <>
       <div className="space-y-4">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
+
+        {deleteError && (
+          <Alert variant="destructive" onClose={() => setDeleteError(null)}>
+            <AlertDescription>{deleteError}</AlertDescription>
+          </Alert>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* TdProvinces */}

@@ -1,35 +1,47 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockBulletins } from '@/mocks';
-import type { Bulletin } from '@/types';
-import type { PaginatedResponse } from './properties';
+import type { Bulletin, SpringPage } from '@/types';
 
 export interface BulletinFilters {
-  page?: number;
-  pageSize?: number;
+  page?: number;  // 0-indexed
+  size?: number;
+  sort?: string;
   year?: number;
 }
 
 export const bulletinsService = {
-  async getAll(filters: BulletinFilters = {}): Promise<PaginatedResponse<Bulletin>> {
-    const { page = 1, pageSize = 20 } = filters;
+  async getAll(filters: BulletinFilters = {}): Promise<SpringPage<Bulletin>> {
+    const { page = 0, size = 20 } = filters;
 
     if (config.useMock.bulletins) {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const startIndex = (page - 1) * pageSize;
-      const data = mockBulletins.slice(startIndex, startIndex + pageSize);
+      const startIndex = page * size;
+      const content = mockBulletins.slice(startIndex, startIndex + size);
+      const totalElements = mockBulletins.length;
+      const totalPages = Math.ceil(totalElements / size);
 
-      return { data, total: mockBulletins.length, page, pageSize };
+      return {
+        content,
+        totalElements,
+        totalPages,
+        size,
+        number: page,
+        first: page === 0,
+        last: page >= totalPages - 1,
+        empty: content.length === 0,
+        numberOfElements: content.length,
+      };
     }
 
     const params = new URLSearchParams();
-    if (filters.page) params.set('page', filters.page.toString());
-    if (filters.pageSize) params.set('pageSize', filters.pageSize.toString());
+    params.set('page', page.toString());
+    params.set('size', size.toString());
+    if (filters.sort) params.set('sort', filters.sort);
     if (filters.year) params.set('year', filters.year.toString());
 
-    const queryString = params.toString();
-    return apiClient.get<PaginatedResponse<Bulletin>>(`/bulletins${queryString ? `?${queryString}` : ''}`);
+    return apiClient.get<SpringPage<Bulletin>>(`/bulletins?${params.toString()}`);
   },
 
   async getById(id: string): Promise<Bulletin | null> {

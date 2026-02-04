@@ -5,8 +5,11 @@ import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TagList } from '@/components/ui/tag-badge';
 import { propertiesService } from '@/services/properties';
+import { ApiError } from '@/lib/api-client';
+import { getErrorMessage } from '@/lib/toast';
 import { formatCurrency, formatDate, formatArea, formatRatio } from '@/lib/formatters';
 import type { PropertySummary } from '@/types';
 
@@ -22,16 +25,17 @@ export default function PropertiesPage() {
     total: 0,
   });
   const [sort, setSort] = useState<SortState | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await propertiesService.getAll({
-        page: pagination.page,
-        pageSize: pagination.pageSize,
+        page: pagination.page - 1,  // Convert to 0-indexed
+        size: pagination.pageSize,
       });
-      setData(response.data);
-      setPagination((prev) => ({ ...prev, total: response.total }));
+      setData(response.content);
+      setPagination((prev) => ({ ...prev, total: response.totalElements }));
     } catch (error) {
       console.error('Failed to fetch properties:', error);
     } finally {
@@ -156,12 +160,26 @@ export default function PropertiesPage() {
     setPagination((prev) => ({ ...prev, page }));
   };
 
+  const handleDelete = async (property: PropertySummary) => {
+    if (!confirm(t('confirmDelete'))) return;
+    setDeleteError(null);
+    try {
+      await propertiesService.delete(property.id);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete property:', error);
+      if (error instanceof ApiError && error.status === 409) {
+        setDeleteError(getErrorMessage(error.status, error.message));
+      }
+    }
+  };
+
   const renderActions = (row: PropertySummary) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7">
         <Edit className="h-4 w-4" />
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive">
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}>
         <Trash2 className="h-4 w-4" />
       </Button>
     </div>
@@ -175,6 +193,12 @@ export default function PropertiesPage() {
           <Plus className="h-4 w-4" />
         </Button>
       </div>
+
+      {deleteError && (
+        <Alert variant="destructive" onClose={() => setDeleteError(null)}>
+          <AlertDescription>{deleteError}</AlertDescription>
+        </Alert>
+      )}
 
       <div className="h-[calc(100vh-12rem)]">
         <DataGrid

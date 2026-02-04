@@ -1,5 +1,5 @@
 // Services
-export { propertiesService, type PaginatedResponse, type PropertyFilters } from './properties';
+export { propertiesService, type PropertyFilters } from './properties';
 export { edictsService, type EdictFilters } from './edicts';
 export { tagsService } from './tags';
 export { vehiclesService, type VehicleFilters } from './vehicles';
@@ -9,3 +9,6 @@ export { territorialService } from './territorial';
 
 // Re-export config for convenience
 export { config } from '@/lib/config';
+
+// Re-export pagination types from common
+export type { SpringPage, SpringPageParams } from '@/types';

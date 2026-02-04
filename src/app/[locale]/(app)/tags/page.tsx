@@ -5,9 +5,12 @@ import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TagBadge } from '@/components/ui/tag-badge';
 import { TagForm } from '@/components/forms/TagForm';
 import { tagsService } from '@/services/tags';
+import { ApiError } from '@/lib/api-client';
+import { getErrorMessage } from '@/lib/toast';
 import { useUserRole } from '@/hooks';
 import type { PropertyTag, PropertyTagCreateRequest, PropertyTagUpdateRequest } from '@/types';
 
@@ -20,6 +23,7 @@ export default function TagsPage() {
   const [selectedTag, setSelectedTag] = useState<PropertyTag | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<PropertyTag | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -49,11 +53,15 @@ export default function TagsPage() {
 
   const handleDelete = async (tag: PropertyTag) => {
     if (!confirm(`Delete "${tag.name}"?`)) return;
+    setDeleteError(null);
     try {
       await tagsService.delete(tag.id);
       fetchData();
     } catch (error) {
       console.error('Failed to delete tag:', error);
+      if (error instanceof ApiError && error.status === 409) {
+        setDeleteError(getErrorMessage(error.status, error.message));
+      }
     }
   };
 
@@ -101,6 +109,13 @@ export default function TagsPage() {
           <Button size="icon" onClick={handleAdd}><Plus className="h-4 w-4" /></Button>
         )}
       </div>
+
+      {deleteError && (
+        <Alert variant="destructive" onClose={() => setDeleteError(null)}>
+          <AlertDescription>{deleteError}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="h-[calc(100vh-12rem)]">
         <DataGrid columns={columns} data={data} keyField="id" loading={loading} onRowSelect={setSelectedTag} selectedRow={selectedTag} actions={renderActions} onReload={fetchData} />
       </div>

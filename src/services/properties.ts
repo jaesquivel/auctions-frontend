@@ -1,51 +1,49 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockProperties } from '@/mocks';
-import type { PropertySummary } from '@/types';
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
+import type { PropertySummary, SpringPage } from '@/types';
 
 export interface PropertyFilters {
-  page?: number;
-  pageSize?: number;
+  page?: number;  // 0-indexed
+  size?: number;
+  sort?: string;
   search?: string;
   tags?: string[];
 }
 
 export const propertiesService = {
-  async getAll(filters: PropertyFilters = {}): Promise<PaginatedResponse<PropertySummary>> {
-    const { page = 1, pageSize = 20 } = filters;
+  async getAll(filters: PropertyFilters = {}): Promise<SpringPage<PropertySummary>> {
+    const { page = 0, size = 20 } = filters;
 
     if (config.useMock.properties) {
-      // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const startIndex = (page - 1) * pageSize;
-      const data = mockProperties.slice(startIndex, startIndex + pageSize);
+      const startIndex = page * size;
+      const content = mockProperties.slice(startIndex, startIndex + size);
+      const totalElements = mockProperties.length;
+      const totalPages = Math.ceil(totalElements / size);
 
       return {
-        data,
-        total: mockProperties.length,
-        page,
-        pageSize,
+        content,
+        totalElements,
+        totalPages,
+        size,
+        number: page,
+        first: page === 0,
+        last: page >= totalPages - 1,
+        empty: content.length === 0,
+        numberOfElements: content.length,
       };
     }
 
     const params = new URLSearchParams();
-    if (filters.page) params.set('page', filters.page.toString());
-    if (filters.pageSize) params.set('pageSize', filters.pageSize.toString());
+    params.set('page', page.toString());
+    params.set('size', size.toString());
+    if (filters.sort) params.set('sort', filters.sort);
     if (filters.search) params.set('search', filters.search);
     if (filters.tags?.length) params.set('tags', filters.tags.join(','));
 
-    const queryString = params.toString();
-    const endpoint = `/properties${queryString ? `?${queryString}` : ''}`;
-
-    return apiClient.get<PaginatedResponse<PropertySummary>>(endpoint);
+    return apiClient.get<SpringPage<PropertySummary>>(`/properties?${params.toString()}`);
   },
 
   async getById(id: string): Promise<PropertySummary | null> {
