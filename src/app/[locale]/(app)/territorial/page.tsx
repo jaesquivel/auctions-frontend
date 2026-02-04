@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,11 +17,13 @@ import { TdProvinceForm } from '@/components/forms/TdProvinceForm';
 import { TdCantonForm } from '@/components/forms/TdCantonForm';
 import { TdDistrictForm } from '@/components/forms/TdDistrictForm';
 import { territorialService } from '@/services/territorial';
+import { useUserRole } from '@/hooks';
 import type { TdProvince, TdCanton, TdDistrict, TdProvinceCreateRequest, TdCantonCreateRequest, TdDistrictCreateRequest } from '@/types';
 
 export default function TerritorialPage() {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
+  const { isAdmin } = useUserRole();
 
   const [tdProvinces, setTdProvinces] = useState<TdProvince[]>([]);
   const [tdCantons, setTdCantons] = useState<TdCanton[]>([]);
@@ -141,11 +143,13 @@ export default function TerritorialPage() {
   const renderTdProvinceActions = (tdProvince: TdProvince) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdProvince(tdProvince)}>
-        <Edit className="h-4 w-4" />
+        {isAdmin ? <Edit className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdProvince(tdProvince)}>
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      {isAdmin && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdProvince(tdProvince)}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 
@@ -179,11 +183,13 @@ export default function TerritorialPage() {
   const renderTdCantonActions = (tdCanton: TdCanton) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdCanton(tdCanton)}>
-        <Edit className="h-4 w-4" />
+        {isAdmin ? <Edit className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdCanton(tdCanton)}>
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      {isAdmin && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdCanton(tdCanton)}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 
@@ -217,11 +223,13 @@ export default function TerritorialPage() {
   const renderTdDistrictActions = (tdDistrict: TdDistrict) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdDistrict(tdDistrict)}>
-        <Edit className="h-4 w-4" />
+        {isAdmin ? <Edit className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdDistrict(tdDistrict)}>
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      {isAdmin && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdDistrict(tdDistrict)}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 
@@ -308,9 +316,11 @@ export default function TerritorialPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{t('provinces')}</h2>
-              <Button size="sm" className="gap-1" onClick={handleAddTdProvince}>
-                <Plus className="h-3 w-3" />
-              </Button>
+              {isAdmin && (
+                <Button size="sm" className="gap-1" onClick={handleAddTdProvince}>
+                  <Plus className="h-3 w-3" />
+                </Button>
+              )}
             </div>
             <div className="h-[calc(100vh-16rem)]">
               <DataGrid
@@ -330,9 +340,11 @@ export default function TerritorialPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{t('cantons')}</h2>
-              <Button size="sm" className="gap-1" disabled={!selectedTdProvince} onClick={handleAddTdCanton}>
-                <Plus className="h-3 w-3" />
-              </Button>
+              {isAdmin && (
+                <Button size="sm" className="gap-1" disabled={!selectedTdProvince} onClick={handleAddTdCanton}>
+                  <Plus className="h-3 w-3" />
+                </Button>
+              )}
             </div>
             <div className="h-[calc(100vh-16rem)]">
               <DataGrid
@@ -352,9 +364,11 @@ export default function TerritorialPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{t('districts')}</h2>
-              <Button size="sm" className="gap-1" disabled={!selectedTdCanton} onClick={handleAddTdDistrict}>
-                <Plus className="h-3 w-3" />
-              </Button>
+              {isAdmin && (
+                <Button size="sm" className="gap-1" disabled={!selectedTdCanton} onClick={handleAddTdDistrict}>
+                  <Plus className="h-3 w-3" />
+                </Button>
+              )}
             </div>
             <div className="h-[calc(100vh-16rem)]">
               <DataGrid
@@ -377,6 +391,7 @@ export default function TerritorialPage() {
         onOpenChange={setTdProvinceModalOpen}
         tdProvince={editingTdProvince}
         onSubmit={handleTdProvinceSubmit}
+        readOnly={!isAdmin}
       />
 
       {selectedTdProvince && (
@@ -386,6 +401,7 @@ export default function TerritorialPage() {
           tdCanton={editingTdCanton}
           tdProvince={selectedTdProvince}
           onSubmit={handleTdCantonSubmit}
+          readOnly={!isAdmin}
         />
       )}
 
@@ -396,6 +412,7 @@ export default function TerritorialPage() {
           tdDistrict={editingTdDistrict}
           tdCanton={selectedTdCanton}
           onSubmit={handleTdDistrictSubmit}
+          readOnly={!isAdmin}
         />
       )}
 

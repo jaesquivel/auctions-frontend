@@ -51,6 +51,7 @@ export function Modal({
           // Semi-transparent backdrop that keeps content visible
           '[&~div[data-overlay]]:bg-background/60 [&~div[data-overlay]]:backdrop-blur-sm'
         )}
+        showCloseButton={false}
       >
         <DialogHeader>
           <div className="flex items-center justify-between">

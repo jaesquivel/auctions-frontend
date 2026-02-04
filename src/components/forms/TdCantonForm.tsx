@@ -16,9 +16,10 @@ interface TdCantonFormProps {
   tdCanton?: TdCanton | null;
   tdProvince: TdProvince;
   onSubmit: (data: TdCantonCreateRequest) => Promise<void>;
+  readOnly?: boolean;
 }
 
-export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmit }: TdCantonFormProps) {
+export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmit, readOnly = false }: TdCantonFormProps) {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
   const tValidation = useTranslations('validation');
@@ -76,21 +77,34 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
 
   const isEdit = !!tdCanton;
 
+  const getTitle = () => {
+    if (readOnly) return t('viewCanton');
+    return isEdit ? t('editCanton') : t('addCanton');
+  };
+
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editCanton') : t('addCanton')}
+      title={getTitle()}
       size="sm"
       footer={
-        <div className="flex gap-2 justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            {tCommon('cancel')}
-          </Button>
-          <Button onClick={handleSubmit(onFormSubmit)} disabled={isSubmitting}>
-            {isSubmitting ? tCommon('loading') : tCommon('save')}
-          </Button>
-        </div>
+        readOnly ? (
+          <div className="flex justify-end">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              {tCommon('close')}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-2 justify-end">
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+              {tCommon('cancel')}
+            </Button>
+            <Button onClick={handleSubmit(onFormSubmit)} disabled={isSubmitting}>
+              {isSubmitting ? tCommon('loading') : tCommon('save')}
+            </Button>
+          </div>
+        )
       }
     >
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
@@ -114,6 +128,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
               max={32767}
               {...register('num', { valueAsNumber: true })}
               className={errors.num ? 'border-destructive' : ''}
+              disabled={readOnly}
             />
             {errors.num && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.num)}</p>
@@ -126,6 +141,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
               {...register('code')}
               maxLength={4}
               className={errors.code ? 'border-destructive' : ''}
+              disabled={readOnly}
             />
             {errors.code && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.code)}</p>
@@ -139,6 +155,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
             {...register('name')}
             maxLength={2048}
             className={errors.name ? 'border-destructive' : ''}
+            disabled={readOnly}
           />
           {errors.name && (
             <p className="text-xs text-destructive">{getErrorMessage(errors.name)}</p>

@@ -147,10 +147,13 @@
     "districts": "Districts",
     "addProvince": "Add Province",
     "editProvince": "Edit Province",
+    "viewProvince": "View Province",
     "addCanton": "Add Canton",
     "editCanton": "Edit Canton",
+    "viewCanton": "View Canton",
     "addDistrict": "Add District",
     "editDistrict": "Edit District",
+    "viewDistrict": "View District",
     "confirmDelete": "Are you sure you want to delete {name}?",
     "columns": {
       "num": "Number",

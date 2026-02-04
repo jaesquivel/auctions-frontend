@@ -15,9 +15,10 @@ interface TdProvinceFormProps {
   onOpenChange: (open: boolean) => void;
   tdProvince?: TdProvince | null;
   onSubmit: (data: TdProvinceCreateRequest) => Promise<void>;
+  readOnly?: boolean;
 }
 
-export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit }: TdProvinceFormProps) {
+export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit, readOnly = false }: TdProvinceFormProps) {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
   const tValidation = useTranslations('validation');
@@ -75,21 +76,34 @@ export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit }: TdP
 
   const isEdit = !!tdProvince;
 
+  const getTitle = () => {
+    if (readOnly) return t('viewProvince');
+    return isEdit ? t('editProvince') : t('addProvince');
+  };
+
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={isEdit ? t('editProvince') : t('addProvince')}
+      title={getTitle()}
       size="sm"
       footer={
-        <div className="flex gap-2 justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            {tCommon('cancel')}
-          </Button>
-          <Button onClick={handleSubmit(onFormSubmit)} disabled={isSubmitting}>
-            {isSubmitting ? tCommon('loading') : tCommon('save')}
-          </Button>
-        </div>
+        readOnly ? (
+          <div className="flex justify-end">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              {tCommon('close')}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-2 justify-end">
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+              {tCommon('cancel')}
+            </Button>
+            <Button onClick={handleSubmit(onFormSubmit)} disabled={isSubmitting}>
+              {isSubmitting ? tCommon('loading') : tCommon('save')}
+            </Button>
+          </div>
+        )
       }
     >
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
@@ -108,6 +122,7 @@ export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit }: TdP
               max={32767}
               {...register('num', { valueAsNumber: true })}
               className={errors.num ? 'border-destructive' : ''}
+              disabled={readOnly}
             />
             {errors.num && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.num)}</p>
@@ -120,6 +135,7 @@ export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit }: TdP
               {...register('code')}
               maxLength={2}
               className={errors.code ? 'border-destructive' : ''}
+              disabled={readOnly}
             />
             {errors.code && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.code)}</p>
@@ -133,6 +149,7 @@ export function TdProvinceForm({ open, onOpenChange, tdProvince, onSubmit }: TdP
             {...register('name')}
             maxLength={2048}
             className={errors.name ? 'border-destructive' : ''}
+            disabled={readOnly}
           />
           {errors.name && (
             <p className="text-xs text-destructive">{getErrorMessage(errors.name)}</p>
