@@ -28,12 +28,14 @@ import { Separator } from '@/components/ui/separator';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageSelector } from './LanguageSelector';
 import { UserMenu } from './UserMenu';
+import { useUserRole } from '@/hooks';
 
 interface NavItem {
   titleKey: string;
   href?: string;
   icon: React.ElementType;
   children?: NavItem[];
+  adminOnly?: boolean;
 }
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -64,7 +66,7 @@ const navItems: NavItem[] = [
     children: [
       { titleKey: 'tags', href: '/tags', icon: Tags },
       { titleKey: 'territorial', href: '/territorial', icon: MapPin },
-      { titleKey: 'generalConfig', href: '/config', icon: Settings },
+      { titleKey: 'generalConfig', href: '/config', icon: Settings, adminOnly: true },
       ...(isDev ? [{ titleKey: 'dev', href: '/dev', icon: Code2 }] : []),
     ],
   },
@@ -80,6 +82,13 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations('nav');
+  const { isAdmin } = useUserRole();
+
+  // Filter nav items based on user role
+  const filteredNavItems = navItems.map((group) => ({
+    ...group,
+    children: group.children?.filter((item) => !item.adminOnly || isAdmin),
+  }));
 
   const toggleGroup = (groupKey: string) => {
     setExpandedGroups((prev) =>
@@ -123,7 +132,7 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Navigation */}
       <ScrollArea className="flex-1 px-2 py-4">
         <nav className="space-y-2">
-          {navItems.map((group) => (
+          {filteredNavItems.map((group) => (
             <div key={group.titleKey} className="space-y-1">
               {!collapsed ? (
                 <>
