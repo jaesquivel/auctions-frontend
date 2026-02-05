@@ -66,7 +66,6 @@ export default function EdictsPage() {
     { id: 'debtor', header: 'Deudor', width: 200, accessorFn: (row) => row.debtor.name },
     { id: 'court', header: 'Juzgado', width: 200, accessorFn: (row) => row.court || '-' },
     { id: 'publication', header: 'Publicación', width: 100, align: 'center', accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
-    { id: 'createdAt', header: 'Fecha', width: 140, accessorFn: (row) => formatDate(row.createdAt) },
   ];
 
   const renderActions = (row: Edict) => (

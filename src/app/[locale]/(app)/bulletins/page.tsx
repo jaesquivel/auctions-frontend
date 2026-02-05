@@ -96,8 +96,8 @@ export default function BulletinsPage() {
   };
 
   const columns: ColumnDef<Bulletin>[] = [
-    { id: 'year', header: t('columns.year'), width: 80, align: 'center', accessorFn: (row) => row.year?.toString() || '-' },
     { id: 'volume', header: t('columns.volume'), width: 100, align: 'center', accessorFn: (row) => row.volume?.toString() || '-' },
+    { id: 'year', header: t('columns.year'), width: 80, align: 'center', accessorFn: (row) => row.year?.toString() || '-' },
     { id: 'url', header: t('columns.url'), width: 400, accessorKey: 'url' },
     { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];

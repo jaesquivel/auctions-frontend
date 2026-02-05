@@ -6,11 +6,12 @@ import { Check, X, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { RawEdictForm } from '@/components/forms/RawEdictForm';
 import { rawEdictsService } from '@/services/raw-edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatDate } from '@/lib/formatters';
-import type { RawEdict } from '@/types';
+import type { RawEdict, RawEdictUpdateRequest } from '@/types';
 
 export default function ExtractedEdictsPage() {
   const t = useTranslations('extractedEdicts');
@@ -24,6 +25,9 @@ export default function ExtractedEdictsPage() {
     total: 0,
   });
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingRawEdict, setEditingRawEdict] = useState<RawEdict | null>(null);
+  const [formLoading, setFormLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -44,6 +48,35 @@ export default function ExtractedEdictsPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const handleEdit = async (rawEdict: RawEdict) => {
+    setEditingRawEdict(null);
+    setFormOpen(true);
+    setFormLoading(true);
+    try {
+      const fullRawEdict = await rawEdictsService.getById(rawEdict.id);
+      if (fullRawEdict) {
+        // Merge bulletin from list data since detail response only has bulletinId
+        setEditingRawEdict({ ...fullRawEdict, bulletin: rawEdict.bulletin });
+      }
+    } catch (error) {
+      console.error('Failed to fetch raw edict details:', error);
+      setFormOpen(false);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleSubmit = async (data: RawEdictUpdateRequest) => {
+    try {
+      if (editingRawEdict) {
+        await rawEdictsService.update(editingRawEdict.id, data);
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Failed to save extracted edict:', error);
+    }
+  };
 
   const handleDelete = async (item: RawEdict) => {
     if (!confirm(t('confirmDelete'))) return;
@@ -68,12 +101,11 @@ export default function ExtractedEdictsPage() {
     { id: 'publication', header: t('columns.publication'), width: 100, align: 'center', accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
     { id: 'bulletinVolume', header: t('columns.bulletin'), width: 120, align: 'center', accessorFn: (row) => row.bulletin ? `${row.bulletin.volume}/${row.bulletin.year}` : '-' },
     { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
-    { id: 'createdAt', header: t('columns.createdAt'), width: 140, accessorFn: (row) => formatDate(row.createdAt) },
   ];
 
   const renderActions = (row: RawEdict) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
     </div>
   );
@@ -105,6 +137,15 @@ export default function ExtractedEdictsPage() {
           onReload={fetchData}
         />
       </div>
+
+      <RawEdictForm
+        key={editingRawEdict?.id ?? 'new'}
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        rawEdict={editingRawEdict}
+        onSubmit={handleSubmit}
+        loading={formLoading}
+      />
     </div>
   );
 }

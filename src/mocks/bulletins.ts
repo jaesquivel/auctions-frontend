@@ -1,4 +1,4 @@
-import type { Bulletin, RawEdict, ExtractedAsset } from '@/types';
+import type { Bulletin, RawEdict, RawAsset } from '@/types';
 
 export const mockBulletins: Bulletin[] = Array.from({ length: 32 }, (_, i) => ({
   id: `bul${i + 1}`,
@@ -47,10 +47,41 @@ export const mockExtractedEdicts: RawEdict[] = Array.from({ length: 35 }, (_, i)
   createdAt: `2024-${String(Math.floor(i / 4) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T09:00:00Z`,
 }));
 
-export const mockExtractedAssets: ExtractedAsset[] = Array.from({ length: 40 }, (_, i) => ({
-  id: `exas${i + 1}`,
-  extractedEdictId: mockExtractedEdicts[i % mockExtractedEdicts.length].id,
-  rawText: `Finca ${Math.floor(Math.random() * 9) + 1}-${100000 + i} del Partido de San José, naturaleza: terreno con casa, situación: distrito primero, cantón central, provincia de San José, medida: ${Math.floor(Math.random() * 500) + 100} metros cuadrados...`,
-  processed: i < 30,
-  createdAt: `2024-${String(Math.floor(i / 4) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`,
-}));
+const mockProvinces = ['SAN JOSÉ', 'ALAJUELA', 'HEREDIA', 'CARTAGO'];
+const mockCantons = ['CENTRAL', 'GOICOECHEA', 'ESCAZÚ', 'DESAMPARADOS'];
+const mockDistricts = ['GUADALUPE', 'CARMEN', 'HOSPITAL', 'SAN FRANCISCO'];
+
+export const mockExtractedAssets: RawAsset[] = Array.from({ length: 40 }, (_, i) => {
+  const edict = mockExtractedEdicts[i % mockExtractedEdicts.length];
+  const isVehicle = i % 3 === 0;
+  return {
+    id: `exas${i + 1}`,
+    rawEdict: {
+      id: edict.id,
+      reference: edict.reference,
+      caseNumber: edict.caseNumber,
+      publication: edict.publication,
+      publicationCount: edict.publicationCount,
+      bulletin: { volume: edict.bulletin!.volume, year: edict.bulletin!.year, processed: edict.bulletin!.processed },
+    },
+    firstAuctionDate: `2024-${String(Math.floor(i / 4) + 3).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}`,
+    firstAuctionTime: '15:00',
+    firstAuctionBase: `${(Math.floor(Math.random() * 50) + 10) * 1000000}`,
+    secondAuctionDate: `2024-${String(Math.floor(i / 4) + 3).padStart(2, '0')}-${String((i % 28) + 10).padStart(2, '0')}`,
+    secondAuctionTime: '15:00',
+    secondAuctionBase: `${(Math.floor(Math.random() * 40) + 5) * 1000000}`,
+    thirdAuctionDate: `2024-${String(Math.floor(i / 4) + 4).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}`,
+    thirdAuctionTime: '15:00',
+    thirdAuctionBase: `${(Math.floor(Math.random() * 20) + 2) * 1000000}`,
+    currency: 'CRC',
+    registration: isVehicle ? '' : `${100000 + i}-000`,
+    plate: isVehicle ? `CL${190000 + i}` : '',
+    type: isVehicle ? 'VEHICULO' : 'INMUEBLE',
+    tdProvince: isVehicle ? '' : mockProvinces[i % mockProvinces.length],
+    tdCanton: isVehicle ? '' : mockCantons[i % mockCantons.length],
+    tdDistrict: isVehicle ? '' : mockDistricts[i % mockDistricts.length],
+    area: isVehicle ? '' : `${(Math.random() * 500 + 100).toFixed(1)}`,
+    processed: i < 30,
+    createdAt: `2024-${String(Math.floor(i / 4) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`,
+  };
+});

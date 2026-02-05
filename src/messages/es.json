@@ -138,6 +138,9 @@
   },
   "extractedEdicts": {
     "title": "Edictos Extraídos",
+    "addRawEdict": "Agregar Edicto Extraído",
+    "editRawEdict": "Editar Edicto Extraído",
+    "viewRawEdict": "Ver Edicto Extraído",
     "confirmDelete": "¿Está seguro de que desea eliminar este edicto extraído?",
     "columns": {
       "caseNumber": "Número de Caso",
@@ -149,10 +152,46 @@
       "bulletin": "Boletín",
       "processed": "Procesado",
       "createdAt": "Fecha"
+    },
+    "form": {
+      "publicationCount": "Cantidad de Publicaciones",
+      "volume": "Volumen",
+      "year": "Año",
+      "notes": "Notas",
+      "fullText": "Texto Completo"
     }
   },
   "extractedAssets": {
-    "title": "Bienes Extraídos"
+    "title": "Bienes Extraídos",
+    "editRawAsset": "Editar Bien Extraído",
+    "viewRawAsset": "Ver Bien Extraído",
+    "confirmDelete": "¿Está seguro de que desea eliminar este bien extraído?",
+    "columns": {
+      "type": "Tipo",
+      "registration": "Matrícula",
+      "plate": "Placa",
+      "firstDate": "1ra Fecha",
+      "firstBase": "1ra Base",
+      "currency": "Mon.",
+      "location": "Ubicación",
+      "caseNumber": "Número de Caso",
+      "reference": "Referencia",
+      "edict": "Edicto",
+      "processed": "Procesado",
+      "area": "Área",
+      "province": "Provincia",
+      "canton": "Cantón",
+      "district": "Distrito"
+    },
+    "form": {
+      "firstAuction": "1er Remate",
+      "secondAuction": "2do Remate",
+      "thirdAuction": "3er Remate",
+      "date": "Fecha",
+      "time": "Hora",
+      "base": "Base",
+      "location": "Ubicación"
+    }
   },
   "tags": {
     "title": "Etiquetas de Propiedades",

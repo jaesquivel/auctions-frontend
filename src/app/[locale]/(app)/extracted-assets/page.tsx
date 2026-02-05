@@ -1,38 +1,98 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Eye, Check, X, Edit, Trash2 } from 'lucide-react';
+import { Check, X, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
-import { mockExtractedAssets } from '@/mocks';
-import { formatDate } from '@/lib/formatters';
-import type { ExtractedAsset } from '@/types';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { RawAssetForm } from '@/components/forms/RawAssetForm';
+import { rawAssetsService } from '@/services/raw-assets';
+import { ApiError } from '@/lib/api-client';
+import { getErrorMessage } from '@/lib/toast';
+import type { RawAsset, RawAssetUpdateRequest } from '@/types';
 
 export default function ExtractedAssetsPage() {
   const t = useTranslations('extractedAssets');
 
-  const [selectedItem, setSelectedItem] = useState<ExtractedAsset | null>(null);
+  const [data, setData] = useState<RawAsset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<RawAsset | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 20,
-    total: mockExtractedAssets.length,
+    total: 0,
   });
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingRawAsset, setEditingRawAsset] = useState<RawAsset | null>(null);
 
-  const startIndex = (pagination.page - 1) * pagination.pageSize;
-  const paginatedData = mockExtractedAssets.slice(startIndex, startIndex + pagination.pageSize);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await rawAssetsService.getAll({
+        page: pagination.page - 1,
+        size: pagination.pageSize,
+      });
+      setData(response.content);
+      setPagination((prev) => ({ ...prev, total: response.totalElements }));
+    } catch (error) {
+      console.error('Failed to fetch extracted assets:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.page, pagination.pageSize]);
 
-  const columns: ColumnDef<ExtractedAsset>[] = [
-    { id: 'id', header: 'ID', width: 80, accessorFn: (row) => row.id.replace('exas', '') },
-    { id: 'rawText', header: 'Texto Extraído', width: 500, accessorFn: (row) => row.rawText.substring(0, 120) + '...' },
-    { id: 'processed', header: 'Procesado', width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
-    { id: 'createdAt', header: 'Fecha', width: 140, accessorFn: (row) => formatDate(row.createdAt) },
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleEdit = (rawAsset: RawAsset) => {
+    setEditingRawAsset(rawAsset);
+    setFormOpen(true);
+  };
+
+  const handleSubmit = async (data: RawAssetUpdateRequest) => {
+    try {
+      if (editingRawAsset) {
+        await rawAssetsService.update(editingRawAsset.id, data);
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Failed to save extracted asset:', error);
+    }
+  };
+
+  const handleDelete = async (item: RawAsset) => {
+    if (!confirm(t('confirmDelete'))) return;
+    setDeleteError(null);
+    try {
+      await rawAssetsService.delete(item.id);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete extracted asset:', error);
+      if (error instanceof ApiError && error.status === 409) {
+        setDeleteError(getErrorMessage(error.status, error.message));
+      }
+    }
+  };
+
+  const columns: ColumnDef<RawAsset>[] = [
+    { id: 'type', header: t('columns.type'), width: 100, accessorFn: (row) => row.type || '-' },
+    { id: 'registration', header: t('columns.registration'), width: 130, accessorFn: (row) => row.registration || '-' },
+    { id: 'plate', header: t('columns.plate'), width: 110, accessorFn: (row) => row.plate || '-' },
+    { id: 'firstAuctionDate', header: t('columns.firstDate'), width: 110, accessorFn: (row) => row.firstAuctionDate || '-' },
+    { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 130, align: 'right', accessorFn: (row) => row.firstAuctionBase || '-' },
+    { id: 'currency', header: t('columns.currency'), width: 70, align: 'center', accessorFn: (row) => row.currency || '-' },
+    { id: 'location', header: t('columns.location'), width: 200, accessorFn: (row) => [row.tdProvince, row.tdCanton, row.tdDistrict].filter(Boolean).join(', ') || '-' },
+    { id: 'caseNumber', header: t('columns.caseNumber'), width: 160, accessorFn: (row) => row.rawEdict?.caseNumber || '-' },
+    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];
 
-  const renderActions = (row: ExtractedAsset) => (
+  const renderActions = (row: RawAsset) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
     </div>
   );
 
@@ -41,9 +101,36 @@ export default function ExtractedAssetsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
       </div>
+
+      {deleteError && (
+        <Alert variant="destructive" onClose={() => setDeleteError(null)}>
+          <AlertDescription>{deleteError}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={paginatedData} keyField="id" pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedItem} selectedRow={selectedItem} actions={renderActions} onFilter={() => {}} onReload={() => {}} />
+        <DataGrid
+          columns={columns}
+          data={data}
+          keyField="id"
+          loading={loading}
+          pagination={pagination}
+          onPageChange={(p) => setPagination((prev) => ({ ...prev, page: p }))}
+          onPageSizeChange={(size) => setPagination((prev) => ({ ...prev, pageSize: size, page: 1 }))}
+          onRowSelect={setSelectedItem}
+          selectedRow={selectedItem}
+          actions={renderActions}
+          onReload={fetchData}
+        />
       </div>
+
+      <RawAssetForm
+        key={editingRawAsset?.id ?? 'new'}
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        rawAsset={editingRawAsset}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
