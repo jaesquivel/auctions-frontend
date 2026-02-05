@@ -1,4 +1,4 @@
-import type { Bulletin, EdictRaw, ExtractedAsset } from '@/types';
+import type { Bulletin, RawEdict, ExtractedAsset } from '@/types';
 
 export const mockBulletins: Bulletin[] = Array.from({ length: 32 }, (_, i) => ({
   id: `bul${i + 1}`,
@@ -33,7 +33,7 @@ const mockCourts = [
   'JUZGADO CIVIL DE ALAJUELA',
 ];
 
-export const mockExtractedEdicts: EdictRaw[] = Array.from({ length: 35 }, (_, i) => ({
+export const mockExtractedEdicts: RawEdict[] = Array.from({ length: 35 }, (_, i) => ({
   id: `exed${i + 1}`,
   reference: `2024${String(165000 + i).padStart(6, '0')}`,
   creditor: mockCreditors[i % mockCreditors.length],

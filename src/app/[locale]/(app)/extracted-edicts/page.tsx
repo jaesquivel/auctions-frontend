@@ -6,18 +6,18 @@ import { Check, X, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { edictsRawService } from '@/services/edicts-raw';
+import { rawEdictsService } from '@/services/raw-edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatDate } from '@/lib/formatters';
-import type { EdictRaw } from '@/types';
+import type { RawEdict } from '@/types';
 
 export default function ExtractedEdictsPage() {
   const t = useTranslations('extractedEdicts');
 
-  const [data, setData] = useState<EdictRaw[]>([]);
+  const [data, setData] = useState<RawEdict[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<EdictRaw | null>(null);
+  const [selectedItem, setSelectedItem] = useState<RawEdict | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 20,
@@ -28,7 +28,7 @@ export default function ExtractedEdictsPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await edictsRawService.getAll({
+      const response = await rawEdictsService.getAll({
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
       });
@@ -45,11 +45,11 @@ export default function ExtractedEdictsPage() {
     fetchData();
   }, [fetchData]);
 
-  const handleDelete = async (item: EdictRaw) => {
+  const handleDelete = async (item: RawEdict) => {
     if (!confirm(t('confirmDelete'))) return;
     setDeleteError(null);
     try {
-      await edictsRawService.delete(item.id);
+      await rawEdictsService.delete(item.id);
       fetchData();
     } catch (error) {
       console.error('Failed to delete extracted edict:', error);
@@ -59,7 +59,7 @@ export default function ExtractedEdictsPage() {
     }
   };
 
-  const columns: ColumnDef<EdictRaw>[] = [
+  const columns: ColumnDef<RawEdict>[] = [
     { id: 'caseNumber', header: t('columns.caseNumber'), width: 180, accessorFn: (row) => row.caseNumber || '-' },
     { id: 'reference', header: t('columns.reference'), width: 140, accessorFn: (row) => row.reference || '-' },
     { id: 'creditor', header: t('columns.creditor'), width: 200, accessorFn: (row) => row.creditor || '-' },
@@ -71,7 +71,7 @@ export default function ExtractedEdictsPage() {
     { id: 'createdAt', header: t('columns.createdAt'), width: 140, accessorFn: (row) => formatDate(row.createdAt) },
   ];
 
-  const renderActions = (row: EdictRaw) => (
+  const renderActions = (row: RawEdict) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
       <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>

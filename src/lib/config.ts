@@ -18,8 +18,8 @@ export const config = {
     assets: true,
     bulletins: false,
     territorial: false,
-    edictsRaw: false,
-    assetsRaw: true,
+    rawEdicts: false,
+    rawAssets: true,
   },
 
   /**

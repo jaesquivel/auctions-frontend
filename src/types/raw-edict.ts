@@ -1,8 +1,8 @@
 import type { Bulletin } from './bulletin';
 
 // Extracted Edict (raw edict from bulletin)
-// Maps to /edicts-raw API endpoint
-export interface EdictRaw {
+// Maps to /raw-edicts API endpoint
+export interface RawEdict {
   id: string;
   reference: string | null;
   creditor: string | null;
@@ -17,9 +17,9 @@ export interface EdictRaw {
 }
 
 // Alias for backwards compatibility
-export type ExtractedEdict = EdictRaw;
+export type ExtractedEdict = RawEdict;
 
-export interface EdictRawCreateRequest {
+export interface RawEdictCreateRequest {
   reference?: string;
   creditor?: string;
   debtor?: string;
@@ -31,7 +31,7 @@ export interface EdictRawCreateRequest {
   processed?: boolean;
 }
 
-export interface EdictRawUpdateRequest {
+export interface RawEdictUpdateRequest {
   reference?: string;
   creditor?: string;
   debtor?: string;
