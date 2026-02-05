@@ -137,7 +137,19 @@
     }
   },
   "extractedEdicts": {
-    "title": "Extracted Edicts"
+    "title": "Extracted Edicts",
+    "confirmDelete": "Are you sure you want to delete this extracted edict?",
+    "columns": {
+      "caseNumber": "Case Number",
+      "reference": "Reference",
+      "creditor": "Creditor",
+      "debtor": "Debtor",
+      "court": "Court",
+      "publication": "Publication",
+      "bulletin": "Bulletin",
+      "processed": "Processed",
+      "createdAt": "Date"
+    }
   },
   "extractedAssets": {
     "title": "Extracted Assets"

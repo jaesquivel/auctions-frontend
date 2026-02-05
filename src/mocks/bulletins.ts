@@ -1,4 +1,4 @@
-import type { Bulletin, ExtractedEdict, ExtractedAsset } from '@/types';
+import type { Bulletin, EdictRaw, ExtractedAsset } from '@/types';
 
 export const mockBulletins: Bulletin[] = Array.from({ length: 32 }, (_, i) => ({
   id: `bul${i + 1}`,
@@ -9,12 +9,40 @@ export const mockBulletins: Bulletin[] = Array.from({ length: 32 }, (_, i) => ({
   createdAt: `2024-${String(Math.floor(i / 4) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T08:00:00Z`,
 }));
 
-export const mockExtractedEdicts: ExtractedEdict[] = Array.from({ length: 35 }, (_, i) => ({
+const mockCreditors = [
+  'BANCO BAC SAN JOSE SOCIEDAD ANÓNIMA',
+  'BANCO NACIONAL DE COSTA RICA',
+  'BANCO DE COSTA RICA',
+  'COOPENAE R.L.',
+  'BANCO POPULAR Y DE DESARROLLO COMUNAL',
+];
+
+const mockDebtors = [
+  'JUAN CARLOS PÉREZ RODRÍGUEZ',
+  'MARÍA FERNANDA SOLÍS CASTRO',
+  'CARLOS ALBERTO VARGAS MORA',
+  'ANA LUCÍA JIMÉNEZ QUESADA',
+  'ROBERTO JOSÉ HERNÁNDEZ SILVA',
+];
+
+const mockCourts = [
+  'JUZGADO PRIMERO ESPECIALIZADO DE COBRO DEL I CIRCUITO JUDICIAL DE SAN JOSÉ',
+  'JUZGADO SEGUNDO ESPECIALIZADO DE COBRO DEL I CIRCUITO JUDICIAL DE SAN JOSÉ',
+  'JUZGADO CIVIL DE HEREDIA',
+  'JUZGADO CIVIL DE CARTAGO',
+  'JUZGADO CIVIL DE ALAJUELA',
+];
+
+export const mockExtractedEdicts: EdictRaw[] = Array.from({ length: 35 }, (_, i) => ({
   id: `exed${i + 1}`,
-  bulletinId: mockBulletins[i % mockBulletins.length].id,
-  rawText: `EDICTO DE REMATE\n\nJUZGADO CIVIL DE SAN JOSÉ\n\nExpediente: 24-00${String(i + 100).padStart(4, '0')}-0180-CI\n\nSe hace saber que en este Juzgado se tramita proceso de ejecución...`,
-  caseNumber: `24-00${String(i + 100).padStart(4, '0')}-0180-CI`,
-  reference: `REF-2024-${String(i + 1).padStart(3, '0')}`,
+  reference: `2024${String(165000 + i).padStart(6, '0')}`,
+  creditor: mockCreditors[i % mockCreditors.length],
+  debtor: mockDebtors[i % mockDebtors.length],
+  caseNumber: `24-00${String(i + 100).padStart(4, '0')}-1170-CJ`,
+  court: mockCourts[i % mockCourts.length],
+  publication: String((i % 3) + 1),
+  publicationCount: '3',
+  bulletin: mockBulletins[i % mockBulletins.length],
   processed: i < 25,
   createdAt: `2024-${String(Math.floor(i / 4) + 1).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T09:00:00Z`,
 }));

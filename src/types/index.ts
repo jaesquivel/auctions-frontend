@@ -4,6 +4,8 @@ export * from './asset';
 export * from './edict';
 export * from './vehicle';
 export * from './bulletin';
+export * from './asset-raw';
+export * from './edict-raw';
 export * from './tag';
 export * from './territorial';
 export * from './common';

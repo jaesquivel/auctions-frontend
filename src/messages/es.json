@@ -137,7 +137,19 @@
     }
   },
   "extractedEdicts": {
-    "title": "Edictos Extraídos"
+    "title": "Edictos Extraídos",
+    "confirmDelete": "¿Está seguro de que desea eliminar este edicto extraído?",
+    "columns": {
+      "caseNumber": "Número de Caso",
+      "reference": "Referencia",
+      "creditor": "Acreedor",
+      "debtor": "Deudor",
+      "court": "Juzgado",
+      "publication": "Publicación",
+      "bulletin": "Boletín",
+      "processed": "Procesado",
+      "createdAt": "Fecha"
+    }
   },
   "extractedAssets": {
     "title": "Bienes Extraídos"

@@ -1,6 +1,8 @@
 {
   "permissions": {
-    "allow": [],
+    "allow": [
+      "Read(//Users/jesquivel/Documents/development/projects/auctions/**)"
+    ],
     "deny": []
   }
 }

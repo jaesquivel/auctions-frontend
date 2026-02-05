@@ -1,6 +1,7 @@
 // Services
 export { propertiesService, type PropertyFilters } from './properties';
 export { edictsService, type EdictFilters } from './edicts';
+export { edictsRawService, type EdictRawFilters } from './edicts-raw';
 export { tagsService } from './tags';
 export { vehiclesService, type VehicleFilters } from './vehicles';
 export { assetsService, type AssetFilters } from './assets';

@@ -25,23 +25,3 @@ export interface BulletinUpdateRequest {
   document?: string;
   processed?: boolean;
 }
-
-// Extracted Edict (raw edict from bulletin)
-export interface ExtractedEdict {
-  id: string;
-  bulletinId: string;
-  rawText: string;
-  caseNumber: string | null;
-  reference: string | null;
-  processed: boolean;
-  createdAt: string;
-}
-
-// Extracted Asset (raw asset from bulletin)
-export interface ExtractedAsset {
-  id: string;
-  extractedEdictId: string;
-  rawText: string;
-  processed: boolean;
-  createdAt: string;
-}

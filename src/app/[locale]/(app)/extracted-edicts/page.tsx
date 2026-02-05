@@ -1,39 +1,80 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Eye, Check, X, Edit, Trash2 } from 'lucide-react';
+import { Check, X, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
-import { mockExtractedEdicts } from '@/mocks';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { edictsRawService } from '@/services/edicts-raw';
+import { ApiError } from '@/lib/api-client';
+import { getErrorMessage } from '@/lib/toast';
 import { formatDate } from '@/lib/formatters';
-import type { ExtractedEdict } from '@/types';
+import type { EdictRaw } from '@/types';
 
 export default function ExtractedEdictsPage() {
   const t = useTranslations('extractedEdicts');
 
-  const [selectedItem, setSelectedItem] = useState<ExtractedEdict | null>(null);
+  const [data, setData] = useState<EdictRaw[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<EdictRaw | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 20,
-    total: mockExtractedEdicts.length,
+    total: 0,
   });
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  const startIndex = (pagination.page - 1) * pagination.pageSize;
-  const paginatedData = mockExtractedEdicts.slice(startIndex, startIndex + pagination.pageSize);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await edictsRawService.getAll({
+        page: pagination.page - 1,  // Convert to 0-indexed
+        size: pagination.pageSize,
+      });
+      setData(response.content);
+      setPagination((prev) => ({ ...prev, total: response.totalElements }));
+    } catch (error) {
+      console.error('Failed to fetch extracted edicts:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.page, pagination.pageSize]);
 
-  const columns: ColumnDef<ExtractedEdict>[] = [
-    { id: 'caseNumber', header: 'Número de Caso', width: 180, accessorFn: (row) => row.caseNumber || '-' },
-    { id: 'reference', header: 'Referencia', width: 140, accessorFn: (row) => row.reference || '-' },
-    { id: 'rawText', header: 'Texto Extraído', width: 400, accessorFn: (row) => row.rawText.substring(0, 100) + '...' },
-    { id: 'processed', header: 'Procesado', width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
-    { id: 'createdAt', header: 'Fecha', width: 140, accessorFn: (row) => formatDate(row.createdAt) },
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleDelete = async (item: EdictRaw) => {
+    if (!confirm(t('confirmDelete'))) return;
+    setDeleteError(null);
+    try {
+      await edictsRawService.delete(item.id);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete extracted edict:', error);
+      if (error instanceof ApiError && error.status === 409) {
+        setDeleteError(getErrorMessage(error.status, error.message));
+      }
+    }
+  };
+
+  const columns: ColumnDef<EdictRaw>[] = [
+    { id: 'caseNumber', header: t('columns.caseNumber'), width: 180, accessorFn: (row) => row.caseNumber || '-' },
+    { id: 'reference', header: t('columns.reference'), width: 140, accessorFn: (row) => row.reference || '-' },
+    { id: 'creditor', header: t('columns.creditor'), width: 200, accessorFn: (row) => row.creditor || '-' },
+    { id: 'debtor', header: t('columns.debtor'), width: 200, accessorFn: (row) => row.debtor || '-' },
+    { id: 'court', header: t('columns.court'), width: 200, accessorFn: (row) => row.court || '-' },
+    { id: 'publication', header: t('columns.publication'), width: 100, align: 'center', accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
+    { id: 'bulletinVolume', header: t('columns.bulletin'), width: 120, align: 'center', accessorFn: (row) => row.bulletin ? `${row.bulletin.volume}/${row.bulletin.year}` : '-' },
+    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
+    { id: 'createdAt', header: t('columns.createdAt'), width: 140, accessorFn: (row) => formatDate(row.createdAt) },
   ];
 
-  const renderActions = (row: ExtractedEdict) => (
+  const renderActions = (row: EdictRaw) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"><Trash2 className="h-4 w-4" /></Button>
+      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
     </div>
   );
 
@@ -42,8 +83,27 @@ export default function ExtractedEdictsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
       </div>
+
+      {deleteError && (
+        <Alert variant="destructive" onClose={() => setDeleteError(null)}>
+          <AlertDescription>{deleteError}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={paginatedData} keyField="id" pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onRowSelect={setSelectedItem} selectedRow={selectedItem} actions={renderActions} onFilter={() => {}} onReload={() => {}} />
+        <DataGrid
+          columns={columns}
+          data={data}
+          keyField="id"
+          loading={loading}
+          pagination={pagination}
+          onPageChange={(p) => setPagination((prev) => ({ ...prev, page: p }))}
+          onPageSizeChange={(size) => setPagination((prev) => ({ ...prev, pageSize: size, page: 1 }))}
+          onRowSelect={setSelectedItem}
+          selectedRow={selectedItem}
+          actions={renderActions}
+          onReload={fetchData}
+        />
       </div>
     </div>
   );
