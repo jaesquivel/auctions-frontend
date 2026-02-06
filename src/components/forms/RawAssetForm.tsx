@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { RawAsset, RawAssetUpdateRequest } from '@/types';
 
@@ -15,9 +16,10 @@ interface RawAssetFormProps {
   onSubmit: (data: RawAssetUpdateRequest) => void;
   readOnly?: boolean;
   loading?: boolean;
+  edictFullText?: string | null;
 }
 
-export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly = false, loading = false }: RawAssetFormProps) {
+export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly = false, loading = false, edictFullText }: RawAssetFormProps) {
   const t = useTranslations('extractedAssets');
   const tCommon = useTranslations('common');
 
@@ -79,23 +81,23 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const data: RawAssetUpdateRequest = {
-      type: formData.type || undefined,
-      registration: formData.registration || undefined,
-      plate: formData.plate || undefined,
-      currency: formData.currency || undefined,
-      firstAuctionDate: formData.firstAuctionDate || undefined,
-      firstAuctionTime: formData.firstAuctionTime || undefined,
-      firstAuctionBase: formData.firstAuctionBase || undefined,
-      secondAuctionDate: formData.secondAuctionDate || undefined,
-      secondAuctionTime: formData.secondAuctionTime || undefined,
-      secondAuctionBase: formData.secondAuctionBase || undefined,
-      thirdAuctionDate: formData.thirdAuctionDate || undefined,
-      thirdAuctionTime: formData.thirdAuctionTime || undefined,
-      thirdAuctionBase: formData.thirdAuctionBase || undefined,
-      tdProvince: formData.tdProvince || undefined,
-      tdCanton: formData.tdCanton || undefined,
-      tdDistrict: formData.tdDistrict || undefined,
-      area: formData.area || undefined,
+      type: formData.type,
+      registration: formData.registration,
+      plate: formData.plate,
+      currency: formData.currency,
+      firstAuctionDate: formData.firstAuctionDate,
+      firstAuctionTime: formData.firstAuctionTime,
+      firstAuctionBase: formData.firstAuctionBase,
+      secondAuctionDate: formData.secondAuctionDate,
+      secondAuctionTime: formData.secondAuctionTime,
+      secondAuctionBase: formData.secondAuctionBase,
+      thirdAuctionDate: formData.thirdAuctionDate,
+      thirdAuctionTime: formData.thirdAuctionTime,
+      thirdAuctionBase: formData.thirdAuctionBase,
+      tdProvince: formData.tdProvince,
+      tdCanton: formData.tdCanton,
+      tdDistrict: formData.tdDistrict,
+      area: formData.area,
       processed: formData.processed,
     };
     onSubmit(data);
@@ -144,6 +146,19 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
               <p className="text-xs font-medium text-muted-foreground">{t('columns.edict')}</p>
               <p className="text-sm">{t('columns.caseNumber')}: {rawAsset.rawEdict.caseNumber || '-'}</p>
               <p className="text-sm">{t('columns.reference')}: {rawAsset.rawEdict.reference || '-'}</p>
+            </div>
+          )}
+
+          {/* Edict full text (read-only) */}
+          {edictFullText && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">{t('form.edictFullText')}</label>
+              <Textarea
+                value={edictFullText}
+                rows={8}
+                readOnly
+                className="cursor-default"
+              />
             </div>
           )}
 
@@ -201,7 +216,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">{t('form.date')}</label>
-                <Input type="date" value={formData.firstAuctionDate} onChange={(e) => setFormData((prev) => ({ ...prev, firstAuctionDate: e.target.value }))} disabled={readOnly} />
+                <Input value={formData.firstAuctionDate} onChange={(e) => setFormData((prev) => ({ ...prev, firstAuctionDate: e.target.value }))} disabled={readOnly} />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">{t('form.time')}</label>
@@ -220,7 +235,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">{t('form.date')}</label>
-                <Input type="date" value={formData.secondAuctionDate} onChange={(e) => setFormData((prev) => ({ ...prev, secondAuctionDate: e.target.value }))} disabled={readOnly} />
+                <Input value={formData.secondAuctionDate} onChange={(e) => setFormData((prev) => ({ ...prev, secondAuctionDate: e.target.value }))} disabled={readOnly} />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">{t('form.time')}</label>
@@ -239,7 +254,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">{t('form.date')}</label>
-                <Input type="date" value={formData.thirdAuctionDate} onChange={(e) => setFormData((prev) => ({ ...prev, thirdAuctionDate: e.target.value }))} disabled={readOnly} />
+                <Input value={formData.thirdAuctionDate} onChange={(e) => setFormData((prev) => ({ ...prev, thirdAuctionDate: e.target.value }))} disabled={readOnly} />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">{t('form.time')}</label>

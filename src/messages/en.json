@@ -190,7 +190,8 @@
       "date": "Date",
       "time": "Time",
       "base": "Base",
-      "location": "Location"
+      "location": "Location",
+      "edictFullText": "Edict Full Text"
     }
   },
   "tags": {

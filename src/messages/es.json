@@ -190,7 +190,8 @@
       "date": "Fecha",
       "time": "Hora",
       "base": "Base",
-      "location": "Ubicación"
+      "location": "Ubicación",
+      "edictFullText": "Texto Completo del Edicto"
     }
   },
   "tags": {

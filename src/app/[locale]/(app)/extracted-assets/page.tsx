@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RawAssetForm } from '@/components/forms/RawAssetForm';
 import { rawAssetsService } from '@/services/raw-assets';
+import { rawEdictsService } from '@/services/raw-edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import type { RawAsset, RawAssetUpdateRequest } from '@/types';
@@ -26,6 +27,8 @@ export default function ExtractedAssetsPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editingRawAsset, setEditingRawAsset] = useState<RawAsset | null>(null);
+  const [formLoading, setFormLoading] = useState(false);
+  const [edictFullText, setEdictFullText] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -47,9 +50,23 @@ export default function ExtractedAssetsPage() {
     fetchData();
   }, [fetchData]);
 
-  const handleEdit = (rawAsset: RawAsset) => {
+  const handleEdit = async (rawAsset: RawAsset) => {
     setEditingRawAsset(rawAsset);
+    setEdictFullText(null);
     setFormOpen(true);
+    setFormLoading(true);
+    try {
+      if (rawAsset.rawEdict?.id) {
+        const fullEdict = await rawEdictsService.getById(rawAsset.rawEdict.id);
+        if (fullEdict) {
+          setEdictFullText(fullEdict.fullText || null);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch raw edict details:', error);
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   const handleSubmit = async (data: RawAssetUpdateRequest) => {
@@ -130,6 +147,8 @@ export default function ExtractedAssetsPage() {
         onOpenChange={setFormOpen}
         rawAsset={editingRawAsset}
         onSubmit={handleSubmit}
+        loading={formLoading}
+        edictFullText={edictFullText}
       />
     </div>
   );

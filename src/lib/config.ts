@@ -19,7 +19,7 @@ export const config = {
     bulletins: false,
     territorial: false,
     rawEdicts: false,
-    rawAssets: true,
+    rawAssets: false,
   },
 
   /**
