@@ -2,12 +2,14 @@ import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockBulletins } from '@/mocks';
 import type { Bulletin, SpringPage } from '@/types';
+import type { FilterState } from '@/components/data-grid';
 
 export interface BulletinFilters {
   page?: number;  // 0-indexed
   size?: number;
   sort?: string[];
   year?: number;
+  filters?: FilterState;
 }
 
 export const bulletinsService = {
@@ -40,6 +42,7 @@ export const bulletinsService = {
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.year) params.set('year', filters.year.toString());
+    if (filters.filters) params.set('filters', JSON.stringify(filters.filters));
 
     return apiClient.get<SpringPage<Bulletin>>(`/bulletins?${params.toString()}`);
   },

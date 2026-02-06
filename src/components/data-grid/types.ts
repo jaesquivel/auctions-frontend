@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { ColumnFilterType, FilterState } from './filters/filter-types';
 
 export interface ColumnDef<T> {
   id: string;
@@ -8,6 +9,8 @@ export interface ColumnDef<T> {
   width?: number; // Fixed width in pixels
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
+  filterable?: boolean;
+  filterType?: ColumnFilterType;
 }
 
 export interface PaginationState {
@@ -36,8 +39,9 @@ export interface DataGridProps<T> {
   onRowSelect?: (row: T) => void;
   selectedRow?: T | null;
   actions?: (row: T) => ReactNode;
-  onFilter?: () => void;
-  onEditFilters?: () => void;
+  filterState?: FilterState;
+  onFilterApply?: (state: FilterState) => void;
+  filterMode?: 'simple' | 'advanced';
   onDownload?: () => void;
   onReload?: () => void;
   sort?: SortState[];

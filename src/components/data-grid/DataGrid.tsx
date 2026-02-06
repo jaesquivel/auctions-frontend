@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DataGridToolbar } from "./DataGridToolbar";
+import { FilterDialog, getFilterableColumns, hasActiveFilters, countActiveFilters } from "./filters";
 import type { DataGridProps, ColumnDef } from "./types";
 
 const MIN_COLUMN_WIDTH = 50;
@@ -20,8 +21,9 @@ export function DataGrid<T>({
   onRowSelect,
   selectedRow,
   actions,
-  onFilter,
-  onEditFilters,
+  filterState,
+  onFilterApply,
+  filterMode = 'simple',
   onDownload,
   onReload,
   sort,
@@ -132,6 +134,13 @@ export function DataGrid<T>({
       onSort(sort.filter((s) => s.columnId !== columnId));
     }
   };
+
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+
+  const filterableColumns = useMemo(
+    () => getFilterableColumns(columns),
+    [columns]
+  );
 
   const getSortIcon = (columnId: string) => {
     const entry = sort?.find((s) => s.columnId === columnId);
@@ -259,11 +268,23 @@ export function DataGrid<T>({
         pagination={pagination}
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
-        onFilter={onFilter}
-        onEditFilters={onEditFilters}
+        onFilterClick={filterableColumns.length > 0 ? () => setFilterDialogOpen(true) : undefined}
+        hasActiveFilters={hasActiveFilters(filterState)}
+        activeFilterCount={countActiveFilters(filterState)}
         onDownload={onDownload}
         onReload={onReload}
       />
+
+      {filterableColumns.length > 0 && onFilterApply && (
+        <FilterDialog
+          open={filterDialogOpen}
+          onOpenChange={setFilterDialogOpen}
+          columns={filterableColumns}
+          initialState={filterState}
+          onApply={onFilterApply}
+          mode={filterMode}
+        />
+      )}
     </div>
   );
 }

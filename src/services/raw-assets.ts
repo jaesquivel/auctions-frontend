@@ -2,6 +2,7 @@ import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockExtractedAssets } from '@/mocks';
 import type { RawAsset, RawAssetUpdateRequest, SpringPage } from '@/types';
+import type { FilterState } from '@/components/data-grid';
 
 export interface RawAssetFilters {
   page?: number;  // 0-indexed
@@ -10,6 +11,7 @@ export interface RawAssetFilters {
   rawEdictId?: string;
   type?: string;
   processed?: boolean;
+  filters?: FilterState;
 }
 
 export const rawAssetsService = {
@@ -44,6 +46,7 @@ export const rawAssetsService = {
     if (filters.rawEdictId) params.set('rawEdictId', filters.rawEdictId);
     if (filters.type) params.set('type', filters.type);
     if (filters.processed !== undefined) params.set('processed', filters.processed.toString());
+    if (filters.filters) params.set('filters', JSON.stringify(filters.filters));
 
     return apiClient.get<SpringPage<RawAsset>>(`/raw-assets?${params.toString()}`);
   },

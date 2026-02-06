@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { vehiclesService } from '@/services/vehicles';
@@ -25,6 +25,7 @@ export default function VehiclesPage() {
   });
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [sort, setSort] = useState<SortState[]>([]);
+  const [filterState, setFilterState] = useState<FilterState | undefined>();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -33,6 +34,7 @@ export default function VehiclesPage() {
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
         sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
+        filters: filterState,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -41,7 +43,7 @@ export default function VehiclesPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize, sort]);
+  }, [pagination.page, pagination.pageSize, sort, filterState]);
 
   useEffect(() => {
     fetchData();
@@ -62,13 +64,13 @@ export default function VehiclesPage() {
   };
 
   const columns: ColumnDef<VehicleSummary>[] = [
-    { id: 'plate', header: 'Placa', width: 100, accessorKey: 'plate' },
-    { id: 'brand', header: 'Marca', width: 120, accessorFn: (row) => row.brand || '-' },
-    { id: 'model', header: 'Modelo', width: 120, accessorFn: (row) => row.model || '-' },
-    { id: 'year', header: 'Año', width: 80, align: 'center', accessorFn: (row) => row.year?.toString() || '-' },
-    { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, accessorFn: (row) => formatDate(row.firstAuctionTs) },
-    { id: 'firstAuctionBase', header: 'Base', width: 130, align: 'right', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
-    { id: 'caseNumber', header: 'Caso', width: 160, accessorFn: (row) => row.edict?.caseNumber || '-' },
+    { id: 'plate', header: 'Placa', width: 100, filterable: true, filterType: 'text', accessorKey: 'plate' },
+    { id: 'brand', header: 'Marca', width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.brand || '-' },
+    { id: 'model', header: 'Modelo', width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.model || '-' },
+    { id: 'year', header: 'Año', width: 80, align: 'center', filterable: true, filterType: 'number', accessorFn: (row) => row.year?.toString() || '-' },
+    { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.firstAuctionTs) },
+    { id: 'firstAuctionBase', header: 'Base', width: 130, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
+    { id: 'caseNumber', header: 'Caso', width: 160, filterable: true, filterType: 'text', accessorFn: (row) => row.edict?.caseNumber || '-' },
   ];
 
   const renderActions = (row: VehicleSummary) => (
@@ -92,7 +94,7 @@ export default function VehiclesPage() {
       )}
 
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedVehicle} selectedRow={selectedVehicle} actions={renderActions} onFilter={() => {}} onReload={fetchData} sort={sort} onSort={setSort} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedVehicle} selectedRow={selectedVehicle} actions={renderActions} onReload={fetchData} sort={sort} onSort={setSort} filterState={filterState} onFilterApply={(state) => { setFilterState(state); setPagination((prev) => ({ ...prev, page: 1 })); }} />
       </div>
     </div>
   );

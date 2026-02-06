@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { assetsService } from '@/services/assets';
@@ -25,6 +25,7 @@ export default function AssetsPage() {
   });
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [sort, setSort] = useState<SortState[]>([]);
+  const [filterState, setFilterState] = useState<FilterState | undefined>();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -33,6 +34,7 @@ export default function AssetsPage() {
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
         sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
+        filters: filterState,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -41,7 +43,7 @@ export default function AssetsPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize, sort]);
+  }, [pagination.page, pagination.pageSize, sort, filterState]);
 
   useEffect(() => {
     fetchData();
@@ -62,13 +64,13 @@ export default function AssetsPage() {
   };
 
   const columns: ColumnDef<Asset>[] = [
-    { id: 'registration', header: 'Matrícula', width: 100, accessorFn: (row) => row.registration || '-' },
-    { id: 'type', header: 'Tipo', width: 150, accessorFn: (row) => row.type || '-' },
-    { id: 'tdProvince', header: 'Provincia', width: 120, accessorFn: (row) => row.tdProvince?.name || '-' },
-    { id: 'tdCanton', header: 'Cantón', width: 120, accessorFn: (row) => row.tdCanton?.name || '-' },
-    { id: 'area', header: 'Área', width: 100, align: 'right', accessorFn: (row) => formatArea(row.area) },
-    { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, accessorFn: (row) => formatDate(row.firstAuctionTs) },
-    { id: 'firstAuctionBase', header: 'Base', width: 130, align: 'right', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
+    { id: 'registration', header: 'Matrícula', width: 100, filterable: true, filterType: 'text', accessorFn: (row) => row.registration || '-' },
+    { id: 'type', header: 'Tipo', width: 150, filterable: true, filterType: 'text', accessorFn: (row) => row.type || '-' },
+    { id: 'tdProvince', header: 'Provincia', width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.tdProvince?.name || '-' },
+    { id: 'tdCanton', header: 'Cantón', width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.tdCanton?.name || '-' },
+    { id: 'area', header: 'Área', width: 100, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatArea(row.area) },
+    { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.firstAuctionTs) },
+    { id: 'firstAuctionBase', header: 'Base', width: 130, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
   ];
 
   const renderActions = (row: Asset) => (
@@ -92,7 +94,7 @@ export default function AssetsPage() {
       )}
 
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedAsset} selectedRow={selectedAsset} actions={renderActions} onFilter={() => {}} onReload={fetchData} sort={sort} onSort={setSort} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedAsset} selectedRow={selectedAsset} actions={renderActions} onReload={fetchData} sort={sort} onSort={setSort} filterState={filterState} onFilterApply={(state) => { setFilterState(state); setPagination((prev) => ({ ...prev, page: 1 })); }} />
       </div>
     </div>
   );

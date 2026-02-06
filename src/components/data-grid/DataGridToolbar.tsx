@@ -1,6 +1,6 @@
 'use client';
 
-import { Filter, SlidersHorizontal, Download, RefreshCw } from 'lucide-react';
+import { Filter, Download, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import {
@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 import { DataGridPagination } from './DataGridPagination';
 import { PAGE_SIZE_OPTIONS, type PaginationState } from './types';
 
@@ -18,8 +19,9 @@ interface DataGridToolbarProps {
   pagination?: PaginationState;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
-  onFilter?: () => void;
-  onEditFilters?: () => void;
+  onFilterClick?: () => void;
+  hasActiveFilters?: boolean;
+  activeFilterCount?: number;
   onDownload?: () => void;
   onReload?: () => void;
 }
@@ -28,8 +30,9 @@ export function DataGridToolbar({
   pagination,
   onPageChange,
   onPageSizeChange,
-  onFilter,
-  onEditFilters,
+  onFilterClick,
+  hasActiveFilters,
+  activeFilterCount,
   onDownload,
   onReload,
 }: DataGridToolbarProps) {
@@ -39,35 +42,24 @@ export function DataGridToolbar({
     <TooltipProvider>
       <div className="flex items-center justify-between border-t border-border bg-muted/30 px-2 py-1 sticky bottom-0 z-10">
         <div className="flex items-center gap-1">
-          {onFilter && (
+          {onFilterClick && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7"
-                  onClick={onFilter}
+                  className={cn('h-7 w-7 relative', hasActiveFilters && 'text-primary')}
+                  onClick={onFilterClick}
                 >
                   <Filter className="h-4 w-4" />
+                  {hasActiveFilters && activeFilterCount != null && activeFilterCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+                      {activeFilterCount}
+                    </span>
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>{t('filter')}</TooltipContent>
-            </Tooltip>
-          )}
-
-          {onEditFilters && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={onEditFilters}
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Edit Filters</TooltipContent>
             </Tooltip>
           )}
 

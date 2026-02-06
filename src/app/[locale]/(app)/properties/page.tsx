@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TagList } from '@/components/ui/tag-badge';
@@ -25,6 +25,7 @@ export default function PropertiesPage() {
     total: 0,
   });
   const [sort, setSort] = useState<SortState[]>([]);
+  const [filterState, setFilterState] = useState<FilterState | undefined>();
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -34,6 +35,7 @@ export default function PropertiesPage() {
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
         sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
+        filters: filterState,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -42,7 +44,7 @@ export default function PropertiesPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize, sort]);
+  }, [pagination.page, pagination.pageSize, sort, filterState]);
 
   useEffect(() => {
     fetchData();
@@ -53,6 +55,8 @@ export default function PropertiesPage() {
       id: 'tags',
       header: t('columns.tags'),
       width: 150,
+      filterable: true,
+      filterType: 'text',
       accessorFn: (row) => <TagList tags={row.tags} max={10} />,
     },
     {
@@ -60,6 +64,8 @@ export default function PropertiesPage() {
       header: t('columns.registration'),
       width: 100,
       sortable: true,
+      filterable: true,
+      filterType: 'text',
       accessorFn: (row) => row.registrationFull || '-',
     },
     {
@@ -67,6 +73,8 @@ export default function PropertiesPage() {
       header: t('columns.location'),
       width: 200,
       sortable: true,
+      filterable: true,
+      filterType: 'text',
       accessorFn: (row) => row.tdLocation || '-',
     },
     {
@@ -74,6 +82,8 @@ export default function PropertiesPage() {
       header: t('columns.firstDate'),
       width: 140,
       sortable: true,
+      filterable: true,
+      filterType: 'date',
       accessorFn: (row) => formatDate(row.asset.firstAuctionTs),
     },
     {
@@ -82,6 +92,8 @@ export default function PropertiesPage() {
       width: 130,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatCurrency(row.asset.firstAuctionBase, row.asset.currency),
     },
     {
@@ -90,6 +102,8 @@ export default function PropertiesPage() {
       width: 130,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatCurrency(row.firstAuctionBaseAdj, row.asset.currency),
     },
     {
@@ -98,6 +112,8 @@ export default function PropertiesPage() {
       width: 130,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatCurrency(row.firstAuctionGuarantee, row.asset.currency),
     },
     {
@@ -106,6 +122,8 @@ export default function PropertiesPage() {
       width: 130,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatCurrency(row.fiscalValue, 'CRC'),
     },
     {
@@ -114,6 +132,8 @@ export default function PropertiesPage() {
       width: 120,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatCurrency(row.fiscalValueUsd, 'USD'),
     },
     {
@@ -122,6 +142,8 @@ export default function PropertiesPage() {
       width: 90,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatRatio(row.fiscalBaseRatio),
     },
     {
@@ -130,6 +152,8 @@ export default function PropertiesPage() {
       width: 130,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatCurrency(row.marketValue, 'CRC'),
     },
     {
@@ -138,6 +162,8 @@ export default function PropertiesPage() {
       width: 130,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatCurrency(row.appraisalValue, 'CRC'),
     },
     {
@@ -146,6 +172,8 @@ export default function PropertiesPage() {
       width: 100,
       align: 'right',
       sortable: true,
+      filterable: true,
+      filterType: 'number',
       accessorFn: (row) => formatArea(row.asset.area),
     },
     {
@@ -153,6 +181,8 @@ export default function PropertiesPage() {
       header: t('columns.caseNumber'),
       width: 160,
       sortable: true,
+      filterable: true,
+      filterType: 'text',
       accessorFn: (row) => row.edict.caseNumber,
     },
   ];
@@ -217,8 +247,12 @@ export default function PropertiesPage() {
           onRowSelect={setSelectedProperty}
           selectedRow={selectedProperty}
           actions={renderActions}
-          onFilter={() => console.log('Filter clicked')}
-          onEditFilters={() => console.log('Edit filters clicked')}
+          filterState={filterState}
+          onFilterApply={(state) => {
+            setFilterState(state);
+            setPagination((prev) => ({ ...prev, page: 1 }));
+          }}
+          filterMode="advanced"
           onDownload={() => console.log('Download clicked')}
           onReload={fetchData}
           sort={sort}

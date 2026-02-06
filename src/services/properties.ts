@@ -2,6 +2,7 @@ import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockProperties } from '@/mocks';
 import type { PropertySummary, SpringPage } from '@/types';
+import type { FilterState } from '@/components/data-grid';
 
 export interface PropertyFilters {
   page?: number;  // 0-indexed
@@ -9,6 +10,7 @@ export interface PropertyFilters {
   sort?: string[];
   search?: string;
   tags?: string[];
+  filters?: FilterState;
 }
 
 export const propertiesService = {
@@ -42,6 +44,7 @@ export const propertiesService = {
     filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.search) params.set('search', filters.search);
     if (filters.tags?.length) params.set('tags', filters.tags.join(','));
+    if (filters.filters) params.set('filters', JSON.stringify(filters.filters));
 
     return apiClient.get<SpringPage<PropertySummary>>(`/properties?${params.toString()}`);
   },

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { edictsService } from '@/services/edicts';
@@ -25,6 +25,7 @@ export default function EdictsPage() {
   });
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [sort, setSort] = useState<SortState[]>([]);
+  const [filterState, setFilterState] = useState<FilterState | undefined>();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -33,6 +34,7 @@ export default function EdictsPage() {
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
         sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
+        filters: filterState,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -41,7 +43,7 @@ export default function EdictsPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize, sort]);
+  }, [pagination.page, pagination.pageSize, sort, filterState]);
 
   useEffect(() => {
     fetchData();
@@ -62,12 +64,12 @@ export default function EdictsPage() {
   };
 
   const columns: ColumnDef<Edict>[] = [
-    { id: 'caseNumber', header: 'Número de Caso', width: 180, accessorKey: 'caseNumber' },
-    { id: 'reference', header: 'Referencia', width: 140, accessorKey: 'reference' },
-    { id: 'creditor', header: 'Acreedor', width: 200, accessorFn: (row) => row.creditor.name },
-    { id: 'debtor', header: 'Deudor', width: 200, accessorFn: (row) => row.debtor.name },
-    { id: 'court', header: 'Juzgado', width: 200, accessorFn: (row) => row.court || '-' },
-    { id: 'publication', header: 'Publicación', width: 100, align: 'center', accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
+    { id: 'caseNumber', header: 'Número de Caso', width: 180, filterable: true, filterType: 'text', accessorKey: 'caseNumber' },
+    { id: 'reference', header: 'Referencia', width: 140, filterable: true, filterType: 'text', accessorKey: 'reference' },
+    { id: 'creditor', header: 'Acreedor', width: 200, filterable: true, filterType: 'text', accessorFn: (row) => row.creditor.name },
+    { id: 'debtor', header: 'Deudor', width: 200, filterable: true, filterType: 'text', accessorFn: (row) => row.debtor.name },
+    { id: 'court', header: 'Juzgado', width: 200, filterable: true, filterType: 'text', accessorFn: (row) => row.court || '-' },
+    { id: 'publication', header: 'Publicación', width: 100, align: 'center', filterable: true, filterType: 'number', accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
   ];
 
   const renderActions = (row: Edict) => (
@@ -91,7 +93,7 @@ export default function EdictsPage() {
       )}
 
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedEdict} selectedRow={selectedEdict} actions={renderActions} onFilter={() => {}} onReload={fetchData} sort={sort} onSort={setSort} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedEdict} selectedRow={selectedEdict} actions={renderActions} onReload={fetchData} sort={sort} onSort={setSort} filterState={filterState} onFilterApply={(state) => { setFilterState(state); setPagination((prev) => ({ ...prev, page: 1 })); }} />
       </div>
     </div>
   );

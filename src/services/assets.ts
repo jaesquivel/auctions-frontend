@@ -2,12 +2,14 @@ import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockAssets } from '@/mocks';
 import type { Asset, SpringPage } from '@/types';
+import type { FilterState } from '@/components/data-grid';
 
 export interface AssetFilters {
   page?: number;  // 0-indexed
   size?: number;
   sort?: string[];
   search?: string;
+  filters?: FilterState;
 }
 
 export const assetsService = {
@@ -40,6 +42,7 @@ export const assetsService = {
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.search) params.set('search', filters.search);
+    if (filters.filters) params.set('filters', JSON.stringify(filters.filters));
 
     return apiClient.get<SpringPage<Asset>>(`/assets?${params.toString()}`);
   },
