@@ -101,7 +101,7 @@ export default function ExtractedEdictsPage() {
     { id: 'debtor', header: t('columns.debtor'), width: 200, sortable: true, accessorFn: (row) => row.debtor || '-' },
     { id: 'court', header: t('columns.court'), width: 200, sortable: true, accessorFn: (row) => row.court || '-' },
     { id: 'publication', header: t('columns.publication'), width: 100, align: 'center', sortable: true, accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
-    { id: 'bulletinVolume', header: t('columns.bulletin'), width: 120, align: 'center', sortable: true, accessorFn: (row) => row.bulletin ? `${row.bulletin.volume}/${row.bulletin.year}` : '-' },
+    { id: 'bulletinVolume', header: t('columns.bulletin'), width: 120, align: 'center', accessorFn: (row) => row.bulletin ? `${row.bulletin.volume}/${row.bulletin.year}` : '-' },
     { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', sortable: true, accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];
 
