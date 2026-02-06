@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2, Check, X } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BulletinForm } from '@/components/forms/BulletinForm';
@@ -26,6 +26,7 @@ export default function BulletinsPage() {
     pageSize: 20,
     total: 0,
   });
+  const [sort, setSort] = useState<SortState[]>([]);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -34,6 +35,7 @@ export default function BulletinsPage() {
       const response = await bulletinsService.getAll({
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
+        sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -42,7 +44,7 @@ export default function BulletinsPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize]);
+  }, [pagination.page, pagination.pageSize, sort]);
 
   useEffect(() => {
     fetchData();
@@ -96,10 +98,10 @@ export default function BulletinsPage() {
   };
 
   const columns: ColumnDef<Bulletin>[] = [
-    { id: 'volume', header: t('columns.volume'), width: 100, align: 'center', accessorFn: (row) => row.volume?.toString() || '-' },
-    { id: 'year', header: t('columns.year'), width: 80, align: 'center', accessorFn: (row) => row.year?.toString() || '-' },
-    { id: 'url', header: t('columns.url'), width: 400, accessorKey: 'url' },
-    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
+    { id: 'volume', header: t('columns.volume'), width: 100, align: 'center', sortable: true, accessorFn: (row) => row.volume?.toString() || '-' },
+    { id: 'year', header: t('columns.year'), width: 80, align: 'center', sortable: true, accessorFn: (row) => row.year?.toString() || '-' },
+    { id: 'url', header: t('columns.url'), width: 400, sortable: true, accessorKey: 'url' },
+    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', sortable: true, accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];
 
   const renderActions = (row: Bulletin) => (
@@ -123,7 +125,7 @@ export default function BulletinsPage() {
       )}
 
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedBulletin} selectedRow={selectedBulletin} actions={renderActions} onReload={fetchData} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedBulletin} selectedRow={selectedBulletin} actions={renderActions} onReload={fetchData} sort={sort} onSort={setSort} />
       </div>
 
       <BulletinForm

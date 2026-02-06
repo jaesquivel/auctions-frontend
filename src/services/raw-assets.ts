@@ -6,7 +6,7 @@ import type { RawAsset, RawAssetUpdateRequest, SpringPage } from '@/types';
 export interface RawAssetFilters {
   page?: number;  // 0-indexed
   size?: number;
-  sort?: string;
+  sort?: string[];
   rawEdictId?: string;
   type?: string;
   processed?: boolean;
@@ -40,7 +40,7 @@ export const rawAssetsService = {
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
-    if (filters.sort) params.set('sort', filters.sort);
+    filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.rawEdictId) params.set('rawEdictId', filters.rawEdictId);
     if (filters.type) params.set('type', filters.type);
     if (filters.processed !== undefined) params.set('processed', filters.processed.toString());

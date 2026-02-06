@@ -6,7 +6,7 @@ import type { PropertySummary, SpringPage } from '@/types';
 export interface PropertyFilters {
   page?: number;  // 0-indexed
   size?: number;
-  sort?: string;
+  sort?: string[];
   search?: string;
   tags?: string[];
 }
@@ -39,7 +39,7 @@ export const propertiesService = {
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
-    if (filters.sort) params.set('sort', filters.sort);
+    filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.search) params.set('search', filters.search);
     if (filters.tags?.length) params.set('tags', filters.tags.join(','));
 

@@ -6,7 +6,7 @@ import type { Bulletin, SpringPage } from '@/types';
 export interface BulletinFilters {
   page?: number;  // 0-indexed
   size?: number;
-  sort?: string;
+  sort?: string[];
   year?: number;
 }
 
@@ -38,7 +38,7 @@ export const bulletinsService = {
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
-    if (filters.sort) params.set('sort', filters.sort);
+    filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.year) params.set('year', filters.year.toString());
 
     return apiClient.get<SpringPage<Bulletin>>(`/bulletins?${params.toString()}`);

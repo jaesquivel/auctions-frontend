@@ -6,7 +6,7 @@ import type { VehicleSummary, SpringPage } from '@/types';
 export interface VehicleFilters {
   page?: number;  // 0-indexed
   size?: number;
-  sort?: string;
+  sort?: string[];
   search?: string;
 }
 
@@ -38,7 +38,7 @@ export const vehiclesService = {
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
-    if (filters.sort) params.set('sort', filters.sort);
+    filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.search) params.set('search', filters.search);
 
     return apiClient.get<SpringPage<VehicleSummary>>(`/vehicles?${params.toString()}`);

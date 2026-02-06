@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, X, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RawAssetForm } from '@/components/forms/RawAssetForm';
@@ -29,6 +29,7 @@ export default function ExtractedAssetsPage() {
   const [editingRawAsset, setEditingRawAsset] = useState<RawAsset | null>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [edictFullText, setEdictFullText] = useState<string | null>(null);
+  const [sort, setSort] = useState<SortState[]>([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -36,6 +37,7 @@ export default function ExtractedAssetsPage() {
       const response = await rawAssetsService.getAll({
         page: pagination.page - 1,
         size: pagination.pageSize,
+        sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -44,7 +46,7 @@ export default function ExtractedAssetsPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize]);
+  }, [pagination.page, pagination.pageSize, sort]);
 
   useEffect(() => {
     fetchData();
@@ -95,15 +97,15 @@ export default function ExtractedAssetsPage() {
   };
 
   const columns: ColumnDef<RawAsset>[] = [
-    { id: 'type', header: t('columns.type'), width: 100, accessorFn: (row) => row.type || '-' },
-    { id: 'registration', header: t('columns.registration'), width: 130, accessorFn: (row) => row.registration || '-' },
-    { id: 'plate', header: t('columns.plate'), width: 110, accessorFn: (row) => row.plate || '-' },
-    { id: 'firstAuctionDate', header: t('columns.firstDate'), width: 110, accessorFn: (row) => row.firstAuctionDate || '-' },
-    { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 130, align: 'right', accessorFn: (row) => row.firstAuctionBase || '-' },
-    { id: 'currency', header: t('columns.currency'), width: 70, align: 'center', accessorFn: (row) => row.currency || '-' },
-    { id: 'location', header: t('columns.location'), width: 200, accessorFn: (row) => [row.tdProvince, row.tdCanton, row.tdDistrict].filter(Boolean).join(', ') || '-' },
-    { id: 'caseNumber', header: t('columns.caseNumber'), width: 160, accessorFn: (row) => row.rawEdict?.caseNumber || '-' },
-    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
+    { id: 'type', header: t('columns.type'), width: 100, sortable: true, accessorFn: (row) => row.type || '-' },
+    { id: 'registration', header: t('columns.registration'), width: 130, sortable: true, accessorFn: (row) => row.registration || '-' },
+    { id: 'plate', header: t('columns.plate'), width: 110, sortable: true, accessorFn: (row) => row.plate || '-' },
+    { id: 'firstAuctionDate', header: t('columns.firstDate'), width: 110, sortable: true, accessorFn: (row) => row.firstAuctionDate || '-' },
+    { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 130, align: 'right', sortable: true, accessorFn: (row) => row.firstAuctionBase || '-' },
+    { id: 'currency', header: t('columns.currency'), width: 70, align: 'center', sortable: true, accessorFn: (row) => row.currency || '-' },
+    { id: 'location', header: t('columns.location'), width: 200, sortable: true, accessorFn: (row) => [row.tdProvince, row.tdCanton, row.tdDistrict].filter(Boolean).join(', ') || '-' },
+    { id: 'caseNumber', header: t('columns.caseNumber'), width: 160, sortable: true, accessorFn: (row) => row.rawEdict?.caseNumber || '-' },
+    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', sortable: true, accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];
 
   const renderActions = (row: RawAsset) => (
@@ -138,6 +140,8 @@ export default function ExtractedAssetsPage() {
           selectedRow={selectedItem}
           actions={renderActions}
           onReload={fetchData}
+          sort={sort}
+          onSort={setSort}
         />
       </div>
 

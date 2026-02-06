@@ -24,7 +24,7 @@ export default function PropertiesPage() {
     pageSize: 20,
     total: 0,
   });
-  const [sort, setSort] = useState<SortState | null>(null);
+  const [sort, setSort] = useState<SortState[]>([]);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -33,6 +33,7 @@ export default function PropertiesPage() {
       const response = await propertiesService.getAll({
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
+        sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -41,7 +42,7 @@ export default function PropertiesPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize]);
+  }, [pagination.page, pagination.pageSize, sort]);
 
   useEffect(() => {
     fetchData();

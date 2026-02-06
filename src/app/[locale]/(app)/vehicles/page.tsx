@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { vehiclesService } from '@/services/vehicles';
@@ -24,6 +24,7 @@ export default function VehiclesPage() {
     total: 0,
   });
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [sort, setSort] = useState<SortState[]>([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -31,6 +32,7 @@ export default function VehiclesPage() {
       const response = await vehiclesService.getAll({
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
+        sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -39,7 +41,7 @@ export default function VehiclesPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize]);
+  }, [pagination.page, pagination.pageSize, sort]);
 
   useEffect(() => {
     fetchData();
@@ -90,7 +92,7 @@ export default function VehiclesPage() {
       )}
 
       <div className="h-[calc(100vh-12rem)]">
-        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedVehicle} selectedRow={selectedVehicle} actions={renderActions} onFilter={() => {}} onReload={fetchData} />
+        <DataGrid columns={columns} data={data} keyField="id" loading={loading} pagination={pagination} onPageChange={(p) => setPagination(prev => ({ ...prev, page: p }))} onPageSizeChange={(size) => setPagination(prev => ({ ...prev, pageSize: size, page: 1 }))} onRowSelect={setSelectedVehicle} selectedRow={selectedVehicle} actions={renderActions} onFilter={() => {}} onReload={fetchData} sort={sort} onSort={setSort} />
       </div>
     </div>
   );

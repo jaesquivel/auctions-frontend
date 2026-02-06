@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DataGridToolbar } from "./DataGridToolbar";
-import type { DataGridProps, ColumnDef, SortState } from "./types";
+import type { DataGridProps, ColumnDef } from "./types";
 
 const MIN_COLUMN_WIDTH = 50;
 
@@ -120,28 +120,29 @@ export function DataGrid<T>({
   const getColumnWidth = (columnId: string) => columnWidths[columnId] || 150;
 
   const handleSort = (columnId: string) => {
-    if (!onSort) return;
+    if (!onSort || !sort) return;
 
-    if (!sort || sort.columnId !== columnId) {
-      // New column or no current sort - start with ascending
-      onSort({ columnId, direction: "asc" });
-    } else if (sort.direction === "asc") {
-      // Currently ascending - switch to descending
-      onSort({ columnId, direction: "desc" });
+    const existing = sort.find((s) => s.columnId === columnId);
+
+    if (!existing) {
+      onSort([...sort, { columnId, direction: "asc" }]);
+    } else if (existing.direction === "asc") {
+      onSort(sort.map((s) => s.columnId === columnId ? { ...s, direction: "desc" } : s));
     } else {
-      // Currently descending - clear sort
-      onSort(null);
+      onSort(sort.filter((s) => s.columnId !== columnId));
     }
   };
 
   const getSortIcon = (columnId: string) => {
-    if (!sort || sort.columnId !== columnId) {
+    const entry = sort?.find((s) => s.columnId === columnId);
+    if (!entry) {
       return <ArrowUpDown className="h-3 w-3 opacity-50" />;
     }
-    if (sort.direction === "asc") {
-      return <ArrowUp className="h-3 w-3" />;
+    const index = sort && sort.length > 1 ? sort.indexOf(entry) + 1 : null;
+    if (entry.direction === "asc") {
+      return <span className="inline-flex items-center gap-0.5"><ArrowUp className="h-3 w-3" />{index && <span className="text-[9px] font-bold">{index}</span>}</span>;
     }
-    return <ArrowDown className="h-3 w-3" />;
+    return <span className="inline-flex items-center gap-0.5"><ArrowDown className="h-3 w-3" />{index && <span className="text-[9px] font-bold">{index}</span>}</span>;
   };
 
   return (

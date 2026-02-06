@@ -6,7 +6,7 @@ import type { RawEdict, RawEdictCreateRequest, RawEdictUpdateRequest, SpringPage
 export interface RawEdictFilters {
   page?: number;  // 0-indexed
   size?: number;
-  sort?: string;
+  sort?: string[];
   bulletinId?: string;
   processed?: boolean;
 }
@@ -39,7 +39,7 @@ export const rawEdictsService = {
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
-    if (filters.sort) params.set('sort', filters.sort);
+    filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.bulletinId) params.set('bulletinId', filters.bulletinId);
     if (filters.processed !== undefined) params.set('processed', filters.processed.toString());
 

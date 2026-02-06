@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, X, Edit, Trash2 } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RawEdictForm } from '@/components/forms/RawEdictForm';
@@ -28,6 +28,7 @@ export default function ExtractedEdictsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingRawEdict, setEditingRawEdict] = useState<RawEdict | null>(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [sort, setSort] = useState<SortState[]>([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -35,6 +36,7 @@ export default function ExtractedEdictsPage() {
       const response = await rawEdictsService.getAll({
         page: pagination.page - 1,  // Convert to 0-indexed
         size: pagination.pageSize,
+        sort: sort.length > 0 ? sort.map((s) => `${s.columnId},${s.direction}`) : undefined,
       });
       setData(response.content);
       setPagination((prev) => ({ ...prev, total: response.totalElements }));
@@ -43,7 +45,7 @@ export default function ExtractedEdictsPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.pageSize]);
+  }, [pagination.page, pagination.pageSize, sort]);
 
   useEffect(() => {
     fetchData();
@@ -93,14 +95,14 @@ export default function ExtractedEdictsPage() {
   };
 
   const columns: ColumnDef<RawEdict>[] = [
-    { id: 'caseNumber', header: t('columns.caseNumber'), width: 180, accessorFn: (row) => row.caseNumber || '-' },
-    { id: 'reference', header: t('columns.reference'), width: 140, accessorFn: (row) => row.reference || '-' },
-    { id: 'creditor', header: t('columns.creditor'), width: 200, accessorFn: (row) => row.creditor || '-' },
-    { id: 'debtor', header: t('columns.debtor'), width: 200, accessorFn: (row) => row.debtor || '-' },
-    { id: 'court', header: t('columns.court'), width: 200, accessorFn: (row) => row.court || '-' },
-    { id: 'publication', header: t('columns.publication'), width: 100, align: 'center', accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
-    { id: 'bulletinVolume', header: t('columns.bulletin'), width: 120, align: 'center', accessorFn: (row) => row.bulletin ? `${row.bulletin.volume}/${row.bulletin.year}` : '-' },
-    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
+    { id: 'caseNumber', header: t('columns.caseNumber'), width: 180, sortable: true, accessorFn: (row) => row.caseNumber || '-' },
+    { id: 'reference', header: t('columns.reference'), width: 140, sortable: true, accessorFn: (row) => row.reference || '-' },
+    { id: 'creditor', header: t('columns.creditor'), width: 200, sortable: true, accessorFn: (row) => row.creditor || '-' },
+    { id: 'debtor', header: t('columns.debtor'), width: 200, sortable: true, accessorFn: (row) => row.debtor || '-' },
+    { id: 'court', header: t('columns.court'), width: 200, sortable: true, accessorFn: (row) => row.court || '-' },
+    { id: 'publication', header: t('columns.publication'), width: 100, align: 'center', sortable: true, accessorFn: (row) => `${row.publication || 0}/${row.publicationCount || 0}` },
+    { id: 'bulletinVolume', header: t('columns.bulletin'), width: 120, align: 'center', sortable: true, accessorFn: (row) => row.bulletin ? `${row.bulletin.volume}/${row.bulletin.year}` : '-' },
+    { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', sortable: true, accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];
 
   const renderActions = (row: RawEdict) => (
@@ -135,6 +137,8 @@ export default function ExtractedEdictsPage() {
           selectedRow={selectedItem}
           actions={renderActions}
           onReload={fetchData}
+          sort={sort}
+          onSort={setSort}
         />
       </div>
 

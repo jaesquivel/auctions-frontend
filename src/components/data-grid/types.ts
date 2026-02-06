@@ -40,6 +40,6 @@ export interface DataGridProps<T> {
   onEditFilters?: () => void;
   onDownload?: () => void;
   onReload?: () => void;
-  sort?: SortState | null;
-  onSort?: (sort: SortState | null) => void;
+  sort?: SortState[];
+  onSort?: (sort: SortState[]) => void;
 }
