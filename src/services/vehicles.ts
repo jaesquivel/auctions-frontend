@@ -2,6 +2,7 @@ import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockVehicles } from '@/mocks';
 import type { VehicleSummary, SpringPage } from '@/types';
+import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
 export interface VehicleFilters {
@@ -42,7 +43,7 @@ export const vehiclesService = {
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.search) params.set('search', filters.search);
-    if (filters.filters) params.set('filters', JSON.stringify(filters.filters));
+    applyFilterParams(params, filters.filters);
 
     return apiClient.get<SpringPage<VehicleSummary>>(`/vehicles?${params.toString()}`);
   },

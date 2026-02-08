@@ -72,6 +72,7 @@ export function FilterDialog({ open, onOpenChange, columns, initialState, onAppl
                 const group = state.groups[0];
                 if (group) updateGroup(group.id, { ...group, joinOperator: op });
               }}
+              labels={{ and: t('all'), or: t('any') }}
             />
           </div>
 

@@ -97,7 +97,7 @@ export function DataGridToolbar({
         </div>
 
         {pagination && (
-          <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-3">
             <div className="text-xs text-muted-foreground">
               {pagination.total.toLocaleString()} {t('records')}
             </div>

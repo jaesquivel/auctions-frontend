@@ -6,10 +6,14 @@ import { Button } from '@/components/ui/button';
 interface FilterJoinToggleProps {
   value: 'and' | 'or';
   onChange: (value: 'and' | 'or') => void;
+  labels?: { and: string; or: string };
 }
 
-export function FilterJoinToggle({ value, onChange }: FilterJoinToggleProps) {
+export function FilterJoinToggle({ value, onChange, labels }: FilterJoinToggleProps) {
   const t = useTranslations('common.filters');
+
+  const andLabel = labels?.and ?? t('and');
+  const orLabel = labels?.or ?? t('or');
 
   return (
     <div className="inline-flex rounded-md border border-border">
@@ -20,7 +24,7 @@ export function FilterJoinToggle({ value, onChange }: FilterJoinToggleProps) {
         className="h-6 rounded-r-none border-0 px-2 text-xs"
         onClick={() => onChange('and')}
       >
-        {t('and')}
+        {andLabel}
       </Button>
       <Button
         type="button"
@@ -29,7 +33,7 @@ export function FilterJoinToggle({ value, onChange }: FilterJoinToggleProps) {
         className="h-6 rounded-l-none border-0 px-2 text-xs"
         onClick={() => onChange('or')}
       >
-        {t('or')}
+        {orLabel}
       </Button>
     </div>
   );

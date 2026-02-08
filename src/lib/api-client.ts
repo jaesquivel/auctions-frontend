@@ -1,6 +1,7 @@
 import { config } from './config';
 import { showErrorToast, showNetworkErrorToast } from './toast';
 import { setApiAvailable } from './api-status';
+import { apiLog } from './api-log';
 
 export class ApiError extends Error {
   constructor(
@@ -29,7 +30,16 @@ async function getAuthToken(): Promise<string | null> {
 
     const token = await clerk.session.getToken();
     return token;
-  } catch {
+  } catch (error) {
+    // Session expired or not found — redirect to sign-in
+    const isSessionError =
+      error instanceof Error &&
+      (error.message?.includes('Session not found') || error.message?.includes('404'));
+
+    if (isSessionError) {
+      window.location.href = '/sign-in';
+    }
+
     return null;
   }
 }
@@ -52,6 +62,9 @@ async function request<T>(
   }
 
   const url = `${config.API_BASE_URL}${endpoint}`;
+  const method = restOptions.method || 'GET';
+  const startTime = Date.now();
+  const requestBodyStr = body ? JSON.stringify(body) : undefined;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), config.API_TIMEOUT);
@@ -60,7 +73,7 @@ async function request<T>(
     const response = await fetch(url, {
       ...restOptions,
       headers,
-      body: body ? JSON.stringify(body) : undefined,
+      body: requestBodyStr,
       signal: controller.signal,
     });
 
@@ -71,6 +84,7 @@ async function request<T>(
 
     if (!response.ok) {
       const errorBody = await response.text();
+      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, requestBody: requestBodyStr, responseBody: errorBody });
       const error = new ApiError(response.status, response.statusText, errorBody);
 
       if (!silent) {
@@ -82,6 +96,7 @@ async function request<T>(
 
     // Handle empty responses
     const text = await response.text();
+    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, requestBody: requestBodyStr, responseBody: text || undefined });
     if (!text) return undefined as T;
 
     return JSON.parse(text) as T;
@@ -93,6 +108,7 @@ async function request<T>(
     if (error instanceof Error && error.name === 'AbortError') {
       // Timeout - API may be unavailable
       setApiAvailable(false);
+      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, requestBody: requestBodyStr, error: 'Request timed out' });
       const timeoutError = new ApiError(408, 'Request Timeout', 'Request timed out');
       if (!silent) {
         showErrorToast(408);
@@ -102,6 +118,7 @@ async function request<T>(
 
     // Network error - API is unavailable
     setApiAvailable(false);
+    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, requestBody: requestBodyStr, error: error instanceof Error ? error.message : 'Network error' });
     if (!silent && error instanceof Error) {
       showNetworkErrorToast();
     }

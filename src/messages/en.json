@@ -31,6 +31,8 @@
       "clearAll": "Clear all",
       "and": "AND",
       "or": "OR",
+      "all": "All",
+      "any": "Any",
       "selectColumn": "Select column",
       "selectOperator": "Select operator",
       "enterValue": "Enter value",
@@ -38,25 +40,19 @@
       "to": "To",
       "operators": {
         "contains": "Contains",
-        "equals": "Equals",
-        "notEquals": "Not equals",
+        "doesNotContain": "Does not contain",
+        "eq": "Equals",
+        "ne": "Not equals",
         "startsWith": "Starts with",
         "endsWith": "Ends with",
         "isEmpty": "Is empty",
         "isNotEmpty": "Is not empty",
-        "eq": "Equals",
-        "neq": "Not equals",
         "gt": "Greater than",
         "gte": "Greater or equal",
         "lt": "Less than",
         "lte": "Less or equal",
-        "between": "Between",
         "isTrue": "Is true",
-        "isFalse": "Is false",
-        "dateEquals": "Equals",
-        "before": "Before",
-        "after": "After",
-        "dateBetween": "Between"
+        "isFalse": "Is false"
       }
     }
   },

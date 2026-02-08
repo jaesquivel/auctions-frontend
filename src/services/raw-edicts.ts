@@ -2,6 +2,7 @@ import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockExtractedEdicts } from '@/mocks';
 import type { RawEdict, RawEdictCreateRequest, RawEdictUpdateRequest, SpringPage } from '@/types';
+import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
 export interface RawEdictFilters {
@@ -44,7 +45,7 @@ export const rawEdictsService = {
     filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.bulletinId) params.set('bulletinId', filters.bulletinId);
     if (filters.processed !== undefined) params.set('processed', filters.processed.toString());
-    if (filters.filters) params.set('filters', JSON.stringify(filters.filters));
+    applyFilterParams(params, filters.filters);
 
     return apiClient.get<SpringPage<RawEdict>>(`/raw-edicts?${params.toString()}`);
   },

@@ -49,3 +49,37 @@ export function getFilterableColumns<T>(columns: ColumnDef<T>[]): FilterableColu
       filterType: c.filterType ?? 'text',
     }));
 }
+
+/**
+ * Serializes FilterState into URLSearchParams using the backend format:
+ *   field[op]=value  +  match=all|any
+ *
+ * Boolean filters are sent as field[eq]=true/false.
+ * Only the first group is used (simple mode). The group's joinOperator
+ * maps to the `match` parameter (and → all, or → any).
+ */
+export function applyFilterParams(params: URLSearchParams, state: FilterState | undefined): void {
+  if (!state) return;
+
+  const conditions = state.groups.flatMap((g) => g.conditions);
+  const active = conditions.filter((c) => c.field !== '');
+  if (active.length === 0) return;
+
+  // Use first group's joinOperator for the match param
+  const match = state.groups[0]?.joinOperator === 'or' ? 'any' : 'all';
+  params.set('match', match);
+
+  for (const c of active) {
+    if (c.operator === 'isTrue') {
+      params.append(`${c.field}[eq]`, 'true');
+    } else if (c.operator === 'isFalse') {
+      params.append(`${c.field}[eq]`, 'false');
+    } else if (c.operator === 'isEmpty') {
+      params.append(`${c.field}[isEmpty]`, '');
+    } else if (c.operator === 'isNotEmpty') {
+      params.append(`${c.field}[isNotEmpty]`, '');
+    } else {
+      params.append(`${c.field}[${c.operator}]`, String(c.value));
+    }
+  }
+}

@@ -1,24 +1,21 @@
 export type ColumnFilterType = 'text' | 'number' | 'boolean' | 'date';
 
+// Operators aligned with the backend API: field[op]=value
 export type FilterOperator =
   // text
-  | 'contains' | 'equals' | 'notEquals' | 'startsWith' | 'endsWith' | 'isEmpty' | 'isNotEmpty'
-  // number
-  | 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'between'
+  | 'contains' | 'doesNotContain' | 'eq' | 'ne' | 'startsWith' | 'endsWith' | 'isEmpty' | 'isNotEmpty'
+  // number & date (shared)
+  | 'gt' | 'gte' | 'lt' | 'lte'
   // boolean
-  | 'isTrue' | 'isFalse'
-  // date
-  | 'dateEquals' | 'before' | 'after' | 'dateBetween';
+  | 'isTrue' | 'isFalse';
 
 export const NO_VALUE_OPERATORS: FilterOperator[] = ['isEmpty', 'isNotEmpty', 'isTrue', 'isFalse'];
 
-export const RANGE_OPERATORS: FilterOperator[] = ['between', 'dateBetween'];
-
 export const OPERATORS_BY_TYPE: Record<ColumnFilterType, FilterOperator[]> = {
-  text: ['contains', 'equals', 'notEquals', 'startsWith', 'endsWith', 'isEmpty', 'isNotEmpty'],
-  number: ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'between'],
+  text: ['contains', 'doesNotContain', 'eq', 'ne', 'startsWith', 'endsWith', 'isEmpty', 'isNotEmpty'],
+  number: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte'],
   boolean: ['isTrue', 'isFalse'],
-  date: ['dateEquals', 'before', 'after', 'dateBetween'],
+  date: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte'],
 };
 
 export interface FilterCondition {
@@ -26,7 +23,6 @@ export interface FilterCondition {
   field: string;
   operator: FilterOperator;
   value: string | number | boolean;
-  valueTo?: string | number;
 }
 
 export interface FilterGroup {

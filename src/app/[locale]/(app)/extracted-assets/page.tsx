@@ -102,11 +102,13 @@ export default function ExtractedAssetsPage() {
     { id: 'type', header: t('columns.type'), width: 100, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.type || '-' },
     { id: 'registration', header: t('columns.registration'), width: 130, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.registration || '-' },
     { id: 'plate', header: t('columns.plate'), width: 110, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.plate || '-' },
-    { id: 'firstAuctionDate', header: t('columns.firstDate'), width: 110, sortable: true, filterable: true, filterType: 'date', accessorFn: (row) => row.firstAuctionDate || '-' },
-    { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 130, align: 'right', sortable: true, filterable: true, filterType: 'number', accessorFn: (row) => row.firstAuctionBase || '-' },
-    { id: 'currency', header: t('columns.currency'), width: 70, align: 'center', sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.currency || '-' },
-    { id: 'location', header: t('columns.location'), width: 200, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => [row.tdProvince, row.tdCanton, row.tdDistrict].filter(Boolean).join(', ') || '-' },
-    { id: 'caseNumber', header: t('columns.caseNumber'), width: 160, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.rawEdict?.caseNumber || '-' },
+    { id: 'firstAuctionDate', header: t('columns.firstDate'), width: 110, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.firstAuctionDate || '-' },
+    { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 130, align: 'right', sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.firstAuctionBase || '-' },
+    { id: 'currency', header: t('columns.currency'), width: 90, align: 'center', sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.currency || '-' },
+    { id: 'tdProvince', header: t('columns.province'), width: 120, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.tdProvince || '-' },
+    { id: 'tdCanton', header: t('columns.canton'), width: 120, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.tdCanton || '-' },
+    { id: 'tdDistrict', header: t('columns.district'), width: 120, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.tdDistrict || '-' },
+    { id: 'rawEdictCaseNumber', header: t('columns.caseNumber'), width: 160, sortable: true, filterable: true, filterType: 'text', accessorFn: (row) => row.rawEdict?.caseNumber || '-' },
     { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', sortable: true, filterable: true, filterType: 'boolean', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];
 

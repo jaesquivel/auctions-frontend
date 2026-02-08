@@ -1,11 +1,24 @@
 'use client';
 
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { useUser, useSession, useAuth } from '@clerk/nextjs';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Trash2 } from 'lucide-react';
 import { useUserRole } from '@/hooks';
+import { apiLog } from '@/lib/api-log';
+
+function useApiLog() {
+  const entries = useSyncExternalStore(
+    apiLog.subscribe,
+    () => apiLog.getEntries(),
+    () => [],
+  );
+  return entries;
+}
 
 export default function DevPage() {
   const t = useTranslations('dev');
@@ -13,6 +26,14 @@ export default function DevPage() {
   const { session, isLoaded: isSessionLoaded } = useSession();
   const { userId, sessionId, orgId } = useAuth();
   const { role, isAdmin } = useUserRole();
+  const logEntries = useApiLog();
+  const logRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (logRef.current) {
+      logRef.current.scrollTop = 0;
+    }
+  }, [logEntries]);
 
   if (!isUserLoaded || !isSessionLoaded) {
     return (
@@ -189,6 +210,30 @@ export default function DevPage() {
               <Badge variant="outline">{process.env.NEXT_PUBLIC_ENV || 'Not set'}</Badge>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* API Log */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>API Log</CardTitle>
+              <CardDescription>{logEntries.length} request{logEntries.length !== 1 ? 's' : ''} recorded</CardDescription>
+            </div>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => apiLog.clear()}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <textarea
+            ref={logRef}
+            readOnly
+            value={logEntries.map((e) => apiLog.format(e)).join('\n\n')}
+            className="w-full h-80 rounded-md border border-border bg-muted p-3 font-mono text-xs resize-y focus:outline-none"
+            placeholder="No API calls yet. Navigate to other pages to see requests here."
+          />
         </CardContent>
       </Card>
     </div>

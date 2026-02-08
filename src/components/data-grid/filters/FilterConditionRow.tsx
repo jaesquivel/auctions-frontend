@@ -32,58 +32,59 @@ export function FilterConditionRow({ condition, columns, onChange, onRemove }: F
     const col = columns.find((c) => c.id === field);
     const type = col?.filterType ?? 'text';
     const firstOp = OPERATORS_BY_TYPE[type][0];
-    onChange({ ...condition, field, operator: firstOp, value: '', valueTo: undefined });
+    onChange({ ...condition, field, operator: firstOp, value: '' });
   };
 
   const handleOperatorChange = (operator: string) => {
-    onChange({ ...condition, operator: operator as FilterOperator, value: '', valueTo: undefined });
+    onChange({ ...condition, operator: operator as FilterOperator, value: '' });
   };
 
-  const handleValueChange = (value: string | number | boolean, valueTo?: string | number) => {
-    onChange({ ...condition, value, valueTo });
+  const handleValueChange = (value: string | number | boolean) => {
+    onChange({ ...condition, value });
   };
 
   return (
-    <div className="flex items-center gap-1.5">
-      <Select value={condition.field || undefined} onValueChange={handleFieldChange}>
-        <SelectTrigger className="h-7 w-40 text-xs">
-          <SelectValue placeholder={t('selectColumn')} />
-        </SelectTrigger>
-        <SelectContent>
-          {columns.map((col) => (
-            <SelectItem key={col.id} value={col.id}>
-              {col.header}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    <div className="flex items-start gap-1.5">
+      <div className="grid grid-cols-1 md:grid-cols-[10rem_9rem_10rem] gap-1.5 flex-1 min-w-0">
+        <Select value={condition.field || undefined} onValueChange={handleFieldChange}>
+          <SelectTrigger className="h-7 text-xs">
+            <SelectValue placeholder={t('selectColumn')} />
+          </SelectTrigger>
+          <SelectContent>
+            {columns.map((col) => (
+              <SelectItem key={col.id} value={col.id}>
+                {col.header}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      <Select
-        value={condition.field ? condition.operator : undefined}
-        onValueChange={handleOperatorChange}
-        disabled={!condition.field}
-      >
-        <SelectTrigger className="h-7 w-36 text-xs">
-          <SelectValue placeholder={t('selectOperator')} />
-        </SelectTrigger>
-        <SelectContent>
-          {operators.map((op) => (
-            <SelectItem key={op} value={op}>
-              {t(`operators.${op}`)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        <Select
+          value={condition.field ? condition.operator : undefined}
+          onValueChange={handleOperatorChange}
+          disabled={!condition.field}
+        >
+          <SelectTrigger className="h-7 text-xs">
+            <SelectValue placeholder={t('selectOperator')} />
+          </SelectTrigger>
+          <SelectContent>
+            {operators.map((op) => (
+              <SelectItem key={op} value={op}>
+                {t(`operators.${op}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      {condition.field && (
-        <FilterValueInput
-          filterType={filterType}
-          operator={condition.operator}
-          value={condition.value}
-          valueTo={condition.valueTo}
-          onChange={handleValueChange}
-        />
-      )}
+        {condition.field && (
+          <FilterValueInput
+            filterType={filterType}
+            operator={condition.operator}
+            value={condition.value}
+            onChange={handleValueChange}
+          />
+        )}
+      </div>
 
       <Button
         type="button"
