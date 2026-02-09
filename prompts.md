@@ -5,3 +5,4 @@ Simple filtering
    valid op values for numbers are: eq, ne, gt, gte, lt, lte
    valid op values for dates, times and timestamps are: eq, ne, gt, gte, lt, lte
    Example: GET /api/v1/properties?registration[contains]=454123-000&firstDate[ge]=20260202&match=all
+

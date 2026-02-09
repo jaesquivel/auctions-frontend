@@ -45,9 +45,9 @@ export function FilterConditionRow({ condition, columns, onChange, onRemove }: F
 
   return (
     <div className="flex items-start gap-1.5">
-      <div className="grid grid-cols-1 md:grid-cols-[10rem_9rem_10rem] gap-1.5 flex-1 min-w-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5 flex-1 min-w-0">
         <Select value={condition.field || undefined} onValueChange={handleFieldChange}>
-          <SelectTrigger className="h-7 text-xs">
+          <SelectTrigger className="h-7 text-xs min-w-0">
             <SelectValue placeholder={t('selectColumn')} />
           </SelectTrigger>
           <SelectContent>
@@ -64,7 +64,7 @@ export function FilterConditionRow({ condition, columns, onChange, onRemove }: F
           onValueChange={handleOperatorChange}
           disabled={!condition.field}
         >
-          <SelectTrigger className="h-7 text-xs">
+          <SelectTrigger className="h-7 text-xs min-w-0">
             <SelectValue placeholder={t('selectOperator')} />
           </SelectTrigger>
           <SelectContent>

@@ -78,7 +78,11 @@ export function useFilterState(initialState?: FilterState) {
   }, []);
 
   const reset = useCallback((newState?: FilterState) => {
-    setState(newState ?? { groups: [createEmptyGroup()], joinOperator: 'and' });
+    if (!newState || newState.groups.length === 0) {
+      setState({ groups: [createEmptyGroup()], joinOperator: newState?.joinOperator ?? 'and' });
+    } else {
+      setState(newState);
+    }
   }, []);
 
   return {

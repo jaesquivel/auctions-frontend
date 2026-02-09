@@ -20,12 +20,34 @@ interface RequestOptions extends Omit<RequestInit, 'body'> {
   silent?: boolean;
 }
 
+interface ClerkInstance {
+  loaded?: boolean;
+  session?: { getToken: () => Promise<string | null> };
+}
+
+function waitForClerk(timeoutMs = 5000): Promise<ClerkInstance | null> {
+  const win = window as unknown as { Clerk?: ClerkInstance };
+  if (win.Clerk?.loaded) return Promise.resolve(win.Clerk);
+
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const check = setInterval(() => {
+      if (win.Clerk?.loaded) {
+        clearInterval(check);
+        resolve(win.Clerk);
+      } else if (Date.now() - start > timeoutMs) {
+        clearInterval(check);
+        resolve(win.Clerk ?? null);
+      }
+    }, 50);
+  });
+}
+
 async function getAuthToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
 
   try {
-    // Access Clerk from window object for client-side token retrieval
-    const clerk = (window as { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
+    const clerk = await waitForClerk();
     if (!clerk?.session) return null;
 
     const token = await clerk.session.getToken();
@@ -84,7 +106,7 @@ async function request<T>(
 
     if (!response.ok) {
       const errorBody = await response.text();
-      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, requestBody: requestBodyStr, responseBody: errorBody });
+      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, requestBody: requestBodyStr, responseBody: errorBody, token: token ?? undefined });
       const error = new ApiError(response.status, response.statusText, errorBody);
 
       if (!silent) {
@@ -96,7 +118,7 @@ async function request<T>(
 
     // Handle empty responses
     const text = await response.text();
-    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, requestBody: requestBodyStr, responseBody: text || undefined });
+    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, requestBody: requestBodyStr, responseBody: text || undefined, token: token ?? undefined });
     if (!text) return undefined as T;
 
     return JSON.parse(text) as T;
@@ -108,7 +130,7 @@ async function request<T>(
     if (error instanceof Error && error.name === 'AbortError') {
       // Timeout - API may be unavailable
       setApiAvailable(false);
-      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, requestBody: requestBodyStr, error: 'Request timed out' });
+      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, requestBody: requestBodyStr, token: token ?? undefined, error: 'Request timed out' });
       const timeoutError = new ApiError(408, 'Request Timeout', 'Request timed out');
       if (!silent) {
         showErrorToast(408);
@@ -118,7 +140,7 @@ async function request<T>(
 
     // Network error - API is unavailable
     setApiAvailable(false);
-    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, requestBody: requestBodyStr, error: error instanceof Error ? error.message : 'Network error' });
+    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, requestBody: requestBodyStr, token: token ?? undefined, error: error instanceof Error ? error.message : 'Network error' });
     if (!silent && error instanceof Error) {
       showNetworkErrorToast();
     }

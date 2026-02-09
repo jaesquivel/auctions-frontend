@@ -8,10 +8,12 @@ export interface ApiLogEntry {
   durationMs: number;
   requestBody?: string;
   responseBody?: string;
+  token?: string;
   error?: string;
 }
 
 const IS_DEV = process.env.NODE_ENV !== 'production';
+const LOG_TOKENS = process.env.NEXT_PUBLIC_LOG_TOKENS === 'true';
 const MAX_ENTRIES = 200;
 let entries: ApiLogEntry[] = [];
 const listeners = new Set<Listener>();
@@ -42,9 +44,10 @@ export const apiLog = {
   },
 
   format(entry: ApiLogEntry): string {
-    const { timestamp, method, url, status, durationMs, requestBody, responseBody, error } = entry;
+    const { timestamp, method, url, status, durationMs, requestBody, responseBody, token, error } = entry;
     const lines: string[] = [];
     lines.push(`[${timestamp}] ${method} ${url} → ${status ?? 'ERR'} (${durationMs}ms)`);
+    if (token && LOG_TOKENS) lines.push(`  🔑 ${token}`);
     if (requestBody) lines.push(`  ← ${requestBody}`);
     if (responseBody) lines.push(`  → ${responseBody.length > 500 ? responseBody.slice(0, 500) + '…' : responseBody}`);
     if (error) lines.push(`  ✗ ${error}`);
