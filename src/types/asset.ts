@@ -1,9 +1,46 @@
 // Asset types
 import type { TdProvinceSummary, TdCantonSummary, TdDistrictSummary } from './territorial';
+import type { EdictListItem } from './edict';
 import type { Currency } from './common';
 
+// List endpoint returns AssetSummaryResponse (with nested edict, no liens/description)
+export interface AssetListItem {
+  id: string;
+  edictId: string;
+  rawAssetId: string;
+  // Auction information
+  firstAuctionTs: string | null;
+  firstAuctionBase: number | null;
+  secondAuctionTs: string | null;
+  secondAuctionBase: number | null;
+  thirdAuctionTs: string | null;
+  thirdAuctionBase: number | null;
+  currency: Currency;
+  // Property registration
+  registration: string | null;
+  propertyNumber: string | null;
+  duplicate: string | null;
+  horizontal: string | null;
+  subRegistration: string | null;
+  plate: string | null;
+  type: string | null;
+  // Territorial Division
+  tdProvince: TdProvinceSummary | null;
+  tdCanton: TdCantonSummary | null;
+  tdDistrict: TdDistrictSummary | null;
+  // Details
+  area: number | null;
+  rights: string | null;
+  // Nested edict
+  edict: EdictListItem;
+  createdAt: string;
+}
+
+// Detail endpoint returns AssetResponse (full territorial, includes liens/description)
 export interface Asset {
   id: string;
+  edictId: string;
+  rawAssetId: string;
   // Auction information
   firstAuctionTs: string | null;
   firstAuctionBase: number | null;
@@ -29,10 +66,10 @@ export interface Asset {
   area: number | null;
   description: string | null;
   rights: string | null;
-  edictId: string;
   createdAt: string;
 }
 
+// Nested reference used by PropertySummary
 export interface AssetSummary {
   id: string;
   firstAuctionTs: string | null;
@@ -51,6 +88,7 @@ export interface AssetSummary {
 
 export interface AssetCreateRequest {
   edictId: string;
+  rawAssetId: string;
   firstAuctionTs?: string;
   firstAuctionBase?: number;
   secondAuctionTs?: string;

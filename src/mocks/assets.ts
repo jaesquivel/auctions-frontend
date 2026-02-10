@@ -1,8 +1,8 @@
-import type { Asset } from '@/types';
+import type { AssetListItem } from '@/types';
 import { mockEdicts } from './edicts';
 import { mockTdProvinces, mockTdCantons, mockTdDistricts } from './territorial';
 
-export const mockAssets: Asset[] = Array.from({ length: 35 }, (_, i) => {
+export const mockAssets: AssetListItem[] = Array.from({ length: 35 }, (_, i) => {
   const edict = mockEdicts[i % mockEdicts.length];
   const tdProvince = mockTdProvinces[i % mockTdProvinces.length];
   const tdCanton = mockTdCantons.find(c => c.tdProvinceId === tdProvince.id) || mockTdCantons[0];
@@ -14,6 +14,8 @@ export const mockAssets: Asset[] = Array.from({ length: 35 }, (_, i) => {
 
   return {
     id: `asset${i + 1}`,
+    edictId: edict.id,
+    rawAssetId: `ra${i + 1}`,
     firstAuctionTs: `2024-${String((i % 6) + 7).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`,
     firstAuctionBase: firstBase,
     secondAuctionTs: `2024-${String((i % 6) + 8).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`,
@@ -21,7 +23,6 @@ export const mockAssets: Asset[] = Array.from({ length: 35 }, (_, i) => {
     thirdAuctionTs: `2024-${String((i % 6) + 9).padStart(2, '0')}-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`,
     thirdAuctionBase: thirdBase,
     currency: 'CRC',
-    liens: i % 4 === 0 ? 'Gravámenes registrados' : null,
     registration: `${100000 + i}`,
     propertyNumber: `${100000 + i}`,
     duplicate: i % 3 === 0 ? 'D' : null,
@@ -33,9 +34,8 @@ export const mockAssets: Asset[] = Array.from({ length: 35 }, (_, i) => {
     tdCanton: { num: tdCanton.num, name: tdCanton.name },
     tdDistrict: { num: tdDistrict.num, name: tdDistrict.name },
     area: Math.floor(Math.random() * 5000) + 100,
-    description: `Propiedad ubicada en ${tdProvince.name}, ${tdCanton.name}. ${i % 2 === 0 ? 'Incluye construcción.' : 'Lote baldío.'}`,
     rights: '100%',
-    edictId: edict.id,
+    edict,
     createdAt: `2024-0${(i % 9) + 1}-${String((i % 28) + 1).padStart(2, '0')}T10:00:00Z`,
   };
 });

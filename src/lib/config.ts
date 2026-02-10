@@ -15,7 +15,7 @@ export const config = {
     edicts: false,
     tags: false,
     vehicles: true,
-    assets: true,
+    assets: false,
     bulletins: false,
     territorial: false,
     rawEdicts: false,

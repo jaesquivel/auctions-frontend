@@ -1,7 +1,7 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockAssets } from '@/mocks';
-import type { Asset, SpringPage } from '@/types';
+import type { Asset, AssetListItem, AssetCreateRequest, AssetUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
@@ -14,7 +14,7 @@ export interface AssetFilters {
 }
 
 export const assetsService = {
-  async getAll(filters: AssetFilters = {}): Promise<SpringPage<Asset>> {
+  async getAll(filters: AssetFilters = {}): Promise<SpringPage<AssetListItem>> {
     const { page = 0, size = 20 } = filters;
 
     if (config.useMock.assets) {
@@ -45,32 +45,31 @@ export const assetsService = {
     if (filters.search) params.set('search', filters.search);
     applyFilterParams(params, filters.filters);
 
-    return apiClient.get<SpringPage<Asset>>(`/assets?${params.toString()}`);
+    return apiClient.get<SpringPage<AssetListItem>>(`/assets?${params.toString()}`);
   },
 
   async getById(id: string): Promise<Asset | null> {
     if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return mockAssets.find((a) => a.id === id) || null;
+      return null;
     }
 
     return apiClient.get<Asset>(`/assets/${id}`);
   },
 
-  async create(data: Partial<Asset>): Promise<Asset> {
+  async create(data: AssetCreateRequest): Promise<Asset> {
     if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as Asset;
+      return { ...data, id: crypto.randomUUID() } as unknown as Asset;
     }
 
     return apiClient.post<Asset>('/assets', data);
   },
 
-  async update(id: string, data: Partial<Asset>): Promise<Asset> {
+  async update(id: string, data: AssetUpdateRequest): Promise<Asset> {
     if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      const existing = mockAssets.find((a) => a.id === id);
-      return { ...existing, ...data } as Asset;
+      return { id, ...data } as unknown as Asset;
     }
 
     return apiClient.put<Asset>(`/assets/${id}`, data);

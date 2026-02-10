@@ -146,7 +146,44 @@
   "assets": {
     "title": "Bienes",
     "addAsset": "Agregar Bien",
-    "editAsset": "Editar Bien"
+    "editAsset": "Editar Bien",
+    "viewAsset": "Ver Bien",
+    "confirmDelete": "¿Está seguro de que desea eliminar este bien?",
+    "columns": {
+      "registration": "Matrícula",
+      "propertyNumber": "Número de Finca",
+      "type": "Tipo",
+      "province": "Provincia",
+      "canton": "Cantón",
+      "area": "Área",
+      "firstAuction": "1er Remate",
+      "firstBase": "1ra Base",
+      "currency": "Moneda"
+    },
+    "form": {
+      "registrationInfo": "Información de Matrícula",
+      "auctionInfo": "Información de Remate",
+      "details": "Detalles",
+      "duplicate": "Duplicado",
+      "horizontal": "Horizontal",
+      "subRegistration": "Sub-matrícula",
+      "plate": "Placa",
+      "firstAuctionDate": "Fecha 1er Remate",
+      "firstAuctionBase": "Base 1er Remate",
+      "secondAuctionDate": "Fecha 2do Remate",
+      "secondAuctionBase": "Base 2do Remate",
+      "thirdAuctionDate": "Fecha 3er Remate",
+      "thirdAuctionBase": "Base 3er Remate",
+      "area": "Área (m²)",
+      "rights": "Derechos",
+      "liens": "Gravámenes",
+      "description": "Descripción",
+      "edict": "Edicto",
+      "creditor": "Acreedor",
+      "debtor": "Deudor",
+      "court": "Juzgado",
+      "location": "Ubicación"
+    }
   },
   "edicts": {
     "title": "Edictos",

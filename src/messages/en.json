@@ -146,7 +146,44 @@
   "assets": {
     "title": "Assets",
     "addAsset": "Add Asset",
-    "editAsset": "Edit Asset"
+    "editAsset": "Edit Asset",
+    "viewAsset": "View Asset",
+    "confirmDelete": "Are you sure you want to delete this asset?",
+    "columns": {
+      "registration": "Registration",
+      "propertyNumber": "Property Number",
+      "type": "Type",
+      "province": "Province",
+      "canton": "Canton",
+      "area": "Area",
+      "firstAuction": "1st Auction",
+      "firstBase": "1st Base",
+      "currency": "Currency"
+    },
+    "form": {
+      "registrationInfo": "Registration Information",
+      "auctionInfo": "Auction Information",
+      "details": "Details",
+      "duplicate": "Duplicate",
+      "horizontal": "Horizontal",
+      "subRegistration": "Sub-registration",
+      "plate": "Plate",
+      "firstAuctionDate": "1st Auction Date",
+      "firstAuctionBase": "1st Auction Base",
+      "secondAuctionDate": "2nd Auction Date",
+      "secondAuctionBase": "2nd Auction Base",
+      "thirdAuctionDate": "3rd Auction Date",
+      "thirdAuctionBase": "3rd Auction Base",
+      "area": "Area (m²)",
+      "rights": "Rights",
+      "liens": "Liens",
+      "description": "Description",
+      "edict": "Edict",
+      "creditor": "Creditor",
+      "debtor": "Debtor",
+      "court": "Court",
+      "location": "Location"
+    }
   },
   "edicts": {
     "title": "Edicts",
