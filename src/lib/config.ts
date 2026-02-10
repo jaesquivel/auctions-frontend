@@ -12,7 +12,7 @@ export const config = {
    */
   useMock: {
     properties: true,
-    edicts: true,
+    edicts: false,
     tags: false,
     vehicles: true,
     assets: true,

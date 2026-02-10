@@ -151,7 +151,26 @@
   "edicts": {
     "title": "Edictos",
     "addEdict": "Agregar Edicto",
-    "editEdict": "Editar Edicto"
+    "editEdict": "Editar Edicto",
+    "viewEdict": "Ver Edicto",
+    "confirmDelete": "¿Está seguro de que desea eliminar este edicto?",
+    "columns": {
+      "caseNumber": "Número de Caso",
+      "reference": "Referencia",
+      "creditor": "Acreedor",
+      "debtor": "Deudor",
+      "court": "Juzgado",
+      "publication": "Publicación",
+      "bulletin": "Boletín"
+    },
+    "form": {
+      "publicationCount": "Cantidad de Publicaciones",
+      "notes": "Notas",
+      "fullText": "Texto Completo",
+      "creditor": "Acreedor",
+      "debtor": "Deudor",
+      "judiciaryOffice": "Despacho Judicial"
+    }
   },
   "bulletins": {
     "title": "Boletines Judiciales",

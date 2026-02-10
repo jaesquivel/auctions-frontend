@@ -1,7 +1,7 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockEdicts } from '@/mocks';
-import type { Edict, SpringPage } from '@/types';
+import type { Edict, EdictListItem, EdictCreateRequest, EdictUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
@@ -14,7 +14,7 @@ export interface EdictFilters {
 }
 
 export const edictsService = {
-  async getAll(filters: EdictFilters = {}): Promise<SpringPage<Edict>> {
+  async getAll(filters: EdictFilters = {}): Promise<SpringPage<EdictListItem>> {
     const { page = 0, size = 20 } = filters;
 
     if (config.useMock.edicts) {
@@ -45,32 +45,31 @@ export const edictsService = {
     if (filters.search) params.set('search', filters.search);
     applyFilterParams(params, filters.filters);
 
-    return apiClient.get<SpringPage<Edict>>(`/edicts?${params.toString()}`);
+    return apiClient.get<SpringPage<EdictListItem>>(`/edicts?${params.toString()}`);
   },
 
   async getById(id: string): Promise<Edict | null> {
     if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return mockEdicts.find((e) => e.id === id) || null;
+      return null;
     }
 
     return apiClient.get<Edict>(`/edicts/${id}`);
   },
 
-  async create(data: Partial<Edict>): Promise<Edict> {
+  async create(data: EdictCreateRequest): Promise<Edict> {
     if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as Edict;
+      return { ...data, id: crypto.randomUUID() } as unknown as Edict;
     }
 
     return apiClient.post<Edict>('/edicts', data);
   },
 
-  async update(id: string, data: Partial<Edict>): Promise<Edict> {
+  async update(id: string, data: EdictUpdateRequest): Promise<Edict> {
     if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      const existing = mockEdicts.find((e) => e.id === id);
-      return { ...existing, ...data } as Edict;
+      return { id, ...data } as unknown as Edict;
     }
 
     return apiClient.put<Edict>(`/edicts/${id}`, data);

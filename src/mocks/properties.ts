@@ -24,7 +24,7 @@ export const mockProperties: PropertySummary[] = Array.from({ length: 35 }, (_, 
   const fiscalValue = randomCurrency(20000000, 500000000);
   const exchangeRate = 515;
   const firstAuctionBase = randomCurrency(15000000, 400000000);
-  const margin = edict.creditor.margin;
+  const margin = edict.creditor?.margin ?? 0;
 
   return {
     id: `prop${i + 1}`,
