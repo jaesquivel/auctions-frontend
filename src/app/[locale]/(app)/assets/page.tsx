@@ -105,13 +105,23 @@ export default function AssetsPage() {
   };
 
   const columns: ColumnDef<AssetListItem>[] = [
-    { id: 'registration', header: t('columns.registration'), width: 100, filterable: true, filterType: 'text', accessorFn: (row) => row.registration || '-' },
-    { id: 'type', header: t('columns.type'), width: 150, filterable: true, filterType: 'text', accessorFn: (row) => row.type || '-' },
+    { id: 'type', header: t('columns.type'), width: 100, filterable: true, filterType: 'text', accessorFn: (row) => row.type || '-' },
+    { id: 'firstAuctionTs', header: t('columns.firstAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.firstAuctionTs) },
+    { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 150, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
+    { id: 'secondAuctionTs', header: t('columns.secondAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.secondAuctionTs) },
+    { id: 'secondAuctionBase', header: t('columns.secondBase'), width: 150, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.secondAuctionBase, row.currency) },
+    { id: 'thirdAuctionTs', header: t('columns.thirdAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.thirdAuctionTs) },
+    { id: 'thirdAuctionBase', header: t('columns.thirdBase'), width: 150, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.thirdAuctionBase, row.currency) },
+    { id: 'currency', header: t('columns.currency'), width: 80, filterable: true, filterType: 'text', accessorFn: (row) => row.currency || '-' },
+    { id: 'registration', header: t('columns.registration'), width: 130, filterable: true, filterType: 'text', accessorFn: (row) => row.registration || '-' },
+    { id: 'plate', header: t('columns.plate'), width: 130, filterable: true, filterType: 'text', accessorFn: (row) => row.plate || '-' },
     { id: 'tdProvince', header: t('columns.province'), width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.tdProvince?.name || '-' },
     { id: 'tdCanton', header: t('columns.canton'), width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.tdCanton?.name || '-' },
-    { id: 'area', header: t('columns.area'), width: 100, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatArea(row.area) },
-    { id: 'firstAuctionTs', header: t('columns.firstAuction'), width: 140, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.firstAuctionTs) },
-    { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 130, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
+    { id: 'tdDistrict', header: t('columns.district'), width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.tdDistrict?.name || '-' },
+    { id: 'area', header: t('columns.area'), width: 80, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatArea(row.area) },
+    { id: 'caseNumber', header: t('columns.caseNumber'), width: 180, filterable: true, filterType: 'text', accessorFn: (row) => row.edict?.caseNumber || '-' },
+    { id: 'publication', header: t('columns.publication'), width: 100, align: 'center', filterable: true, filterType: 'number', accessorFn: (row) => `${row.edict?.publication || 0}/${row.edict?.publicationCount || 0}` },
+    { id: 'bulletin', header: t('columns.bulletin'), width: 120, align: 'center', accessorFn: (row) => row.edict?.bulletin ? `${row.edict.bulletin.volume}-${row.edict.bulletin.year}` : '-' },
   ];
 
   const renderActions = (row: AssetListItem) => (

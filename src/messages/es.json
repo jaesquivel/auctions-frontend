@@ -151,14 +151,23 @@
     "confirmDelete": "¿Está seguro de que desea eliminar este bien?",
     "columns": {
       "registration": "Matrícula",
+      "plate": "Plate",
       "propertyNumber": "Número de Finca",
       "type": "Tipo",
       "province": "Provincia",
       "canton": "Cantón",
+      "district": "Distrito",
       "area": "Área",
       "firstAuction": "1er Remate",
       "firstBase": "1ra Base",
-      "currency": "Moneda"
+      "secondAuction": "2do Remate",
+      "secondBase": "2da Base",
+      "thirdAuction": "3er Remate",
+      "thirdBase": "3ra Base",
+      "currency": "Mon.",
+      "caseNumber": "Número de Caso",
+      "publication": "Publicación",
+      "bulletin": "Boletín"
     },
     "form": {
       "registrationInfo": "Información de Matrícula",
