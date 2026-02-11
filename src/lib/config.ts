@@ -11,7 +11,7 @@ export const config = {
    * Set to false to use real backend for that specific service.
    */
   useMock: {
-    properties: true,
+    properties: false,
     edicts: false,
     tags: false,
     vehicles: true,

@@ -1,7 +1,7 @@
 // Property types
 import type { PropertyTagSummary } from './tag';
-import type { AssetSummary, Asset } from './asset';
-import type { EdictSummary, Edict } from './edict';
+import type { AssetListItem, Asset } from './asset';
+import type { EdictListItem, Edict } from './edict';
 
 export interface PropertyImage {
   id: string;
@@ -30,7 +30,6 @@ export interface Property {
   firstAuctionBaseAdj: number | null;
   firstAuctionGuarantee: number | null;
   registrationFull: string | null;
-  tdLocation: string | null;
   fiscalBaseRatio: number | null;
   // Details
   observations: string | null;
@@ -52,7 +51,8 @@ export interface Property {
   createdAt: string;
 }
 
-export interface PropertySummary {
+// List endpoint returns PropertySummaryResponse (with nested edict/asset list items)
+export interface PropertyListItem {
   id: string;
   fiscalValue: number | null;
   marketValue: number | null;
@@ -62,10 +62,10 @@ export interface PropertySummary {
   firstAuctionBaseAdj: number | null;
   firstAuctionGuarantee: number | null;
   registrationFull: string | null;
-  tdLocation: string | null;
+  // tdLocation: string | null;
   fiscalBaseRatio: number | null;
-  edict: EdictSummary;
-  asset: AssetSummary;
+  edict: EdictListItem;
+  asset: AssetListItem;
   tags: PropertyTagSummary[];
   createdAt: string;
 }

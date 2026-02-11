@@ -124,7 +124,9 @@
     "columns": {
       "tags": "Etiquetas",
       "registration": "Matrícula",
-      "location": "Ubicación",
+      "province": "Provincia",
+      "canton": "Cantón",
+      "district": "Distrito",
       "firstDate": "Primera Fecha",
       "firstBase": "Primera Base",
       "firstBaseAdj": "Primera Base Adj.",
@@ -191,7 +193,9 @@
       "creditor": "Acreedor",
       "debtor": "Deudor",
       "court": "Juzgado",
-      "location": "Ubicación"
+      "province": "Provincia",
+      "canton": "Cantón",
+      "district": "Distrito"
     }
   },
   "edicts": {
@@ -270,7 +274,6 @@
       "firstDate": "1ra Fecha",
       "firstBase": "1ra Base",
       "currency": "Mon.",
-      "location": "Ubicación",
       "caseNumber": "Número de Caso",
       "reference": "Referencia",
       "edict": "Edicto",
@@ -288,6 +291,9 @@
       "time": "Hora",
       "base": "Base",
       "location": "Ubicación",
+      "province": "Provincia",
+      "canton": "Cantón",
+      "district": "Distrito",
       "edictFullText": "Texto Completo del Edicto"
     }
   },

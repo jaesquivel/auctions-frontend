@@ -42,8 +42,8 @@ const navItems: NavItem[] = [
     children: [
       { titleKey: 'properties', href: '/properties', icon: Building2 },
       { titleKey: 'vehicles', href: '/vehicles', icon: Car },
-      { titleKey: 'assets', href: '/assets', icon: Package },
       { titleKey: 'edicts', href: '/edicts', icon: FileText },
+      { titleKey: 'assets', href: '/assets', icon: Package },
     ],
   },
   {

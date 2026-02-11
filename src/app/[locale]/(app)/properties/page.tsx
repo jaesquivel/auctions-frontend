@@ -11,14 +11,14 @@ import { propertiesService } from '@/services/properties';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatCurrency, formatDate, formatArea, formatRatio } from '@/lib/formatters';
-import type { PropertySummary } from '@/types';
+import type { PropertyListItem } from '@/types';
 
 export default function PropertiesPage() {
   const t = useTranslations('properties');
 
-  const [data, setData] = useState<PropertySummary[]>([]);
+  const [data, setData] = useState<PropertyListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState<PropertySummary | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<PropertyListItem | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 20,
@@ -50,7 +50,7 @@ export default function PropertiesPage() {
     fetchData();
   }, [fetchData]);
 
-  const columns: ColumnDef<PropertySummary>[] = [
+  const columns: ColumnDef<PropertyListItem>[] = [
     {
       id: 'tags',
       header: t('columns.tags'),
@@ -69,13 +69,31 @@ export default function PropertiesPage() {
       accessorFn: (row) => row.registrationFull || '-',
     },
     {
-      id: 'location',
-      header: t('columns.location'),
-      width: 200,
+      id: 'tdProvince',
+      header: t('columns.province'),
+      width: 100,
       sortable: true,
       filterable: true,
       filterType: 'text',
-      accessorFn: (row) => row.tdLocation || '-',
+      accessorFn: (row) => row.asset.tdProvince?.name,
+    },
+    {
+      id: 'tdCanton',
+      header: t('columns.canton'),
+      width: 100,
+      sortable: true,
+      filterable: true,
+      filterType: 'text',
+      accessorFn: (row) => row.asset.tdCanton?.name,
+    },
+    {
+      id: 'tdDistrict',
+      header: t('columns.district'),
+      width: 100,
+      sortable: true,
+      filterable: true,
+      filterType: 'text',
+      accessorFn: (row) => row.asset.tdDistrict?.name,
     },
     {
       id: 'firstDate',
@@ -195,7 +213,7 @@ export default function PropertiesPage() {
     setPagination((prev) => ({ ...prev, pageSize, page: 1 }));
   };
 
-  const handleDelete = async (property: PropertySummary) => {
+  const handleDelete = async (property: PropertyListItem) => {
     if (!confirm(t('confirmDelete'))) return;
     setDeleteError(null);
     try {
@@ -209,7 +227,7 @@ export default function PropertiesPage() {
     }
   };
 
-  const renderActions = (row: PropertySummary) => (
+  const renderActions = (row: PropertyListItem) => (
     <div className="flex items-center gap-1">
       <Button variant="ghost" size="icon" className="h-7 w-7">
         <Edit className="h-4 w-4" />

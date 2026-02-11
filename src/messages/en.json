@@ -124,7 +124,9 @@
     "columns": {
       "tags": "Tags",
       "registration": "Registration",
-      "location": "Location",
+      "province": "Province",
+      "canton": "Canton",
+      "district": "District",
       "firstDate": "First Date",
       "firstBase": "First Base",
       "firstBaseAdj": "First Base Adj.",
@@ -191,7 +193,9 @@
       "creditor": "Creditor",
       "debtor": "Debtor",
       "court": "Court",
-      "location": "Location"
+      "province": "Province",
+      "canton": "Canton",
+      "district": "District"
     }
   },
   "edicts": {
@@ -270,7 +274,6 @@
       "firstDate": "1st Date",
       "firstBase": "1st Base",
       "currency": "Cur.",
-      "location": "Location",
       "caseNumber": "Case Number",
       "reference": "Reference",
       "edict": "Edict",
@@ -288,6 +291,9 @@
       "time": "Time",
       "base": "Base",
       "location": "Location",
+      "province": "Province",
+      "canton": "Canton",
+      "district": "District",
       "edictFullText": "Edict Full Text"
     }
   },

@@ -69,7 +69,7 @@ export interface Asset {
   createdAt: string;
 }
 
-// Nested reference used by PropertySummary
+// Nested reference used by Property (detail)
 export interface AssetSummary {
   id: string;
   firstAuctionTs: string | null;

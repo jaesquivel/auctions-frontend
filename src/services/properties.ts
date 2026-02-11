@@ -1,7 +1,7 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { mockProperties } from '@/mocks';
-import type { PropertySummary, SpringPage } from '@/types';
+import type { Property, PropertyListItem, PropertyCreateRequest, PropertyUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
@@ -15,7 +15,7 @@ export interface PropertyFilters {
 }
 
 export const propertiesService = {
-  async getAll(filters: PropertyFilters = {}): Promise<SpringPage<PropertySummary>> {
+  async getAll(filters: PropertyFilters = {}): Promise<SpringPage<PropertyListItem>> {
     const { page = 0, size = 20 } = filters;
 
     if (config.useMock.properties) {
@@ -47,36 +47,34 @@ export const propertiesService = {
     if (filters.tags?.length) params.set('tags', filters.tags.join(','));
     applyFilterParams(params, filters.filters);
 
-    return apiClient.get<SpringPage<PropertySummary>>(`/properties?${params.toString()}`);
+    return apiClient.get<SpringPage<PropertyListItem>>(`/properties?${params.toString()}`);
   },
 
-  async getById(id: string): Promise<PropertySummary | null> {
+  async getById(id: string): Promise<Property | null> {
     if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return mockProperties.find((p) => p.id === id) || null;
+      return null;
     }
 
-    return apiClient.get<PropertySummary>(`/properties/${id}`);
+    return apiClient.get<Property>(`/properties/${id}`);
   },
 
-  async create(data: Partial<PropertySummary>): Promise<PropertySummary> {
+  async create(data: PropertyCreateRequest): Promise<Property> {
     if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      const newProperty = { ...data, id: crypto.randomUUID() } as PropertySummary;
-      return newProperty;
+      return { ...data, id: crypto.randomUUID() } as unknown as Property;
     }
 
-    return apiClient.post<PropertySummary>('/properties', data);
+    return apiClient.post<Property>('/properties', data);
   },
 
-  async update(id: string, data: Partial<PropertySummary>): Promise<PropertySummary> {
+  async update(id: string, data: PropertyUpdateRequest): Promise<Property> {
     if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      const existing = mockProperties.find((p) => p.id === id);
-      return { ...existing, ...data } as PropertySummary;
+      return { id, ...data } as unknown as Property;
     }
 
-    return apiClient.put<PropertySummary>(`/properties/${id}`, data);
+    return apiClient.put<Property>(`/properties/${id}`, data);
   },
 
   async delete(id: string): Promise<void> {

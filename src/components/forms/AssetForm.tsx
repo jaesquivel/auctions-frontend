@@ -150,8 +150,14 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
               {listItem.edict?.court && (
                 <p><span className="font-medium">{t('form.court')}:</span> {listItem.edict.court}</p>
               )}
-              {(listItem.tdProvince || listItem.tdCanton || listItem.tdDistrict) && (
-                <p><span className="font-medium">{t('form.location')}:</span> {[listItem.tdProvince?.name, listItem.tdCanton?.name, listItem.tdDistrict?.name].filter(Boolean).join(', ')}</p>
+              {listItem.tdProvince && (
+                <p><span className="font-medium">{t('form.province')}:</span> {listItem.tdProvince?.name}</p>
+              )}
+              {listItem.tdCanton && (
+                <p><span className="font-medium">{t('form.cantone')}:</span> {listItem.tdCanton?.name}</p>
+              )}
+              {listItem.tdDistrict && (
+                <p><span className="font-medium">{t('form.district')}:</span> {listItem.tdDistrict?.name}</p>
               )}
             </div>
           )}
