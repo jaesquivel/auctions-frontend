@@ -78,8 +78,14 @@ export function DataGrid<T>({
     [resizing]
   );
 
+  const resizeJustEnded = useRef(false);
+
   const handleResizeEnd = useCallback(() => {
     setResizing(null);
+    resizeJustEnded.current = true;
+    requestAnimationFrame(() => {
+      resizeJustEnded.current = false;
+    });
   }, []);
 
   // Attach global mouse events during resize
@@ -122,7 +128,7 @@ export function DataGrid<T>({
   const getColumnWidth = (columnId: string) => columnWidths[columnId] || 150;
 
   const handleSort = (columnId: string) => {
-    if (!onSort || !sort) return;
+    if (!onSort || !sort || resizeJustEnded.current) return;
 
     const existing = sort.find((s) => s.columnId === columnId);
 
