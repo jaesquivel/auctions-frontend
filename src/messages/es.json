@@ -120,7 +120,9 @@
     "title": "Propiedades",
     "addProperty": "Agregar Propiedad",
     "editProperty": "Editar Propiedad",
+    "viewProperty": "Ver Propiedad",
     "deleteProperty": "Eliminar Propiedad",
+    "confirmDelete": "¿Está seguro de que desea eliminar esta propiedad?",
     "columns": {
       "tags": "Etiquetas",
       "registration": "Matrícula",
@@ -138,6 +140,27 @@
       "appraisalValue": "Valor Avalúo",
       "area": "Área",
       "caseNumber": "Número de Caso"
+    },
+    "form": {
+      "values": "Valores",
+      "details": "Detalles",
+      "fiscalValue": "Valor Fiscal",
+      "marketValue": "Valor de Mercado",
+      "appraisalValue": "Valor de Avalúo",
+      "usdExchangeRate": "Tipo de Cambio USD",
+      "observations": "Observaciones",
+      "rnpCert": "Certificado RNP",
+      "rnpPlan": "Plano RNP",
+      "edict": "Edicto",
+      "asset": "Bien",
+      "creditor": "Acreedor",
+      "debtor": "Deudor",
+      "court": "Juzgado",
+      "registration": "Matrícula",
+      "province": "Provincia",
+      "canton": "Cantón",
+      "district": "Distrito",
+      "tags": "Etiquetas"
     }
   },
   "vehicles": {

@@ -120,7 +120,9 @@
     "title": "Properties",
     "addProperty": "Add Property",
     "editProperty": "Edit Property",
+    "viewProperty": "View Property",
     "deleteProperty": "Delete Property",
+    "confirmDelete": "Are you sure you want to delete this property?",
     "columns": {
       "tags": "Tags",
       "registration": "Registration",
@@ -138,6 +140,27 @@
       "appraisalValue": "Appraisal Value",
       "area": "Area",
       "caseNumber": "Case Number"
+    },
+    "form": {
+      "values": "Values",
+      "details": "Details",
+      "fiscalValue": "Fiscal Value",
+      "marketValue": "Market Value",
+      "appraisalValue": "Appraisal Value",
+      "usdExchangeRate": "USD Exchange Rate",
+      "observations": "Observations",
+      "rnpCert": "RNP Certificate",
+      "rnpPlan": "RNP Plan",
+      "edict": "Edict",
+      "asset": "Asset",
+      "creditor": "Creditor",
+      "debtor": "Debtor",
+      "court": "Court",
+      "registration": "Registration",
+      "province": "Province",
+      "canton": "Canton",
+      "district": "District",
+      "tags": "Tags"
     }
   },
   "vehicles": {
