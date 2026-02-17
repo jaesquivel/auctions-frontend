@@ -152,7 +152,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
           {/* Edict full text (read-only) */}
           {edictFullText && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('form.edictFullText')}</label>
+              <label className="block text-sm font-medium">{t('form.edictFullText')}</label>
               <Textarea
                 value={edictFullText}
                 rows={8}
@@ -165,7 +165,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
           {/* Type & identifiers */}
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.type')}</label>
+              <label className="block text-sm font-medium">{t('columns.type')}</label>
               <Input
                 value={formData.type}
                 onChange={(e) => setFormData((prev) => ({ ...prev, type: e.target.value }))}
@@ -173,7 +173,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.registration')}</label>
+              <label className="block text-sm font-medium">{t('columns.registration')}</label>
               <Input
                 value={formData.registration}
                 onChange={(e) => setFormData((prev) => ({ ...prev, registration: e.target.value }))}
@@ -181,7 +181,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.plate')}</label>
+              <label className="block text-sm font-medium">{t('columns.plate')}</label>
               <Input
                 value={formData.plate}
                 onChange={(e) => setFormData((prev) => ({ ...prev, plate: e.target.value }))}
@@ -193,7 +193,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
           {/* Currency */}
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.currency')}</label>
+              <label className="block text-sm font-medium">{t('columns.currency')}</label>
               <Input
                 value={formData.currency}
                 onChange={(e) => setFormData((prev) => ({ ...prev, currency: e.target.value }))}
@@ -201,7 +201,7 @@ export function RawAssetForm({ open, onOpenChange, rawAsset, onSubmit, readOnly 
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.area')}</label>
+              <label className="block text-sm font-medium">{t('columns.area')}</label>
               <Input
                 value={formData.area}
                 onChange={(e) => setFormData((prev) => ({ ...prev, area: e.target.value }))}

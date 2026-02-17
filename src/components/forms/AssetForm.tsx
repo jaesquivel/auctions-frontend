@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumericInput } from '@/components/ui/numeric-input';
 import { Textarea } from '@/components/ui/textarea';
 import type { Asset, AssetListItem, AssetUpdateRequest } from '@/types';
 
@@ -166,7 +167,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
             <legend className="text-sm font-semibold text-muted-foreground">{t('form.registrationInfo')}</legend>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('columns.registration')}</label>
+                <label className="block text-sm font-medium">{t('columns.registration')}</label>
                 <Input
                   value={formData.registration}
                   onChange={(e) => setFormData((prev) => ({ ...prev, registration: e.target.value }))}
@@ -174,7 +175,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('columns.propertyNumber')}</label>
+                <label className="block text-sm font-medium">{t('columns.propertyNumber')}</label>
                 <Input
                   value={formData.propertyNumber}
                   onChange={(e) => setFormData((prev) => ({ ...prev, propertyNumber: e.target.value }))}
@@ -184,7 +185,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.type')}</label>
+              <label className="block text-sm font-medium">{t('columns.type')}</label>
               <Input
                 value={formData.type}
                 onChange={(e) => setFormData((prev) => ({ ...prev, type: e.target.value }))}
@@ -194,7 +195,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.duplicate')}</label>
+                <label className="block text-sm font-medium">{t('form.duplicate')}</label>
                 <Input
                   value={formData.duplicate}
                   onChange={(e) => setFormData((prev) => ({ ...prev, duplicate: e.target.value }))}
@@ -202,7 +203,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.horizontal')}</label>
+                <label className="block text-sm font-medium">{t('form.horizontal')}</label>
                 <Input
                   value={formData.horizontal}
                   onChange={(e) => setFormData((prev) => ({ ...prev, horizontal: e.target.value }))}
@@ -213,7 +214,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.subRegistration')}</label>
+                <label className="block text-sm font-medium">{t('form.subRegistration')}</label>
                 <Input
                   value={formData.subRegistration}
                   onChange={(e) => setFormData((prev) => ({ ...prev, subRegistration: e.target.value }))}
@@ -221,7 +222,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.plate')}</label>
+                <label className="block text-sm font-medium">{t('form.plate')}</label>
                 <Input
                   value={formData.plate}
                   onChange={(e) => setFormData((prev) => ({ ...prev, plate: e.target.value }))}
@@ -234,7 +235,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
           <fieldset className="space-y-3">
             <legend className="text-sm font-semibold text-muted-foreground">{t('form.auctionInfo')}</legend>
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.currency')}</label>
+              <label className="block text-sm font-medium">{t('columns.currency')}</label>
               <Input
                 value={formData.currency}
                 onChange={(e) => setFormData((prev) => ({ ...prev, currency: e.target.value }))}
@@ -244,7 +245,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.firstAuctionDate')}</label>
+                <label className="block text-sm font-medium">{t('form.firstAuctionDate')}</label>
                 <Input
                   type="datetime-local"
                   value={formData.firstAuctionTs}
@@ -253,11 +254,10 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.firstAuctionBase')}</label>
-                <Input
-                  type="number"
+                <label className="block text-sm font-medium">{t('form.firstAuctionBase')}</label>
+                <NumericInput
                   value={formData.firstAuctionBase}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, firstAuctionBase: e.target.value }))}
+                  onChange={(v) => setFormData((prev) => ({ ...prev, firstAuctionBase: v }))}
                   disabled={readOnly}
                 />
               </div>
@@ -265,7 +265,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.secondAuctionDate')}</label>
+                <label className="block text-sm font-medium">{t('form.secondAuctionDate')}</label>
                 <Input
                   type="datetime-local"
                   value={formData.secondAuctionTs}
@@ -274,11 +274,10 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.secondAuctionBase')}</label>
-                <Input
-                  type="number"
+                <label className="block text-sm font-medium">{t('form.secondAuctionBase')}</label>
+                <NumericInput
                   value={formData.secondAuctionBase}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, secondAuctionBase: e.target.value }))}
+                  onChange={(v) => setFormData((prev) => ({ ...prev, secondAuctionBase: v }))}
                   disabled={readOnly}
                 />
               </div>
@@ -286,7 +285,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.thirdAuctionDate')}</label>
+                <label className="block text-sm font-medium">{t('form.thirdAuctionDate')}</label>
                 <Input
                   type="datetime-local"
                   value={formData.thirdAuctionTs}
@@ -295,11 +294,10 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.thirdAuctionBase')}</label>
-                <Input
-                  type="number"
+                <label className="block text-sm font-medium">{t('form.thirdAuctionBase')}</label>
+                <NumericInput
                   value={formData.thirdAuctionBase}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, thirdAuctionBase: e.target.value }))}
+                  onChange={(v) => setFormData((prev) => ({ ...prev, thirdAuctionBase: v }))}
                   disabled={readOnly}
                 />
               </div>
@@ -310,16 +308,15 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
             <legend className="text-sm font-semibold text-muted-foreground">{t('form.details')}</legend>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.area')}</label>
-                <Input
-                  type="number"
+                <label className="block text-sm font-medium">{t('form.area')}</label>
+                <NumericInput
                   value={formData.area}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, area: e.target.value }))}
+                  onChange={(v) => setFormData((prev) => ({ ...prev, area: v }))}
                   disabled={readOnly}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.rights')}</label>
+                <label className="block text-sm font-medium">{t('form.rights')}</label>
                 <Input
                   value={formData.rights}
                   onChange={(e) => setFormData((prev) => ({ ...prev, rights: e.target.value }))}
@@ -329,7 +326,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('form.liens')}</label>
+              <label className="block text-sm font-medium">{t('form.liens')}</label>
               <Textarea
                 value={formData.liens}
                 onChange={(e) => setFormData((prev) => ({ ...prev, liens: e.target.value }))}
@@ -339,7 +336,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('form.description')}</label>
+              <label className="block text-sm font-medium">{t('form.description')}</label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}

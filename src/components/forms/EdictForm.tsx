@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumericInput } from '@/components/ui/numeric-input';
 import { Textarea } from '@/components/ui/textarea';
 import type { Edict, EdictListItem, EdictUpdateRequest } from '@/types';
 
@@ -120,7 +121,7 @@ export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readO
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.reference')}</label>
+              <label className="block text-sm font-medium">{t('columns.reference')}</label>
               <Input
                 value={formData.reference}
                 onChange={(e) => setFormData((prev) => ({ ...prev, reference: e.target.value }))}
@@ -129,7 +130,7 @@ export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readO
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.caseNumber')}</label>
+              <label className="block text-sm font-medium">{t('columns.caseNumber')}</label>
               <Input
                 value={formData.caseNumber}
                 onChange={(e) => setFormData((prev) => ({ ...prev, caseNumber: e.target.value }))}
@@ -139,7 +140,7 @@ export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readO
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.court')}</label>
+            <label className="block text-sm font-medium">{t('columns.court')}</label>
             <Input
               value={formData.court}
               onChange={(e) => setFormData((prev) => ({ ...prev, court: e.target.value }))}
@@ -149,28 +150,26 @@ export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readO
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.publication')}</label>
-              <Input
-                type="number"
+              <label className="block text-sm font-medium">{t('columns.publication')}</label>
+              <NumericInput
                 value={formData.publication}
-                onChange={(e) => setFormData((prev) => ({ ...prev, publication: e.target.value }))}
+                onChange={(v) => setFormData((prev) => ({ ...prev, publication: v }))}
                 disabled={readOnly}
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('form.publicationCount')}</label>
-              <Input
-                type="number"
+              <label className="block text-sm font-medium">{t('form.publicationCount')}</label>
+              <NumericInput
                 value={formData.publicationCount}
-                onChange={(e) => setFormData((prev) => ({ ...prev, publicationCount: e.target.value }))}
+                onChange={(v) => setFormData((prev) => ({ ...prev, publicationCount: v }))}
                 disabled={readOnly}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('form.notes')}</label>
+            <label className="block text-sm font-medium">{t('form.notes')}</label>
             <Textarea
               value={formData.notes}
               onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
@@ -180,7 +179,7 @@ export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readO
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('form.fullText')}</label>
+            <label className="block text-sm font-medium">{t('form.fullText')}</label>
             <Textarea
               value={formData.fullText}
               onChange={(e) => setFormData((prev) => ({ ...prev, fullText: e.target.value }))}

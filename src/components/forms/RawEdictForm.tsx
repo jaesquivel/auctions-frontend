@@ -112,7 +112,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.reference')}</label>
+              <label className="block text-sm font-medium">{t('columns.reference')}</label>
               <Input
                 value={formData.reference}
                 onChange={(e) => setFormData((prev) => ({ ...prev, reference: e.target.value }))}
@@ -121,7 +121,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.caseNumber')}</label>
+              <label className="block text-sm font-medium">{t('columns.caseNumber')}</label>
               <Input
                 value={formData.caseNumber}
                 onChange={(e) => setFormData((prev) => ({ ...prev, caseNumber: e.target.value }))}
@@ -139,7 +139,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
           )}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.creditor')}</label>
+            <label className="block text-sm font-medium">{t('columns.creditor')}</label>
             <Input
               value={formData.creditor}
               onChange={(e) => setFormData((prev) => ({ ...prev, creditor: e.target.value }))}
@@ -148,7 +148,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.debtor')}</label>
+            <label className="block text-sm font-medium">{t('columns.debtor')}</label>
             <Input
               value={formData.debtor}
               onChange={(e) => setFormData((prev) => ({ ...prev, debtor: e.target.value }))}
@@ -157,7 +157,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.court')}</label>
+            <label className="block text-sm font-medium">{t('columns.court')}</label>
             <Input
               value={formData.court}
               onChange={(e) => setFormData((prev) => ({ ...prev, court: e.target.value }))}
@@ -167,7 +167,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.publication')}</label>
+              <label className="block text-sm font-medium">{t('columns.publication')}</label>
               <Input
                 value={formData.publication}
                 onChange={(e) => setFormData((prev) => ({ ...prev, publication: e.target.value }))}
@@ -176,7 +176,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('form.publicationCount')}</label>
+              <label className="block text-sm font-medium">{t('form.publicationCount')}</label>
               <Input
                 value={formData.publicationCount}
                 onChange={(e) => setFormData((prev) => ({ ...prev, publicationCount: e.target.value }))}
@@ -186,7 +186,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('form.notes')}</label>
+            <label className="block text-sm font-medium">{t('form.notes')}</label>
             <Textarea
               value={formData.notes}
               onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
@@ -196,7 +196,7 @@ export function RawEdictForm({ open, onOpenChange, rawEdict, onSubmit, readOnly 
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('form.fullText')}</label>
+            <label className="block text-sm font-medium">{t('form.fullText')}</label>
             <Textarea
               value={formData.fullText}
               onChange={(e) => setFormData((prev) => ({ ...prev, fullText: e.target.value }))}

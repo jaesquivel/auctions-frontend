@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumericInput } from '@/components/ui/numeric-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { Bulletin, BulletinCreateRequest, BulletinUpdateRequest } from '@/types';
@@ -95,7 +96,7 @@ export function BulletinForm({ open, onOpenChange, bulletin, onSubmit, readOnly 
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.url')}</label>
+            <label className="block text-sm font-medium">{t('columns.url')}</label>
             <Input
               value={formData.url}
               onChange={(e) => setFormData((prev) => ({ ...prev, url: e.target.value }))}
@@ -107,33 +108,26 @@ export function BulletinForm({ open, onOpenChange, bulletin, onSubmit, readOnly 
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.year')}</label>
-              <Input
-                type="number"
+              <label className="block text-sm font-medium">{t('columns.year')}</label>
+              <NumericInput
                 value={formData.year}
-                onChange={(e) => setFormData((prev) => ({ ...prev, year: e.target.value }))}
-                placeholder={new Date().getFullYear().toString()}
-                min={2000}
-                max={2100}
+                onChange={(v) => setFormData((prev) => ({ ...prev, year: v }))}
                 disabled={readOnly}
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('columns.volume')}</label>
-              <Input
-                type="number"
+              <label className="block text-sm font-medium">{t('columns.volume')}</label>
+              <NumericInput
                 value={formData.volume}
-                onChange={(e) => setFormData((prev) => ({ ...prev, volume: e.target.value }))}
-                placeholder="1"
-                min={1}
+                onChange={(v) => setFormData((prev) => ({ ...prev, volume: v }))}
                 disabled={readOnly}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.document')}</label>
+            <label className="block text-sm font-medium">{t('columns.document')}</label>
             <Textarea
               value={formData.document}
               onChange={(e) => setFormData((prev) => ({ ...prev, document: e.target.value }))}

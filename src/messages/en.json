@@ -205,6 +205,7 @@
       "latitude": "Latitude",
       "longitude": "Longitude",
       "tags": "Tags",
+      "selectTags": "Select tags...",
       "noImages": "No images available"
     }
   },

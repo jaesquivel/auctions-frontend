@@ -94,7 +94,7 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
     onOpenChange(false);
   };
 
-  const getTitle = () => {
+  const getBaseTitle = () => {
     if (readOnly) return t('viewProperty');
     return property ? t('editProperty') : t('addProperty');
   };
@@ -137,7 +137,9 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-full p-0 flex flex-col h-full">
           <SheetHeader className="px-4 pt-4 pb-2 border-b shrink-0">
-            <SheetTitle>{getTitle()}</SheetTitle>
+            <SheetTitle>
+              {getBaseTitle()}
+            </SheetTitle>
           </SheetHeader>
           <ScrollArea className="flex-1 min-h-0 px-4 py-4">
             {tabsContent}
@@ -153,13 +155,13 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[95vw] w-[95vw] h-[95vh] flex flex-col p-0 gap-0 [&~div[data-overlay]]:bg-background/60 [&~div[data-overlay]]:backdrop-blur-sm"
+        className="sm:max-w-[100vw] w-[100vw] h-[100vh] rounded-none flex flex-col p-0 gap-0 [&~div[data-overlay]]:bg-background/60 [&~div[data-overlay]]:backdrop-blur-sm"
         showCloseButton={false}
       >
         <DialogHeader className="px-6 py-4 border-b shrink-0">
           <div className="flex items-center justify-between">
-            <DialogTitle>{getTitle()}</DialogTitle>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onOpenChange(false)}>
+            <DialogTitle className="shrink-0">{getBaseTitle()}</DialogTitle>
+            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => onOpenChange(false)}>
               <X className="h-4 w-4" />
             </Button>
           </div>

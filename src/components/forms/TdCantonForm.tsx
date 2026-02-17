@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumericInput } from '@/components/ui/numeric-input';
 import { tdCantonSchema, type TdCantonFormData } from '@/lib/validations/territorial';
 import type { TdCanton, TdCantonCreateRequest, TdProvince } from '@/types';
 
@@ -31,6 +32,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<TdCantonFormData>({
     resolver: zodResolver(tdCantonSchema),
@@ -116,19 +118,23 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
 
         <div className="p-3 bg-muted rounded-md">
           <span className="text-sm text-muted-foreground">{t('provinces')}: </span>
-          <span className="text-sm font-medium">{tdProvince.name}</span>
+          <span className="block text-sm font-medium">{tdProvince.name}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.num')}</label>
-            <Input
-              type="number"
-              min={0}
-              max={32767}
-              {...register('num', { valueAsNumber: true })}
-              className={errors.num ? 'border-destructive' : ''}
-              disabled={readOnly}
+            <label className="block text-sm font-medium">{t('columns.num')}</label>
+            <Controller
+              name="num"
+              control={control}
+              render={({ field }) => (
+                <NumericInput
+                  value={field.value?.toString() || ''}
+                  onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                  className={errors.num ? 'border-destructive' : ''}
+                  disabled={readOnly}
+                />
+              )}
             />
             {errors.num && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.num)}</p>
@@ -136,7 +142,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.code')}</label>
+            <label className="block text-sm font-medium">{t('columns.code')}</label>
             <Input
               {...register('code')}
               maxLength={4}
@@ -150,7 +156,7 @@ export function TdCantonForm({ open, onOpenChange, tdCanton, tdProvince, onSubmi
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t('columns.name')}</label>
+          <label className="block text-sm font-medium">{t('columns.name')}</label>
           <Input
             {...register('name')}
             maxLength={2048}

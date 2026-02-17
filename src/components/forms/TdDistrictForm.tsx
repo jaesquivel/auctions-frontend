@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NumericInput } from '@/components/ui/numeric-input';
 import { tdDistrictSchema, type TdDistrictFormData } from '@/lib/validations/territorial';
 import type { TdDistrict, TdDistrictCreateRequest, TdCanton } from '@/types';
 
@@ -31,6 +32,7 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<TdDistrictFormData>({
     resolver: zodResolver(tdDistrictSchema),
@@ -120,19 +122,23 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
 
         <div className="p-3 bg-muted rounded-md">
           <span className="text-sm text-muted-foreground">{t('cantons')}: </span>
-          <span className="text-sm font-medium">{tdCanton.name}</span>
+          <span className="block text-sm font-medium">{tdCanton.name}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.num')}</label>
-            <Input
-              type="number"
-              min={0}
-              max={32767}
-              {...register('num', { valueAsNumber: true })}
-              className={errors.num ? 'border-destructive' : ''}
-              disabled={readOnly}
+            <label className="block text-sm font-medium">{t('columns.num')}</label>
+            <Controller
+              name="num"
+              control={control}
+              render={({ field }) => (
+                <NumericInput
+                  value={field.value?.toString() || ''}
+                  onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                  className={errors.num ? 'border-destructive' : ''}
+                  disabled={readOnly}
+                />
+              )}
             />
             {errors.num && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.num)}</p>
@@ -140,7 +146,7 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.code')}</label>
+            <label className="block text-sm font-medium">{t('columns.code')}</label>
             <Input
               {...register('code')}
               maxLength={7}
@@ -154,7 +160,7 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t('columns.name')}</label>
+          <label className="block text-sm font-medium">{t('columns.name')}</label>
           <Input
             {...register('name')}
             maxLength={2048}
@@ -168,15 +174,18 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.area')}</label>
-            <Input
-              type="number"
-              step="0.01"
-              min={0}
-              max={99999999.99}
-              {...register('area', { valueAsNumber: true })}
-              className={errors.area ? 'border-destructive' : ''}
-              disabled={readOnly}
+            <label className="block text-sm font-medium">{t('columns.area')}</label>
+            <Controller
+              name="area"
+              control={control}
+              render={({ field }) => (
+                <NumericInput
+                  value={field.value?.toString() || ''}
+                  onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                  className={errors.area ? 'border-destructive' : ''}
+                  disabled={readOnly}
+                />
+              )}
             />
             {errors.area && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.area)}</p>
@@ -184,15 +193,18 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t('columns.altitude')}</label>
-            <Input
-              type="number"
-              step="0.01"
-              min={0}
-              max={9999.99}
-              {...register('altitude', { valueAsNumber: true })}
-              className={errors.altitude ? 'border-destructive' : ''}
-              disabled={readOnly}
+            <label className="block text-sm font-medium">{t('columns.altitude')}</label>
+            <Controller
+              name="altitude"
+              control={control}
+              render={({ field }) => (
+                <NumericInput
+                  value={field.value?.toString() || ''}
+                  onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                  className={errors.altitude ? 'border-destructive' : ''}
+                  disabled={readOnly}
+                />
+              )}
             />
             {errors.altitude && (
               <p className="text-xs text-destructive">{getErrorMessage(errors.altitude)}</p>

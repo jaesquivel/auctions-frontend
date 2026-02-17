@@ -74,7 +74,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit, readOnly = false }:
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t('columns.name')}</label>
+          <label className="block text-sm font-medium">{t('columns.name')}</label>
           <Input
             value={formData.name}
             onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
@@ -86,7 +86,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit, readOnly = false }:
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t('columns.description')}</label>
+          <label className="block text-sm font-medium">{t('columns.description')}</label>
           <Input
             value={formData.description}
             onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
@@ -96,7 +96,7 @@ export function TagForm({ open, onOpenChange, tag, onSubmit, readOnly = false }:
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t('columns.color')}</label>
+          <label className="block text-sm font-medium">{t('columns.color')}</label>
           <div className="grid grid-cols-10 gap-1 mb-2">
             {COLOR_SWATCHES.map((color) => (
               <button
