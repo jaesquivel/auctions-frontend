@@ -69,7 +69,7 @@ export default function VehiclesPage() {
     { id: 'model', header: 'Modelo', width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.model || '-' },
     { id: 'year', header: 'Año', width: 80, align: 'center', filterable: true, filterType: 'number', accessorFn: (row) => row.year?.toString() || '-' },
     { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.firstAuctionTs) },
-    { id: 'firstAuctionBase', header: 'Base', width: 130, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
+    { id: 'firstAuctionBase', header: 'Base', width: 130, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase) },
     { id: 'caseNumber', header: 'Caso', width: 160, filterable: true, filterType: 'text', accessorFn: (row) => row.edict?.caseNumber || '-' },
   ];
 

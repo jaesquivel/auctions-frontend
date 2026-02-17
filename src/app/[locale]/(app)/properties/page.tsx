@@ -195,7 +195,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'number',
-      accessorFn: (row) => formatCurrency(row.asset.firstAuctionBase, row.asset.currency),
+      accessorFn: (row) => formatCurrency(row.asset.firstAuctionBase),
     },
     {
       id: 'firstBaseAdj',
@@ -205,7 +205,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'number',
-      accessorFn: (row) => formatCurrency(row.firstAuctionBaseAdj, row.asset.currency),
+      accessorFn: (row) => formatCurrency(row.firstAuctionBaseAdj),
     },
     {
       id: 'firstGuarantee',
@@ -215,7 +215,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'number',
-      accessorFn: (row) => formatCurrency(row.firstAuctionGuarantee, row.asset.currency),
+      accessorFn: (row) => formatCurrency(row.firstAuctionGuarantee),
     },
     {
       id: 'fiscalValue',
@@ -225,7 +225,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'number',
-      accessorFn: (row) => formatCurrency(row.fiscalValue, 'CRC'),
+      accessorFn: (row) => formatCurrency(row.fiscalValue),
     },
     {
       id: 'fiscalValueUsd',
@@ -235,7 +235,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'number',
-      accessorFn: (row) => formatCurrency(row.fiscalValueUsd, 'USD'),
+      accessorFn: (row) => formatCurrency(row.fiscalValueUsd),
     },
     {
       id: 'fiscalBaseRatio',
@@ -255,7 +255,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'number',
-      accessorFn: (row) => formatCurrency(row.marketValue, 'CRC'),
+      accessorFn: (row) => formatCurrency(row.marketValue),
     },
     {
       id: 'appraisalValue',
@@ -265,7 +265,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'number',
-      accessorFn: (row) => formatCurrency(row.appraisalValue, 'CRC'),
+      accessorFn: (row) => formatCurrency(row.appraisalValue),
     },
     {
       id: 'area',
@@ -284,7 +284,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'text',
-      accessorFn: (row) => row.edict.caseNumber,
+      accessorFn: (row) => row.asset.edict.caseNumber,
     },
   ];
 

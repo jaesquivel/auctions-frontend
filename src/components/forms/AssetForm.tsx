@@ -154,7 +154,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
                 <p><span className="font-medium">{t('form.province')}:</span> {listItem.tdProvince?.name}</p>
               )}
               {listItem.tdCanton && (
-                <p><span className="font-medium">{t('form.cantone')}:</span> {listItem.tdCanton?.name}</p>
+                <p><span className="font-medium">{t('form.canton')}:</span> {listItem.tdCanton?.name}</p>
               )}
               {listItem.tdDistrict && (
                 <p><span className="font-medium">{t('form.district')}:</span> {listItem.tdDistrict?.name}</p>

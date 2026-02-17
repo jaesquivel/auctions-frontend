@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { TagBadge } from '@/components/ui/tag-badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { X } from 'lucide-react';
+import { PropertyFormTabs } from './property/PropertyFormTabs';
+import { useIsMobile } from '@/hooks';
 import type { Property, PropertyListItem, PropertyUpdateRequest, PropertyTag } from '@/types';
 
 interface PropertyFormProps {
@@ -23,20 +25,23 @@ interface PropertyFormProps {
 export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit, readOnly = false, loading = false, availableTags = [] }: PropertyFormProps) {
   const t = useTranslations('properties');
   const tCommon = useTranslations('common');
+  const isMobile = useIsMobile();
 
-  const [formData, setFormData] = useState({
-    fiscalValue: property?.fiscalValue?.toString() || '',
-    marketValue: property?.marketValue?.toString() || '',
-    appraisalValue: property?.appraisalValue?.toString() || '',
-    usdExchangeRate: property?.usdExchangeRate?.toString() || '',
-    observations: property?.observations || '',
-    rnpCert: property?.rnpCert || '',
-    rnpPlan: property?.rnpPlan || '',
+  const [formData, setFormData] = useState<Record<string, string>>({
+    fiscalValue: '',
+    marketValue: '',
+    appraisalValue: '',
+    usdExchangeRate: '',
+    observations: '',
+    rnpCert: '',
+    rnpPlan: '',
+    locationCenterLat: '',
+    locationCenterLon: '',
+    locationStLat: '',
+    locationStLon: '',
   });
 
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
-    property?.tags?.map((t) => t.id) || listItem?.tags?.map((t) => t.id) || []
-  );
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (property) {
@@ -48,19 +53,29 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
         observations: property.observations || '',
         rnpCert: property.rnpCert || '',
         rnpPlan: property.rnpPlan || '',
+        locationCenterLat: property.locationCenterLat?.toString() || '',
+        locationCenterLon: property.locationCenterLon?.toString() || '',
+        locationStLat: property.locationStLat?.toString() || '',
+        locationStLon: property.locationStLon?.toString() || '',
       });
-      setSelectedTagIds(property.tags?.map((t) => t.id) || []);
+      setSelectedTagIds(property.tags?.map((tag) => tag.id) || []);
     } else {
       setFormData({
         fiscalValue: '', marketValue: '', appraisalValue: '', usdExchangeRate: '',
         observations: '', rnpCert: '', rnpPlan: '',
+        locationCenterLat: '', locationCenterLon: '', locationStLat: '', locationStLon: '',
       });
-      setSelectedTagIds(listItem?.tags?.map((t) => t.id) || []);
+      setSelectedTagIds(listItem?.tags?.map((tag) => tag.id) || []);
     }
   }, [property, listItem]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const toggleTag = (tagId: string) => {
+    setSelectedTagIds((prev) =>
+      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
+    );
+  };
+
+  const handleSubmit = () => {
     const data: PropertyUpdateRequest = {
       fiscalValue: formData.fiscalValue ? Number(formData.fiscalValue) : undefined,
       marketValue: formData.marketValue ? Number(formData.marketValue) : undefined,
@@ -69,184 +84,93 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
       observations: formData.observations || undefined,
       rnpCert: formData.rnpCert || undefined,
       rnpPlan: formData.rnpPlan || undefined,
+      locationCenterLat: formData.locationCenterLat ? Number(formData.locationCenterLat) : undefined,
+      locationCenterLon: formData.locationCenterLon ? Number(formData.locationCenterLon) : undefined,
+      locationStLat: formData.locationStLat ? Number(formData.locationStLat) : undefined,
+      locationStLon: formData.locationStLon ? Number(formData.locationStLon) : undefined,
       tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
     };
     onSubmit(data);
     onOpenChange(false);
   };
 
-  const toggleTag = (tagId: string) => {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
-    );
-  };
-
-  const isEdit = !!property;
-
   const getTitle = () => {
     if (readOnly) return t('viewProperty');
-    return isEdit ? t('editProperty') : t('addProperty');
+    return property ? t('editProperty') : t('addProperty');
   };
 
+  const tabsContent = loading ? (
+    <div className="flex items-center justify-center h-32">
+      <p className="text-muted-foreground">{tCommon('loading')}</p>
+    </div>
+  ) : (
+    <PropertyFormTabs
+      property={property}
+      formData={formData}
+      setFormData={setFormData}
+      selectedTagIds={selectedTagIds}
+      toggleTag={toggleTag}
+      availableTags={availableTags}
+      readOnly={readOnly}
+    />
+  );
+
+  const footer = readOnly ? (
+    <div className="flex justify-end">
+      <Button variant="outline" onClick={() => onOpenChange(false)}>
+        {tCommon('close')}
+      </Button>
+    </div>
+  ) : (
+    <div className="flex gap-2 justify-end">
+      <Button variant="outline" onClick={() => onOpenChange(false)}>
+        {tCommon('cancel')}
+      </Button>
+      <Button onClick={handleSubmit} disabled={loading}>
+        {tCommon('save')}
+      </Button>
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="right" className="w-full p-0 flex flex-col h-full">
+          <SheetHeader className="px-4 pt-4 pb-2 border-b shrink-0">
+            <SheetTitle>{getTitle()}</SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="flex-1 min-h-0 px-4 py-4">
+            {tabsContent}
+          </ScrollArea>
+          <SheetFooter className="px-4 py-3 border-t shrink-0">
+            {footer}
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
   return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title={getTitle()}
-      size="lg"
-      footer={
-        readOnly ? (
-          <div className="flex justify-end">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              {tCommon('close')}
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="sm:max-w-[95vw] w-[95vw] h-[95vh] flex flex-col p-0 gap-0 [&~div[data-overlay]]:bg-background/60 [&~div[data-overlay]]:backdrop-blur-sm"
+        showCloseButton={false}
+      >
+        <DialogHeader className="px-6 py-4 border-b shrink-0">
+          <div className="flex items-center justify-between">
+            <DialogTitle>{getTitle()}</DialogTitle>
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onOpenChange(false)}>
+              <X className="h-4 w-4" />
             </Button>
           </div>
-        ) : (
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              {tCommon('cancel')}
-            </Button>
-            <Button onClick={handleSubmit} disabled={loading}>
-              {tCommon('save')}
-            </Button>
-          </div>
-        )
-      }
-    >
-      {loading ? (
-        <div className="flex items-center justify-center h-32">
-          <p className="text-muted-foreground">{tCommon('loading')}</p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Read-only info from nested edict/asset */}
-          {isEdit && (
-            <div className="rounded-md border p-3 bg-muted/50 space-y-1 text-sm text-muted-foreground">
-              {property?.edict?.creditor && (
-                <p><span className="font-medium">{t('form.creditor')}:</span> {property.edict.creditor.name}</p>
-              )}
-              {property?.edict?.debtor && (
-                <p><span className="font-medium">{t('form.debtor')}:</span> {property.edict.debtor.name}</p>
-              )}
-              {property?.edict?.court && (
-                <p><span className="font-medium">{t('form.court')}:</span> {property.edict.court}</p>
-              )}
-              {property?.asset?.registration && (
-                <p><span className="font-medium">{t('form.registration')}:</span> {property.registrationFull || property.asset.registration}</p>
-              )}
-              {property?.asset?.tdProvince && (
-                <p><span className="font-medium">{t('form.province')}:</span> {property.asset.tdProvince.name}</p>
-              )}
-              {property?.asset?.tdCanton && (
-                <p><span className="font-medium">{t('form.canton')}:</span> {property.asset.tdCanton.name}</p>
-              )}
-              {property?.asset?.tdDistrict && (
-                <p><span className="font-medium">{t('form.district')}:</span> {property.asset.tdDistrict.name}</p>
-              )}
-            </div>
-          )}
-
-          <fieldset className="space-y-3">
-            <legend className="text-sm font-semibold text-muted-foreground">{t('form.values')}</legend>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.fiscalValue')}</label>
-                <Input
-                  type="number"
-                  value={formData.fiscalValue}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, fiscalValue: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.usdExchangeRate')}</label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.usdExchangeRate}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, usdExchangeRate: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.marketValue')}</label>
-                <Input
-                  type="number"
-                  value={formData.marketValue}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, marketValue: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.appraisalValue')}</label>
-                <Input
-                  type="number"
-                  value={formData.appraisalValue}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, appraisalValue: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="space-y-3">
-            <legend className="text-sm font-semibold text-muted-foreground">{t('form.details')}</legend>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.rnpCert')}</label>
-                <Input
-                  value={formData.rnpCert}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, rnpCert: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t('form.rnpPlan')}</label>
-                <Input
-                  value={formData.rnpPlan}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, rnpPlan: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t('form.observations')}</label>
-              <Textarea
-                value={formData.observations}
-                onChange={(e) => setFormData((prev) => ({ ...prev, observations: e.target.value }))}
-                rows={4}
-                disabled={readOnly}
-              />
-            </div>
-          </fieldset>
-
-          {/* Tags */}
-          {availableTags.length > 0 && (
-            <fieldset className="space-y-3">
-              <legend className="text-sm font-semibold text-muted-foreground">{t('form.tags')}</legend>
-              <div className="flex flex-wrap gap-2">
-                {availableTags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    onClick={() => !readOnly && toggleTag(tag.id)}
-                    className={`rounded-md transition-all ${
-                      selectedTagIds.includes(tag.id)
-                        ? 'ring-2 ring-primary ring-offset-1'
-                        : 'opacity-50 hover:opacity-75'
-                    }`}
-                    disabled={readOnly}
-                  >
-                    <TagBadge name={tag.name} color={tag.color} />
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-          )}
-        </form>
-      )}
-    </Modal>
+        </DialogHeader>
+        <ScrollArea className="flex-1 min-h-0 px-6 py-4">
+          {tabsContent}
+        </ScrollArea>
+        <DialogFooter className="px-6 py-3 border-t shrink-0">
+          {footer}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

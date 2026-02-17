@@ -1,14 +1,14 @@
-import type { Currency } from '@/types';
+// Global formatting locale — change this to update separators across the app.
+// ',' for thousands, '.' for decimals (en-US convention)
+const NUMBER_LOCALE = 'en-US';
 
-export function formatCurrency(value: number | null | undefined, currency: Currency = 'CRC'): string {
+export function formatCurrency(value: number | null | undefined): string {
   if (value === null || value === undefined) return '-';
 
-  const formatted = new Intl.NumberFormat('es-CR', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+  return new Intl.NumberFormat(NUMBER_LOCALE, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
-
-  return `${currency} ${formatted}`;
 }
 
 export function formatDate(dateString: string | null | undefined): string {
@@ -27,7 +27,7 @@ export function formatDate(dateString: string | null | undefined): string {
 export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) return '-';
 
-  return new Intl.NumberFormat('es-CR', {
+  return new Intl.NumberFormat(NUMBER_LOCALE, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(value);
@@ -40,5 +40,11 @@ export function formatArea(value: number | null | undefined): string {
 
 export function formatRatio(value: number | null | undefined): string {
   if (value === null || value === undefined) return '-';
-  return `${formatNumber(value)}%`;
+
+  const formatted = new Intl.NumberFormat(NUMBER_LOCALE, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+
+  return `${formatted}%`;
 }
