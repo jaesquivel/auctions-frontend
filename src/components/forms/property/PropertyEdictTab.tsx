@@ -10,7 +10,7 @@ interface PropertyEdictTabProps {
 function Field({ label, value }: { label: string; value: string | number | null | undefined }) {
   return (
     <p className="text-sm">
-      <span className="font-medium text-muted-foreground">{label}:</span>{' '}
+      <span className="font-semibold text-muted-foreground">{label}:</span>{' '}
       <span>{value ?? '-'}</span>
     </p>
   );
@@ -18,7 +18,7 @@ function Field({ label, value }: { label: string; value: string | number | null 
 
 export function PropertyEdictTab({ property }: PropertyEdictTabProps) {
   const t = useTranslations('properties.form');
-  const edict = property?.edict;
+  const edict = property?.asset?.edict;
 
   if (!edict) {
     return <p className="text-sm text-muted-foreground py-4">{t('noData')}</p>;
@@ -51,7 +51,18 @@ export function PropertyEdictTab({ property }: PropertyEdictTabProps) {
       {edict.judiciaryOffice && (
         <div className="rounded-md border p-3 space-y-1">
           <p className="text-sm font-semibold text-muted-foreground mb-1">{t('judiciaryOffice')}</p>
+          <Field label={t('sigapjCode')} value={edict.judiciaryOffice.sigapjCode} />
           <Field label={t('name')} value={edict.judiciaryOffice.officeName} />
+        </div>
+      )}
+
+      {/* Notes */}
+      {edict.notes && (
+        <div className="space-y-2">
+          <p className="text-sm font-semibold text-muted-foreground">{t('notes')}</p>
+          <div className="rounded-md border p-3 text-sm whitespace-pre-wrap max-h-40 overflow-y-auto bg-muted/30">
+            {edict.notes}
+          </div>
         </div>
       )}
 
@@ -64,6 +75,12 @@ export function PropertyEdictTab({ property }: PropertyEdictTabProps) {
           </div>
         </div>
       )}
+
+      {/* Bulletin */}
+      {edict.bulletin && (
+        <Field label={t('bulletin')} value={`${edict.bulletin.year} vol. ${edict.bulletin.volume}`} />
+      )}
+
     </div>
   );
 }

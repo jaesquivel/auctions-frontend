@@ -36,6 +36,49 @@ export interface AssetListItem {
   createdAt: string;
 }
 
+// Edict sub-types nested inside Asset (from PropertyAssetResponse)
+export interface AssetEdictCreditor {
+  id: string;
+  name: string;
+  entityType: number;
+  margin: number;
+}
+
+export interface AssetEdictDebtor {
+  id: string;
+  name: string;
+  entityType: number;
+}
+
+export interface AssetEdictJudiciaryOffice {
+  id: string;
+  sigapjCode: number;
+  officeName: string;
+  popularName: string | null;
+}
+
+export interface AssetEdictBulletin {
+  id: string;
+  volume: number;
+  year: number;
+}
+
+export interface AssetEdict {
+  id: string;
+  reference: string;
+  caseNumber: string;
+  publication: number | null;
+  publicationCount: number | null;
+  notes: string | null;
+  fullText: string | null;
+  court: string | null;
+  rawEdictId: string;
+  creditor: AssetEdictCreditor;
+  debtor: AssetEdictDebtor;
+  judiciaryOffice: AssetEdictJudiciaryOffice | null;
+  bulletin: AssetEdictBulletin;
+}
+
 // Detail endpoint returns AssetResponse (full territorial, includes liens/description)
 export interface Asset {
   id: string;
@@ -66,6 +109,8 @@ export interface Asset {
   area: number | null;
   description: string | null;
   rights: string | null;
+  // Nested edict
+  edict: AssetEdict;
   createdAt: string;
 }
 

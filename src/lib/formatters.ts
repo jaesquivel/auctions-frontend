@@ -2,13 +2,15 @@
 // ',' for thousands, '.' for decimals (en-US convention)
 const NUMBER_LOCALE = 'en-US';
 
-export function formatCurrency(value: number | null | undefined): string {
+export function formatCurrency(value: number | null | undefined, currency?: string): string {
   if (value === null || value === undefined) return '-';
 
-  return new Intl.NumberFormat(NUMBER_LOCALE, {
+  const formatted = new Intl.NumberFormat(NUMBER_LOCALE, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+
+  return currency ? `${currency} ${formatted}` : formatted;
 }
 
 export function formatDate(dateString: string | null | undefined): string {
@@ -36,6 +38,11 @@ export function formatNumber(value: number | null | undefined): string {
 export function formatArea(value: number | null | undefined): string {
   if (value === null || value === undefined) return '-';
   return `${formatNumber(value)} m²`;
+}
+
+export function formatCoordinate(value: number | null | undefined): string {
+  if (value === null || value === undefined) return '-';
+  return value.toFixed(8);
 }
 
 export function formatRatio(value: number | null | undefined): string {

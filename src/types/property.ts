@@ -1,7 +1,7 @@
 // Property types
 import type { PropertyTagSummary } from './tag';
 import type { AssetListItem, Asset } from './asset';
-import type { EdictListItem, Edict } from './edict';
+import type { EdictListItem } from './edict';
 
 export interface PropertyImage {
   id: string;
@@ -43,7 +43,6 @@ export interface Property {
   locationStLat: number | null;
   locationStLon: number | null;
   // Relations
-  edict: Edict;
   asset: Asset;
   tags: PropertyTagSummary[];
   images: PropertyImage[];
