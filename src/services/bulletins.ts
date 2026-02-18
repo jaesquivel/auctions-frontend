@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockBulletins } from '@/mocks';
 import type { Bulletin, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
@@ -60,7 +61,7 @@ export const bulletinsService = {
   async create(data: Partial<Bulletin>): Promise<Bulletin> {
     if (config.useMock.bulletins) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID(), createdAt: new Date().toISOString() } as Bulletin;
+      return { ...data, id: uuid(), createdAt: new Date().toISOString() } as Bulletin;
     }
 
     return apiClient.post<Bulletin>('/bulletins', data);

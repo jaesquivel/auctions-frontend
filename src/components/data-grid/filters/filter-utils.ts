@@ -1,9 +1,10 @@
+import { uuid } from '@/lib/utils';
 import type { ColumnDef } from '../types';
 import type { FilterCondition, FilterGroup, FilterState, FilterableColumnDef } from './filter-types';
 
 export function createEmptyCondition(defaultField?: string): FilterCondition {
   return {
-    id: crypto.randomUUID(),
+    id: uuid(),
     field: defaultField ?? '',
     operator: 'contains',
     value: '',
@@ -12,7 +13,7 @@ export function createEmptyCondition(defaultField?: string): FilterCondition {
 
 export function createEmptyGroup(defaultField?: string): FilterGroup {
   return {
-    id: crypto.randomUUID(),
+    id: uuid(),
     conditions: [createEmptyCondition(defaultField)],
     joinOperator: 'and',
   };

@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockVehicles } from '@/mocks';
 import type { VehicleSummary, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
@@ -60,7 +61,7 @@ export const vehiclesService = {
   async create(data: Partial<VehicleSummary>): Promise<VehicleSummary> {
     if (config.useMock.vehicles) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as VehicleSummary;
+      return { ...data, id: uuid() } as VehicleSummary;
     }
 
     return apiClient.post<VehicleSummary>('/vehicles', data);

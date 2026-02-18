@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockEdicts } from '@/mocks';
 import type { Edict, EdictListItem, EdictCreateRequest, EdictUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
@@ -60,7 +61,7 @@ export const edictsService = {
   async create(data: EdictCreateRequest): Promise<Edict> {
     if (config.useMock.edicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as unknown as Edict;
+      return { ...data, id: uuid() } as unknown as Edict;
     }
 
     return apiClient.post<Edict>('/edicts', data);

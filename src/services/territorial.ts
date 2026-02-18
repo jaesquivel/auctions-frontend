@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockTdProvinces, mockTdCantons, mockTdDistricts } from '@/mocks';
 import type { TdProvince, TdCanton, TdDistrict } from '@/types';
 
@@ -26,7 +27,7 @@ export const territorialService = {
   async createTdProvince(data: Partial<TdProvince>): Promise<TdProvince> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as TdProvince;
+      return { ...data, id: uuid() } as TdProvince;
     }
 
     return apiClient.post<TdProvince>('/td-provinces', data);
@@ -77,7 +78,7 @@ export const territorialService = {
   async createTdCanton(data: Partial<TdCanton>): Promise<TdCanton> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as TdCanton;
+      return { ...data, id: uuid() } as TdCanton;
     }
 
     return apiClient.post<TdCanton>('/td-cantons', data);
@@ -128,7 +129,7 @@ export const territorialService = {
   async createTdDistrict(data: Partial<TdDistrict>): Promise<TdDistrict> {
     if (config.useMock.territorial) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as TdDistrict;
+      return { ...data, id: uuid() } as TdDistrict;
     }
 
     return apiClient.post<TdDistrict>('/td-districts', data);

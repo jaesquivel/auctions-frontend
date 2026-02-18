@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockAssets } from '@/mocks';
 import type { Asset, AssetListItem, AssetCreateRequest, AssetUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
@@ -60,7 +61,7 @@ export const assetsService = {
   async create(data: AssetCreateRequest): Promise<Asset> {
     if (config.useMock.assets) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as unknown as Asset;
+      return { ...data, id: uuid() } as unknown as Asset;
     }
 
     return apiClient.post<Asset>('/assets', data);

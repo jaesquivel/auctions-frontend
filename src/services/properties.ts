@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockProperties } from '@/mocks';
 import type { Property, PropertyListItem, PropertyCreateRequest, PropertyUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
@@ -62,7 +63,7 @@ export const propertiesService = {
   async create(data: PropertyCreateRequest): Promise<Property> {
     if (config.useMock.properties) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID() } as unknown as Property;
+      return { ...data, id: uuid() } as unknown as Property;
     }
 
     return apiClient.post<Property>('/properties', data);

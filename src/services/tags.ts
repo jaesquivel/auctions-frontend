@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockTags } from '@/mocks';
 import type { PropertyTag } from '@/types';
 
@@ -25,7 +26,7 @@ export const tagsService = {
   async create(data: Partial<PropertyTag>): Promise<PropertyTag> {
     if (config.useMock.tags) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID(), createdAt: new Date().toISOString() } as PropertyTag;
+      return { ...data, id: uuid(), createdAt: new Date().toISOString() } as PropertyTag;
     }
 
     return apiClient.post<PropertyTag>('/properties-tags', data);

@@ -1,5 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
+import { uuid } from '@/lib/utils';
 import { mockExtractedEdicts } from '@/mocks';
 import type { RawEdict, RawEdictCreateRequest, RawEdictUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
@@ -62,7 +63,7 @@ export const rawEdictsService = {
   async create(data: RawEdictCreateRequest): Promise<RawEdict> {
     if (config.useMock.rawEdicts) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: crypto.randomUUID(), createdAt: new Date().toISOString() } as unknown as RawEdict;
+      return { ...data, id: uuid(), createdAt: new Date().toISOString() } as unknown as RawEdict;
     }
 
     return apiClient.post<RawEdict>('/raw-edicts', data);

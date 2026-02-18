@@ -28,16 +28,16 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
   return (
     <div className="w-full space-y-4">
       {/* Registration + Tags bar */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
         {property?.registrationFull && (
-          <span className="text-base font-bold text-muted-foreground">{property.registrationFull}</span>
+          <span className="text-base font-semibold">{property.registrationFull}</span>
         )}
         {availableTags.length > 0 && (
           <Popover>
             <PopoverTrigger asChild disabled={readOnly}>
               <button
                 type="button"
-                className="flex gap-1 min-h-9 max-w-250 items-center rounded-md border border-input bg-transparent px-3 py-1.5 text-sm cursor-pointer hover:bg-accent/50 transition-colors disabled:pointer-events-none disabled:opacity-50 overflow-hidden ml-auto"
+                className="flex gap-1 min-h-9 max-w-250 items-center rounded-md border border-input bg-transparent px-3 py-1.5 text-sm cursor-pointer hover:bg-accent/50 transition-colors disabled:pointer-events-none disabled:opacity-50 overflow-hidden"
               >
                 {selectedTagIds.length > 0 ? (
                   availableTags
@@ -48,7 +48,7 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
                 )}
               </button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-64 p-0" onWheel={(e) => e.stopPropagation()}>
+            <PopoverContent align="start" className="w-64 p-0" onWheel={(e) => e.stopPropagation()}>
               <div className="space-y-1 p-2 max-h-60 overflow-y-auto">
                 {availableTags.map((tag) => (
                   <button
