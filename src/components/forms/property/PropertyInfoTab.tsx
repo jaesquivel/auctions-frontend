@@ -6,6 +6,7 @@ import { NumericInput } from '@/components/ui/numeric-input';
 import { Numeric } from '@/components/ui/numeric';
 import { formatCurrency, formatDate, formatArea } from '@/lib/formatters';
 import type { Property } from '@/types';
+import { DateTime } from '@/components/ui/datetime';
 
 interface PropertyInfoTabProps {
   property?: Property | null;
@@ -32,36 +33,59 @@ export function PropertyInfoTab({ property, formData, setFormData, readOnly }: P
 
   return (
     <div className="space-y-4">
-      {/* Calculated values (read-only) */}
-      {property && (
-        <div className="rounded-md border p-3 bg-muted/50 space-y-1 text-sm">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 text-muted-foreground">
-            <p className="text-left"><span className="font-medium">{t('firstBaseAdj')}:</span> {formatCurrency(property.firstAuctionBaseAdj, cur)}</p>
-            <p className="text-left"><span className="font-medium">{t('firstGuarantee')}:</span> {formatCurrency(property.firstAuctionGuarantee, cur)}</p>
-          </div>
-        </div>
-      )}
-
       {/* Asset info (read-only) */}
       {property?.asset && (
-        <div className="rounded-md border p-3 bg-muted/50 space-y-2 text-sm">
+
+        <fieldset className="rounded-md border space-y-3 p-3">
+          <legend className="text-sm font-semibold text-muted-foreground">{t('auctionSchedule')}</legend>
           {/* Auction Schedule */}
           {(property.asset.firstAuctionTs || property.asset.secondAuctionTs || property.asset.thirdAuctionTs) && (
             <div className="pt-1">
-              <p className="font-semibold text-muted-foreground mb-1">{t('auctionSchedule')}</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 text-muted-foreground">
                 {property.asset.firstAuctionTs && (
-                  <p><span className="font-medium">{t('firstAuction')}:</span> {formatDate(property.asset.firstAuctionTs)} — {formatCurrency(property.asset.firstAuctionBase, cur)}</p>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium">{t('firstAuction')}</label>
+                    <DateTime value={property.asset.firstAuctionTs}/>
+                    <Numeric value={property.asset.firstAuctionBase} currency={cur} decimals={2}/>
+                  </div>
                 )}
                 {property.asset.secondAuctionTs && (
-                  <p><span className="font-medium">{t('secondAuction')}:</span> {formatDate(property.asset.secondAuctionTs)} — {formatCurrency(property.asset.secondAuctionBase, cur)}</p>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium">{t('secondAuction')}</label>
+                    <DateTime value={property.asset.secondAuctionTs}/>
+                    <Numeric value={property.asset.secondAuctionBase} currency={cur} decimals={2}/>
+                  </div>
                 )}
                 {property.asset.thirdAuctionTs && (
-                  <p><span className="font-medium">{t('thirdAuction')}:</span> {formatDate(property.asset.thirdAuctionTs)} — {formatCurrency(property.asset.thirdAuctionBase, cur)}</p>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium">{t('thirdAuction')}</label>
+                    <DateTime value={property.asset.thirdAuctionTs}/>
+                    <Numeric value={property.asset.thirdAuctionBase} currency={cur} decimals={2}/>
+                  </div>
                 )}
               </div>
             </div>
           )}
+          <div className="pt-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 text-muted-foreground">
+              {property.firstAuctionGuarantee && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">{t('firstGuarantee')}</label>
+                  <Numeric value={property.firstAuctionGuarantee} currency={cur} decimals={2}/>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="pt-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 text-muted-foreground">
+              {property.firstAuctionBaseAdj && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">{t('firstBaseAdj')}</label>
+                  <Numeric value={property.firstAuctionBaseAdj} currency={cur} decimals={2}/>
+                </div>
+              )}
+            </div>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 text-muted-foreground">
             {property.asset.type && (
               <p><span className="font-medium">{t('type')}:</span> {property.asset.type}</p>
@@ -97,13 +121,13 @@ export function PropertyInfoTab({ property, formData, setFormData, readOnly }: P
           {property.asset.description && (
             <p className="text-muted-foreground"><span className="font-medium">{t('description')}:</span> {property.asset.description}</p>
           )}
-        </div>
+        </fieldset>
       )}
 
       {/* Valuation */}
       <fieldset className="rounded-md border space-y-3 p-3">
         <legend className="text-sm font-semibold text-muted-foreground">{t('valuation')}</legend>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium">{t('marketValue')}</label>
             {readOnly ? moneyDisplay(formData.marketValue, 'USD') : (
@@ -117,6 +141,10 @@ export function PropertyInfoTab({ property, formData, setFormData, readOnly }: P
             )}
           </div>
           <div className="space-y-2">
+            <label className="block text-sm font-medium">{t('fiscalBaseRatio')}</label>
+            <Numeric value={property?.fiscalBaseRatio} percent decimals={0}/>
+          </div>
+          <div className="space-y-2">
             <label className="block text-sm font-medium">{t('fiscalValue')}</label>
             {readOnly ? moneyDisplay(formData.fiscalValue, 'CRC') : (
               <NumericInput value={formData.fiscalValue} onChange={updateField('fiscalValue')} currency="CRC" />
@@ -125,10 +153,6 @@ export function PropertyInfoTab({ property, formData, setFormData, readOnly }: P
           <div className="space-y-2">
             <label className="block text-sm font-medium">{t('fiscalValueUsd')}</label>
             <Numeric value={property?.fiscalValueUsd} currency='USD' decimals={2}/>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('fiscalBaseRatio')}</label>
-            <Numeric value={property?.fiscalBaseRatio} percent decimals={0}/>
           </div>
         </div>
       </fieldset>
