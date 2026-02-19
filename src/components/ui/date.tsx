@@ -7,5 +7,5 @@ interface DateProps {
 
 export function DateDisplay({ value, dateOnly = false }: DateProps) {
   const display = dateOnly ? formatDateOnly(value) : formatDate(value);
-  return <p className="rounded-md border text-right max-w-50 bg-muted/50 px-3 py-1.5">{display}</p>;
+  return <p className="rounded-md flex items-center justify-end max-w-50 bg-muted/90 px-3 h-9 text-sm">{display}</p>;
 }

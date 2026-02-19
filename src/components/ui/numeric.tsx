@@ -27,5 +27,5 @@ export function Numeric({ value, className, currency, percent, decimals = 2 }: N
     }
   }
 
-  return <p className={`rounded-md border text-right max-w-50 bg-muted/50 px-3 h-9 py-1 text-sm ${className || ''}`}>{display}</p>;
+  return <p className={`rounded-md flex items-center justify-end max-w-50 bg-muted/90 px-3 h-9 text-sm ${className || ''}`}>{display}</p>;
 }
