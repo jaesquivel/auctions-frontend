@@ -35,23 +35,30 @@ export function formatNumber(value: number | null | undefined): string {
   }).format(value);
 }
 
+export function formatDecimal(value: number | null | undefined, decimals: number): string {
+  if (value === null || value === undefined) return '-';
+
+  return new Intl.NumberFormat(NUMBER_LOCALE, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+export function formatPercent(value: number | null | undefined, decimals = 0): string {
+  if (value === null || value === undefined) return '-';
+
+  return formatDecimal(value, decimals) + '%';
+}
+
 export function formatArea(value: number | null | undefined): string {
   if (value === null || value === undefined) return '-';
   return `${formatNumber(value)} m²`;
 }
 
 export function formatCoordinate(value: number | null | undefined): string {
-  if (value === null || value === undefined) return '-';
-  return value.toFixed(8);
+  return formatDecimal(value, 8);
 }
 
 export function formatRatio(value: number | null | undefined): string {
-  if (value === null || value === undefined) return '-';
-
-  const formatted = new Intl.NumberFormat(NUMBER_LOCALE, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-
-  return `${formatted}%`;
+  return formatPercent(value, 0);
 }

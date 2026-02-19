@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
-import { formatCurrency, formatCoordinate } from '@/lib/formatters';
+import { formatCurrency, formatDecimal } from '@/lib/formatters';
 
 interface NumericInputProps {
   value: string;
@@ -21,7 +21,7 @@ export function NumericInput({ value, onChange, className, disabled, currency, d
     if (!raw) return '';
     const num = Number(raw);
     if (isNaN(num)) return raw;
-    if (decimals != null) return num.toFixed(decimals);
+    if (decimals != null) return formatDecimal(num, decimals);
     return formatCurrency(num, currency);
   }, [currency, decimals]);
 
@@ -51,7 +51,7 @@ export function NumericInput({ value, onChange, className, disabled, currency, d
     <Input
       type="text"
       inputMode="decimal"
-      className={`text-right max-w-[200px] ${className || ''}`}
+      className={`text-right max-w-50 ${className || ''}`}
       value={focused ? value : formatDisplay(value)}
       onChange={handleChange}
       onFocus={handleFocus}

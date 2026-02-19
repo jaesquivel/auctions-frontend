@@ -18,7 +18,7 @@ export function PropertyRegistryTab({ property }: PropertyRegistryTabProps) {
       )}
       {property?.rnpCert ? (
         <div
-          className="prose prose-sm dark:prose-invert max-w-none rounded-md border p-4 overflow-auto"
+          className="prose prose-lg dark:prose-invert max-w-none rounded-md border p-4 overflow-auto"
           dangerouslySetInnerHTML={{ __html: property.rnpCert }}
         />
       ) : (
