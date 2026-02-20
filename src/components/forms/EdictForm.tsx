@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { NumericInput } from '@/components/ui/numeric-input';
-import { Textarea } from '@/components/ui/textarea';
+import { StringField } from '@/components/ui/string-field';
+import { TextField } from '@/components/ui/text-field';
 import type { Edict, EdictListItem, EdictUpdateRequest } from '@/types';
 
 interface EdictFormProps {
@@ -22,6 +21,7 @@ interface EdictFormProps {
 export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readOnly = false, loading = false }: EdictFormProps) {
   const t = useTranslations('edicts');
   const tCommon = useTranslations('common');
+  const fieldMode = readOnly ? 'readonly' : 'edit';
 
   const [formData, setFormData] = useState({
     reference: edict?.reference || '',
@@ -65,6 +65,7 @@ export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readO
   };
 
   const isEdit = !!edict;
+  const update = (field: string) => (value: string) => setFormData((prev) => ({ ...prev, [field]: value }));
 
   const getTitle = () => {
     if (readOnly) return t('viewEdict');
@@ -120,73 +121,19 @@ export function EdictForm({ open, onOpenChange, edict, listItem, onSubmit, readO
           )}
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('columns.reference')}</label>
-              <Input
-                value={formData.reference}
-                onChange={(e) => setFormData((prev) => ({ ...prev, reference: e.target.value }))}
-                disabled={readOnly}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('columns.caseNumber')}</label>
-              <Input
-                value={formData.caseNumber}
-                onChange={(e) => setFormData((prev) => ({ ...prev, caseNumber: e.target.value }))}
-                disabled={readOnly}
-              />
-            </div>
+            <StringField mode={fieldMode} label={t('columns.reference')} value={formData.reference} onChange={update('reference')} />
+            <StringField mode={fieldMode} label={t('columns.caseNumber')} value={formData.caseNumber} onChange={update('caseNumber')} />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('columns.court')}</label>
-            <Input
-              value={formData.court}
-              onChange={(e) => setFormData((prev) => ({ ...prev, court: e.target.value }))}
-              disabled={readOnly}
-            />
-          </div>
+          <StringField mode={fieldMode} label={t('columns.court')} value={formData.court} onChange={update('court')} />
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('columns.publication')}</label>
-              <NumericInput
-                value={formData.publication}
-                onChange={(v) => setFormData((prev) => ({ ...prev, publication: v }))}
-                disabled={readOnly}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('form.publicationCount')}</label>
-              <NumericInput
-                value={formData.publicationCount}
-                onChange={(v) => setFormData((prev) => ({ ...prev, publicationCount: v }))}
-                disabled={readOnly}
-              />
-            </div>
+            <StringField mode={fieldMode} label={t('columns.publication')} value={formData.publication} onChange={update('publication')} />
+            <StringField mode={fieldMode} label={t('form.publicationCount')} value={formData.publicationCount} onChange={update('publicationCount')} />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('form.notes')}</label>
-            <Textarea
-              value={formData.notes}
-              onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
-              rows={3}
-              disabled={readOnly}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('form.fullText')}</label>
-            <Textarea
-              value={formData.fullText}
-              onChange={(e) => setFormData((prev) => ({ ...prev, fullText: e.target.value }))}
-              rows={8}
-              disabled={readOnly}
-            />
-          </div>
+          <TextField mode={fieldMode} label={t('form.notes')} value={formData.notes} onChange={update('notes')} rows={3} />
+          <TextField mode={fieldMode} label={t('form.fullText')} value={formData.fullText} onChange={update('fullText')} rows={8} />
         </form>
       )}
     </Modal>

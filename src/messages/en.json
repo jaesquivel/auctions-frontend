@@ -193,9 +193,7 @@
       "liens": "Liens",
       "description": "Description",
       "location": "Location",
-      "province": "Province",
-      "canton": "Canton",
-      "district": "District",
+      "tdLocation": "Territorial Location",
       "auctionSchedule": "Auction Schedule",
       "firstAuction": "1st Auction",
       "secondAuction": "2nd Auction",
@@ -264,9 +262,7 @@
       "creditor": "Creditor",
       "debtor": "Debtor",
       "court": "Court",
-      "province": "Province",
-      "canton": "Canton",
-      "district": "District"
+      "tdLocation": "Territorial Location"
     }
   },
   "edicts": {

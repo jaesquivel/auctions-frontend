@@ -193,16 +193,14 @@
       "liens": "Gravámenes",
       "description": "Descripción",
       "location": "Ubicación",
-      "province": "Provincia",
-      "canton": "Cantón",
-      "district": "Distrito",
+      "tdLocation": "Ubicación Territorial",
       "auctionSchedule": "Calendario de Remates",
       "firstAuction": "1er Remate",
       "secondAuction": "2do Remate",
       "thirdAuction": "3er Remate",
       "auctionDate": "Fecha",
       "auctionBase": "Base",
-      "locationCenter": "Ubicación Central",
+      "locationCenter": "Ubicación Centro",
       "locationStreet": "Ubicación Calle",
       "latitude": "Latitud",
       "longitude": "Longitud",
@@ -264,9 +262,7 @@
       "creditor": "Acreedor",
       "debtor": "Deudor",
       "court": "Juzgado",
-      "province": "Provincia",
-      "canton": "Cantón",
-      "district": "Distrito"
+      "tdLocation": "Ubicación Territorial"
     }
   },
   "edicts": {

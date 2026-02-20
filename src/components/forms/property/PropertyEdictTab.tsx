@@ -1,19 +1,12 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { StringField } from '@/components/ui/string-field';
+import { PercentField } from '@/components/ui/percent-field';
 import type { Property } from '@/types';
 
 interface PropertyEdictTabProps {
   property?: Property | null;
-}
-
-function Field({ label, value }: { label: string; value: string | number | null | undefined }) {
-  return (
-    <p className="text-sm">
-      <span className="font-semibold text-muted-foreground">{label}:</span>{' '}
-      <span>{value ?? '-'}</span>
-    </p>
-  );
 }
 
 export function PropertyEdictTab({ property }: PropertyEdictTabProps) {
@@ -28,32 +21,45 @@ export function PropertyEdictTab({ property }: PropertyEdictTabProps) {
     <div className="space-y-4">
       {/* Parties */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-md border p-3 space-y-1">
-          <p className="text-sm font-semibold text-muted-foreground mb-1">{t('creditor')}</p>
-          <Field label={t('name')} value={edict.creditor?.name} />
-          <Field label={t('creditorMargin')} value={edict.creditor?.margin != null ? `${edict.creditor.margin}%` : null} />
+        <div className="rounded-md border p-3 space-y-2">
+          <p className="text-sm font-semibold text-muted-foreground">{t('creditor')}</p>
+          <StringField mode="readonly" label={t('name')} value={edict.creditor?.name} />
+          <PercentField mode="readonly" label={t('creditorMargin')} value={edict.creditor?.margin} decimals={0} />
         </div>
-        <div className="rounded-md border p-3 space-y-1">
-          <p className="text-sm font-semibold text-muted-foreground mb-1">{t('debtor')}</p>
-          <Field label={t('name')} value={edict.debtor?.name} />
+        <div className="rounded-md border p-3 space-y-2">
+          <p className="text-sm font-semibold text-muted-foreground">{t('debtor')}</p>
+          <StringField mode="readonly" label={t('name')} value={edict.debtor?.name} />
         </div>
       </div>
 
       {/* Case info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label={t('caseNumber')} value={edict.caseNumber} />
-        <Field label={t('reference')} value={edict.reference} />
-        <Field label={t('court')} value={edict.court} />
-        <Field label={t('publication')} value={edict.publication != null ? `${edict.publication}/${edict.publicationCount ?? '?'}` : null} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <StringField mode="readonly" label={t('caseNumber')} value={edict.caseNumber} />
+        <StringField mode="readonly" label={t('reference')} value={edict.reference} />
+        <StringField mode="readonly" label={t('court')} value={edict.court} />
+        <StringField
+          mode="readonly"
+          label={t('publication')}
+          value={edict.publication != null ? `${edict.publication}/${edict.publicationCount ?? '?'}` : undefined}
+        />
       </div>
 
       {/* Judiciary Office */}
       {edict.judiciaryOffice && (
-        <div className="rounded-md border p-3 space-y-1">
-          <p className="text-sm font-semibold text-muted-foreground mb-1">{t('judiciaryOffice')}</p>
-          <Field label={t('sigapjCode')} value={edict.judiciaryOffice.sigapjCode} />
-          <Field label={t('name')} value={edict.judiciaryOffice.officeName} />
+        <div className="rounded-md border p-3 space-y-2">
+          <p className="text-sm font-semibold text-muted-foreground">{t('judiciaryOffice')}</p>
+          <StringField mode="readonly" label={t('sigapjCode')} value={edict.judiciaryOffice.sigapjCode != null ? String(edict.judiciaryOffice.sigapjCode) : undefined} />
+          <StringField mode="readonly" label={t('name')} value={edict.judiciaryOffice.officeName} />
         </div>
+      )}
+
+      {/* Bulletin */}
+      {edict.bulletin && (
+        <StringField
+          mode="readonly"
+          label={t('bulletin')}
+          value={`${edict.bulletin.year} vol. ${edict.bulletin.volume}`}
+        />
       )}
 
       {/* Notes */}
@@ -75,12 +81,6 @@ export function PropertyEdictTab({ property }: PropertyEdictTabProps) {
           </div>
         </div>
       )}
-
-      {/* Bulletin */}
-      {edict.bulletin && (
-        <Field label={t('bulletin')} value={`${edict.bulletin.year} vol. ${edict.bulletin.volume}`} />
-      )}
-
     </div>
   );
 }

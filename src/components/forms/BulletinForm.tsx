@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { NumericInput } from '@/components/ui/numeric-input';
-import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { StringField } from '@/components/ui/string-field';
+import { TextField } from '@/components/ui/text-field';
 import type { Bulletin, BulletinCreateRequest, BulletinUpdateRequest } from '@/types';
 
 interface BulletinFormProps {
@@ -22,6 +21,7 @@ interface BulletinFormProps {
 export function BulletinForm({ open, onOpenChange, bulletin, onSubmit, readOnly = false, loading = false }: BulletinFormProps) {
   const t = useTranslations('bulletins');
   const tCommon = useTranslations('common');
+  const fieldMode = readOnly ? 'readonly' : 'edit';
 
   const [formData, setFormData] = useState({
     url: bulletin?.url || '',
@@ -64,6 +64,8 @@ export function BulletinForm({ open, onOpenChange, bulletin, onSubmit, readOnly 
     return isEdit ? t('editBulletin') : t('addBulletin');
   };
 
+  const update = (field: string) => (value: string) => setFormData((prev) => ({ ...prev, [field]: value }));
+
   return (
     <Modal
       open={open}
@@ -95,47 +97,14 @@ export function BulletinForm({ open, onOpenChange, bulletin, onSubmit, readOnly 
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('columns.url')}</label>
-            <Input
-              value={formData.url}
-              onChange={(e) => setFormData((prev) => ({ ...prev, url: e.target.value }))}
-              placeholder="https://..."
-              required
-              disabled={readOnly}
-            />
-          </div>
+          <StringField mode={fieldMode} label={t('columns.url')} value={formData.url} onChange={update('url')} placeholder="https://..." />
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('columns.year')}</label>
-              <NumericInput
-                value={formData.year}
-                onChange={(v) => setFormData((prev) => ({ ...prev, year: v }))}
-                disabled={readOnly}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('columns.volume')}</label>
-              <NumericInput
-                value={formData.volume}
-                onChange={(v) => setFormData((prev) => ({ ...prev, volume: v }))}
-                disabled={readOnly}
-              />
-            </div>
+            <StringField mode={fieldMode} label={t('columns.year')} value={formData.year} onChange={update('year')} />
+            <StringField mode={fieldMode} label={t('columns.volume')} value={formData.volume} onChange={update('volume')} />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('columns.document')}</label>
-            <Textarea
-              value={formData.document}
-              onChange={(e) => setFormData((prev) => ({ ...prev, document: e.target.value }))}
-              placeholder={t('documentPlaceholder')}
-              rows={8}
-              disabled={readOnly}
-            />
-          </div>
+          <TextField mode={fieldMode} label={t('columns.document')} value={formData.document} onChange={update('document')} placeholder={t('documentPlaceholder')} rows={8} />
 
           <div className="pt-2">
             <Checkbox

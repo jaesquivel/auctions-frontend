@@ -6,8 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { NumericInput } from '@/components/ui/numeric-input';
+import { NumericField } from '@/components/ui/numeric-field';
+import { StringField } from '@/components/ui/string-field';
 import { tdDistrictSchema, type TdDistrictFormData } from '@/lib/validations/territorial';
 import type { TdDistrict, TdDistrictCreateRequest, TdCanton } from '@/types';
 
@@ -24,12 +24,12 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
   const tValidation = useTranslations('validation');
+  const fieldMode = readOnly ? 'readonly' : 'edit';
 
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
-    register,
     handleSubmit,
     reset,
     control,
@@ -126,88 +126,103 @@ export function TdDistrictForm({ open, onOpenChange, tdDistrict, tdCanton, onSub
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('columns.num')}</label>
+          <div>
             <Controller
               name="num"
               control={control}
               render={({ field }) => (
-                <NumericInput
+                <NumericField
+                  mode={fieldMode}
+                  label={t('columns.num')}
                   value={field.value?.toString() || ''}
                   onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                  decimals={0}
                   className={errors.num ? 'border-destructive' : ''}
-                  disabled={readOnly}
                 />
               )}
             />
             {errors.num && (
-              <p className="text-xs text-destructive">{getErrorMessage(errors.num)}</p>
+              <p className="text-xs text-destructive mt-1">{getErrorMessage(errors.num)}</p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('columns.code')}</label>
-            <Input
-              {...register('code')}
-              maxLength={7}
-              className={errors.code ? 'border-destructive' : ''}
-              disabled={readOnly}
+          <div>
+            <Controller
+              name="code"
+              control={control}
+              render={({ field }) => (
+                <StringField
+                  mode={fieldMode}
+                  label={t('columns.code')}
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  className={errors.code ? 'border-destructive' : ''}
+                />
+              )}
             />
             {errors.code && (
-              <p className="text-xs text-destructive">{getErrorMessage(errors.code)}</p>
+              <p className="text-xs text-destructive mt-1">{getErrorMessage(errors.code)}</p>
             )}
           </div>
         </div>
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">{t('columns.name')}</label>
-          <Input
-            {...register('name')}
-            maxLength={2048}
-            className={errors.name ? 'border-destructive' : ''}
-            disabled={readOnly}
+        <div>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <StringField
+                mode={fieldMode}
+                label={t('columns.name')}
+                value={field.value || ''}
+                onChange={field.onChange}
+                className={errors.name ? 'border-destructive' : ''}
+              />
+            )}
           />
           {errors.name && (
-            <p className="text-xs text-destructive">{getErrorMessage(errors.name)}</p>
+            <p className="text-xs text-destructive mt-1">{getErrorMessage(errors.name)}</p>
           )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('columns.area')}</label>
+          <div>
             <Controller
               name="area"
               control={control}
               render={({ field }) => (
-                <NumericInput
+                <NumericField
+                  mode={fieldMode}
+                  label={t('columns.area')}
                   value={field.value?.toString() || ''}
                   onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                  decimals={2}
                   className={errors.area ? 'border-destructive' : ''}
-                  disabled={readOnly}
                 />
               )}
             />
             {errors.area && (
-              <p className="text-xs text-destructive">{getErrorMessage(errors.area)}</p>
+              <p className="text-xs text-destructive mt-1">{getErrorMessage(errors.area)}</p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">{t('columns.altitude')}</label>
+          <div>
             <Controller
               name="altitude"
               control={control}
               render={({ field }) => (
-                <NumericInput
+                <NumericField
+                  mode={fieldMode}
+                  label={t('columns.altitude')}
                   value={field.value?.toString() || ''}
                   onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                  decimals={2}
                   className={errors.altitude ? 'border-destructive' : ''}
-                  disabled={readOnly}
                 />
               )}
             />
             {errors.altitude && (
-              <p className="text-xs text-destructive">{getErrorMessage(errors.altitude)}</p>
+              <p className="text-xs text-destructive mt-1">{getErrorMessage(errors.altitude)}</p>
             )}
           </div>
         </div>

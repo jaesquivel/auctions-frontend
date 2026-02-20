@@ -7,6 +7,7 @@ import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { StringField } from '@/components/ui/string-field';
 import type { PropertyTag, PropertyTagCreateRequest, PropertyTagUpdateRequest } from '@/types';
 
 const COLOR_SWATCHES = [
@@ -27,6 +28,7 @@ interface TagFormProps {
 export function TagForm({ open, onOpenChange, tag, onSubmit, readOnly = false }: TagFormProps) {
   const t = useTranslations('tags');
   const tCommon = useTranslations('common');
+  const fieldMode = readOnly ? 'readonly' : 'edit';
 
   const [formData, setFormData] = useState({
     name: tag?.name || '',
@@ -73,27 +75,9 @@ export function TagForm({ open, onOpenChange, tag, onSubmit, readOnly = false }:
       }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">{t('columns.name')}</label>
-          <Input
-            value={formData.name}
-            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-            placeholder="e.g., Residencial"
-            required
-            maxLength={30}
-            disabled={readOnly}
-          />
-        </div>
+        <StringField mode={fieldMode} label={t('columns.name')} value={formData.name} onChange={(v) => setFormData((prev) => ({ ...prev, name: v }))} placeholder="e.g., Residencial" />
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">{t('columns.description')}</label>
-          <Input
-            value={formData.description}
-            onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-            placeholder="Optional description"
-            disabled={readOnly}
-          />
-        </div>
+        <StringField mode={fieldMode} label={t('columns.description')} value={formData.description} onChange={(v) => setFormData((prev) => ({ ...prev, description: v }))} placeholder="Optional description" />
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">{t('columns.color')}</label>

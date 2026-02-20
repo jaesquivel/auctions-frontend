@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { NumericInput } from '@/components/ui/numeric-input';
-import { Textarea } from '@/components/ui/textarea';
+import { StringField } from '@/components/ui/string-field';
+import { NumericField } from '@/components/ui/numeric-field';
+import { TextField } from '@/components/ui/text-field';
+import { DateTimeField } from '@/components/ui/datetime-field';
 import type { Asset, AssetListItem, AssetUpdateRequest } from '@/types';
 
 interface AssetFormProps {
@@ -22,6 +23,7 @@ interface AssetFormProps {
 export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readOnly = false, loading = false }: AssetFormProps) {
   const t = useTranslations('assets');
   const tCommon = useTranslations('common');
+  const fieldMode = readOnly ? 'readonly' : 'edit';
 
   const [formData, setFormData] = useState({
     registration: asset?.registration || '',
@@ -31,12 +33,12 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
     subRegistration: asset?.subRegistration || '',
     plate: asset?.plate || '',
     type: asset?.type || '',
-    currency: asset?.currency || 'CRC',
-    firstAuctionTs: asset?.firstAuctionTs?.slice(0, 16) || '',
+    currency: (asset?.currency as string) || 'CRC',
+    firstAuctionTs: asset?.firstAuctionTs || '',
     firstAuctionBase: asset?.firstAuctionBase?.toString() || '',
-    secondAuctionTs: asset?.secondAuctionTs?.slice(0, 16) || '',
+    secondAuctionTs: asset?.secondAuctionTs || '',
     secondAuctionBase: asset?.secondAuctionBase?.toString() || '',
-    thirdAuctionTs: asset?.thirdAuctionTs?.slice(0, 16) || '',
+    thirdAuctionTs: asset?.thirdAuctionTs || '',
     thirdAuctionBase: asset?.thirdAuctionBase?.toString() || '',
     area: asset?.area?.toString() || '',
     rights: asset?.rights || '',
@@ -54,12 +56,12 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
         subRegistration: asset.subRegistration || '',
         plate: asset.plate || '',
         type: asset.type || '',
-        currency: asset.currency || 'CRC',
-        firstAuctionTs: asset.firstAuctionTs?.slice(0, 16) || '',
+        currency: (asset.currency as string) || 'CRC',
+        firstAuctionTs: asset.firstAuctionTs || '',
         firstAuctionBase: asset.firstAuctionBase?.toString() || '',
-        secondAuctionTs: asset.secondAuctionTs?.slice(0, 16) || '',
+        secondAuctionTs: asset.secondAuctionTs || '',
         secondAuctionBase: asset.secondAuctionBase?.toString() || '',
-        thirdAuctionTs: asset.thirdAuctionTs?.slice(0, 16) || '',
+        thirdAuctionTs: asset.thirdAuctionTs || '',
         thirdAuctionBase: asset.thirdAuctionBase?.toString() || '',
         area: asset.area?.toString() || '',
         rights: asset.rights || '',
@@ -86,12 +88,12 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
       subRegistration: formData.subRegistration || undefined,
       plate: formData.plate || undefined,
       type: formData.type || undefined,
-      currency: formData.currency || undefined,
-      firstAuctionTs: formData.firstAuctionTs ? `${formData.firstAuctionTs}:00Z` : undefined,
+      currency: (formData.currency || undefined) as AssetUpdateRequest['currency'],
+      firstAuctionTs: formData.firstAuctionTs || undefined,
       firstAuctionBase: formData.firstAuctionBase ? Number(formData.firstAuctionBase) : undefined,
-      secondAuctionTs: formData.secondAuctionTs ? `${formData.secondAuctionTs}:00Z` : undefined,
+      secondAuctionTs: formData.secondAuctionTs || undefined,
       secondAuctionBase: formData.secondAuctionBase ? Number(formData.secondAuctionBase) : undefined,
-      thirdAuctionTs: formData.thirdAuctionTs ? `${formData.thirdAuctionTs}:00Z` : undefined,
+      thirdAuctionTs: formData.thirdAuctionTs || undefined,
       thirdAuctionBase: formData.thirdAuctionBase ? Number(formData.thirdAuctionBase) : undefined,
       area: formData.area ? Number(formData.area) : undefined,
       rights: formData.rights || undefined,
@@ -103,6 +105,7 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
   };
 
   const isEdit = !!asset;
+  const update = (field: string) => (value: string) => setFormData((prev) => ({ ...prev, [field]: value }));
 
   const getTitle = () => {
     if (readOnly) return t('viewAsset');
@@ -141,209 +144,64 @@ export function AssetForm({ open, onOpenChange, asset, listItem, onSubmit, readO
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           {isEdit && listItem && (
-            <div className="rounded-md border p-3 bg-muted/50 space-y-1 text-sm text-muted-foreground">
+            <fieldset className="space-y-3">
               {listItem.edict?.creditor && (
-                <p><span className="font-medium">{t('form.creditor')}:</span> {listItem.edict.creditor.name}</p>
+                <StringField mode="readonly" label={t('form.creditor')} value={listItem.edict.creditor.name} />
               )}
               {listItem.edict?.debtor && (
-                <p><span className="font-medium">{t('form.debtor')}:</span> {listItem.edict.debtor.name}</p>
+                <StringField mode="readonly" label={t('form.debtor')} value={listItem.edict.debtor.name} />
               )}
               {listItem.edict?.court && (
-                <p><span className="font-medium">{t('form.court')}:</span> {listItem.edict.court}</p>
+                <StringField mode="readonly" label={t('form.court')} value={listItem.edict.court} />
               )}
-              {listItem.tdProvince && (
-                <p><span className="font-medium">{t('form.province')}:</span> {listItem.tdProvince?.name}</p>
+              {listItem.tdProvince && listItem.tdCanton && listItem.tdDistrict && (
+                <StringField mode="readonly" label={t('form.tdLocation')} value={listItem.tdProvince?.name + ", " + listItem.tdCanton?.name + ", " + listItem.tdDistrict?.name} />
               )}
-              {listItem.tdCanton && (
-                <p><span className="font-medium">{t('form.canton')}:</span> {listItem.tdCanton?.name}</p>
-              )}
-              {listItem.tdDistrict && (
-                <p><span className="font-medium">{t('form.district')}:</span> {listItem.tdDistrict?.name}</p>
-              )}
-            </div>
+            </fieldset>
           )}
 
           <fieldset className="space-y-3">
             <legend className="text-sm font-semibold text-muted-foreground">{t('form.registrationInfo')}</legend>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('columns.registration')}</label>
-                <Input
-                  value={formData.registration}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, registration: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('columns.propertyNumber')}</label>
-                <Input
-                  value={formData.propertyNumber}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, propertyNumber: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
+              <StringField mode={fieldMode} label={t('columns.registration')} value={formData.registration} onChange={update('registration')} />
+              <StringField mode={fieldMode} label={t('columns.propertyNumber')} value={formData.propertyNumber} onChange={update('propertyNumber')} />
             </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('columns.type')}</label>
-              <Input
-                value={formData.type}
-                onChange={(e) => setFormData((prev) => ({ ...prev, type: e.target.value }))}
-                disabled={readOnly}
-              />
-            </div>
-
+            <StringField mode={fieldMode} label={t('columns.type')} value={formData.type} onChange={update('type')} />
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.duplicate')}</label>
-                <Input
-                  value={formData.duplicate}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, duplicate: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.horizontal')}</label>
-                <Input
-                  value={formData.horizontal}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, horizontal: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
+              <StringField mode={fieldMode} label={t('form.duplicate')} value={formData.duplicate} onChange={update('duplicate')} />
+              <StringField mode={fieldMode} label={t('form.horizontal')} value={formData.horizontal} onChange={update('horizontal')} />
             </div>
-
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.subRegistration')}</label>
-                <Input
-                  value={formData.subRegistration}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, subRegistration: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.plate')}</label>
-                <Input
-                  value={formData.plate}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, plate: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
+              <StringField mode={fieldMode} label={t('form.subRegistration')} value={formData.subRegistration} onChange={update('subRegistration')} />
+              <StringField mode={fieldMode} label={t('form.plate')} value={formData.plate} onChange={update('plate')} />
             </div>
           </fieldset>
 
           <fieldset className="space-y-3">
             <legend className="text-sm font-semibold text-muted-foreground">{t('form.auctionInfo')}</legend>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('columns.currency')}</label>
-              <Input
-                value={formData.currency}
-                onChange={(e) => setFormData((prev) => ({ ...prev, currency: e.target.value }))}
-                disabled={readOnly}
-              />
-            </div>
-
+            <StringField mode={fieldMode} label={t('columns.currency')} value={formData.currency} onChange={update('currency')} />
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.firstAuctionDate')}</label>
-                <Input
-                  type="datetime-local"
-                  value={formData.firstAuctionTs}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, firstAuctionTs: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.firstAuctionBase')}</label>
-                <NumericInput
-                  value={formData.firstAuctionBase}
-                  onChange={(v) => setFormData((prev) => ({ ...prev, firstAuctionBase: v }))}
-                  disabled={readOnly}
-                />
-              </div>
+              <DateTimeField mode={fieldMode} label={t('form.firstAuctionDate')} value={formData.firstAuctionTs} onChange={update('firstAuctionTs')} />
+              <NumericField mode={fieldMode} label={t('form.firstAuctionBase')} value={formData.firstAuctionBase} onChange={update('firstAuctionBase')} decimals={2} />
             </div>
-
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.secondAuctionDate')}</label>
-                <Input
-                  type="datetime-local"
-                  value={formData.secondAuctionTs}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, secondAuctionTs: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.secondAuctionBase')}</label>
-                <NumericInput
-                  value={formData.secondAuctionBase}
-                  onChange={(v) => setFormData((prev) => ({ ...prev, secondAuctionBase: v }))}
-                  disabled={readOnly}
-                />
-              </div>
+              <DateTimeField mode={fieldMode} label={t('form.secondAuctionDate')} value={formData.secondAuctionTs} onChange={update('secondAuctionTs')} />
+              <NumericField mode={fieldMode} label={t('form.secondAuctionBase')} value={formData.secondAuctionBase} onChange={update('secondAuctionBase')} decimals={2} />
             </div>
-
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.thirdAuctionDate')}</label>
-                <Input
-                  type="datetime-local"
-                  value={formData.thirdAuctionTs}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, thirdAuctionTs: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.thirdAuctionBase')}</label>
-                <NumericInput
-                  value={formData.thirdAuctionBase}
-                  onChange={(v) => setFormData((prev) => ({ ...prev, thirdAuctionBase: v }))}
-                  disabled={readOnly}
-                />
-              </div>
+              <DateTimeField mode={fieldMode} label={t('form.thirdAuctionDate')} value={formData.thirdAuctionTs} onChange={update('thirdAuctionTs')} />
+              <NumericField mode={fieldMode} label={t('form.thirdAuctionBase')} value={formData.thirdAuctionBase} onChange={update('thirdAuctionBase')} decimals={2} />
             </div>
           </fieldset>
 
           <fieldset className="space-y-3">
             <legend className="text-sm font-semibold text-muted-foreground">{t('form.details')}</legend>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.area')}</label>
-                <NumericInput
-                  value={formData.area}
-                  onChange={(v) => setFormData((prev) => ({ ...prev, area: v }))}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">{t('form.rights')}</label>
-                <Input
-                  value={formData.rights}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, rights: e.target.value }))}
-                  disabled={readOnly}
-                />
-              </div>
+              <NumericField mode={fieldMode} label={t('form.area')} value={formData.area} onChange={update('area')} decimals={2} />
+              <StringField mode={fieldMode} label={t('form.rights')} value={formData.rights} onChange={update('rights')} />
             </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('form.liens')}</label>
-              <Textarea
-                value={formData.liens}
-                onChange={(e) => setFormData((prev) => ({ ...prev, liens: e.target.value }))}
-                rows={3}
-                disabled={readOnly}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">{t('form.description')}</label>
-              <Textarea
-                value={formData.description}
-                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                rows={4}
-                disabled={readOnly}
-              />
-            </div>
+            <TextField mode={fieldMode} label={t('form.liens')} value={formData.liens} onChange={update('liens')} rows={3} />
+            <TextField mode={fieldMode} label={t('form.description')} value={formData.description} onChange={update('description')} rows={4} />
           </fieldset>
         </form>
       )}

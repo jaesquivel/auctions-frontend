@@ -311,7 +311,7 @@ export default function PropertiesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        {isAdmin && (
+        {isAdmin && false && (
           <Button size="icon" onClick={handleCreate}>
             <Plus className="h-4 w-4" />
           </Button>

@@ -38,7 +38,7 @@ export interface JudiciaryOfficeSummary {
   officeName: string;
 }
 
-export interface BulletinBrief {
+export interface BulletinSummary {
   volume: number;
   year: number;
   processed: boolean;
@@ -58,7 +58,7 @@ export interface EdictListItem {
   creditor: CreditorSummary | null;
   debtor: DebtorSummary | null;
   judiciaryOffice: JudiciaryOfficeSummary | null;
-  bulletin: BulletinBrief;
+  bulletin: BulletinSummary;
 }
 
 // Detail endpoint returns EdictResponse (full nested objects)

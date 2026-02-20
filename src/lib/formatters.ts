@@ -66,10 +66,6 @@ export function formatArea(value: number | null | undefined): string {
   return `${formatNumber(value)} m²`;
 }
 
-export function formatCoordinate(value: number | null | undefined): string {
-  return formatDecimal(value, 8);
-}
-
 export function formatRatio(value: number | null | undefined): string {
   return formatPercent(value, 0);
 }
