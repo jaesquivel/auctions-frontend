@@ -23,6 +23,7 @@ interface PropertyFormTabsProps {
   toggleTag: (tagId: string) => void;
   availableTags: PropertyTag[];
   readOnly: boolean;
+  onRefresh?: () => void;
 }
 
 const TABS = [
@@ -33,7 +34,7 @@ const TABS = [
   { value: 'images',      icon: ImageIcon },
 ] as const;
 
-export function PropertyFormTabs({ property, formData, setFormData, selectedTagIds, toggleTag, availableTags, readOnly }: PropertyFormTabsProps) {
+export function PropertyFormTabs({ property, formData, setFormData, selectedTagIds, toggleTag, availableTags, readOnly, onRefresh }: PropertyFormTabsProps) {
   const t = useTranslations('properties.form');
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<string>('information');
@@ -128,7 +129,7 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
         </TabsContent>
 
         <TabsContent value="images" className="mt-4">
-          <PropertyImagesTab property={property} />
+          <PropertyImagesTab property={property} propertyId={property?.id} onRefresh={onRefresh} />
         </TabsContent>
       </Tabs>
     </div>

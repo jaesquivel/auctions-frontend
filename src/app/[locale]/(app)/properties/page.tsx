@@ -108,6 +108,16 @@ export default function PropertiesPage() {
     }
   };
 
+  const handleRefreshProperty = async () => {
+    if (!editingProperty) return;
+    try {
+      const full = await propertiesService.getById(editingProperty.id);
+      if (full) setEditingProperty(full);
+    } catch (error) {
+      console.error('Failed to refresh property:', error);
+    }
+  };
+
   const handleSubmit = async (data: PropertyUpdateRequest) => {
     try {
       if (editingProperty) {
@@ -356,6 +366,7 @@ export default function PropertiesPage() {
         property={editingProperty}
         listItem={editingListItem}
         onSubmit={handleSubmit}
+        onRefresh={handleRefreshProperty}
         readOnly={formReadOnly}
         loading={formLoading}
         availableTags={availableTags}

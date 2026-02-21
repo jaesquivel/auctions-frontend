@@ -207,6 +207,15 @@
       "tags": "Tags",
       "selectTags": "Select tags...",
       "noImages": "No images available",
+      "imageThumbnail": "Thumbnail",
+      "imageName": "Name",
+      "uploadImage": "Upload Image",
+      "uploading": "Uploading...",
+      "viewImage": "View full image",
+      "deleteImage": "Delete image",
+      "confirmDeleteImage": "Delete image \"{name}\"?",
+      "loadingImage": "Loading image...",
+      "imageNotAvailable": "Image not available",
       "parties": "Parties",
       "case": "Case"
     }

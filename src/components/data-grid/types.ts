@@ -46,4 +46,5 @@ export interface DataGridProps<T> {
   onReload?: () => void;
   sort?: SortState[];
   onSort?: (sort: SortState[]) => void;
+  rowHeight?: number;
 }

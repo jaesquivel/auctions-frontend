@@ -207,6 +207,15 @@
       "tags": "Etiquetas",
       "selectTags": "Seleccionar etiquetas...",
       "noImages": "No hay imágenes disponibles",
+      "imageThumbnail": "Miniatura",
+      "imageName": "Nombre",
+      "uploadImage": "Subir imagen",
+      "uploading": "Subiendo...",
+      "viewImage": "Ver imagen completa",
+      "deleteImage": "Eliminar imagen",
+      "confirmDeleteImage": "¿Eliminar imagen \"{name}\"?",
+      "loadingImage": "Cargando imagen...",
+      "imageNotAvailable": "Imagen no disponible",
       "parties": "Partes",
       "case": "Caso"
     }

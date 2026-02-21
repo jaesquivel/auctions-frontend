@@ -66,6 +66,99 @@ async function getAuthToken(): Promise<string | null> {
   }
 }
 
+async function requestBlobUrl(
+  endpoint: string,
+  options: { silent?: boolean } = {}
+): Promise<string> {
+  const { silent } = options;
+  const token = await getAuthToken();
+
+  const headers: HeadersInit = {};
+  if (token) {
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+  }
+
+  const url = `${config.API_BASE_URL}${endpoint}`;
+  const startTime = Date.now();
+
+  try {
+    const response = await fetch(url, { method: 'GET', headers });
+    setApiAvailable(true);
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      apiLog.add({ timestamp: new Date().toISOString(), method: 'GET', url, status: response.status, durationMs: Date.now() - startTime, token: token ?? undefined, responseBody: errorBody });
+      const error = new ApiError(response.status, response.statusText, errorBody);
+      if (!silent) showErrorToast(response.status, errorBody);
+      throw error;
+    }
+
+    apiLog.add({ timestamp: new Date().toISOString(), method: 'GET', url, status: response.status, durationMs: Date.now() - startTime, token: token ?? undefined });
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    setApiAvailable(false);
+    if (!silent && error instanceof Error) showNetworkErrorToast();
+    throw error;
+  }
+}
+
+async function requestFile<T>(
+  endpoint: string,
+  options: { method: string; body: FormData; silent?: boolean }
+): Promise<T> {
+  const { method, body, silent } = options;
+  const token = await getAuthToken();
+
+  // Do NOT set Content-Type — browser sets it with multipart boundary
+  const headers: HeadersInit = {};
+  if (token) {
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+  }
+
+  const url = `${config.API_BASE_URL}${endpoint}`;
+  const startTime = Date.now();
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), config.API_TIMEOUT);
+
+  try {
+    const response = await fetch(url, { method, headers, body, signal: controller.signal });
+    clearTimeout(timeoutId);
+    setApiAvailable(true);
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, token: token ?? undefined, responseBody: errorBody });
+      const error = new ApiError(response.status, response.statusText, errorBody);
+      if (!silent) showErrorToast(response.status, errorBody);
+      throw error;
+    }
+
+    const text = await response.text();
+    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: response.status, durationMs: Date.now() - startTime, token: token ?? undefined, responseBody: text || undefined });
+    if (!text) return undefined as T;
+    return JSON.parse(text) as T;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof ApiError) throw error;
+
+    if (error instanceof Error && error.name === 'AbortError') {
+      setApiAvailable(false);
+      apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, token: token ?? undefined, error: 'Request timed out' });
+      const timeoutError = new ApiError(408, 'Request Timeout', 'Request timed out');
+      if (!silent) showErrorToast(408);
+      throw timeoutError;
+    }
+
+    setApiAvailable(false);
+    apiLog.add({ timestamp: new Date().toISOString(), method, url, status: null, durationMs: Date.now() - startTime, token: token ?? undefined, error: error instanceof Error ? error.message : 'Network error' });
+    if (!silent && error instanceof Error) showNetworkErrorToast();
+    throw error;
+  }
+}
+
 async function request<T>(
   endpoint: string,
   options: RequestOptions = {}
@@ -164,4 +257,10 @@ export const apiClient = {
 
   delete: <T>(endpoint: string, options?: RequestOptions) =>
     request<T>(endpoint, { ...options, method: 'DELETE' }),
+
+  postFile: <T>(endpoint: string, body: FormData, options?: { silent?: boolean }) =>
+    requestFile<T>(endpoint, { method: 'POST', body, ...options }),
+
+  getBlob: (endpoint: string, options?: { silent?: boolean }) =>
+    requestBlobUrl(endpoint, options),
 };

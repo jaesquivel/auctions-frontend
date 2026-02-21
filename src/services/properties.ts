@@ -2,7 +2,7 @@ import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { uuid } from '@/lib/utils';
 import { mockProperties } from '@/mocks';
-import type { Property, PropertyListItem, PropertyCreateRequest, PropertyUpdateRequest, SpringPage } from '@/types';
+import type { Property, PropertyListItem, PropertyCreateRequest, PropertyUpdateRequest, SpringPage, PropertyImage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
@@ -85,5 +85,34 @@ export const propertiesService = {
     }
 
     return apiClient.delete(`/properties/${id}`);
+  },
+
+  async uploadImage(propertyId: string, file: File): Promise<PropertyImage> {
+    if (config.useMock.properties) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      return { id: uuid(), name: file.name, mimeType: file.type, createdAt: new Date().toISOString() };
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    return apiClient.postFile<PropertyImage>(`/properties/${propertyId}/images`, formData);
+  },
+
+  async getImageUrl(propertyId: string, imageId: string): Promise<string> {
+    if (config.useMock.properties) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return '';
+    }
+
+    return apiClient.getBlob(`/properties/${propertyId}/images/${imageId}`);
+  },
+
+  async deleteImage(propertyId: string, imageId: string): Promise<void> {
+    if (config.useMock.properties) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return;
+    }
+
+    return apiClient.delete(`/properties/${propertyId}/images/${imageId}`);
   },
 };

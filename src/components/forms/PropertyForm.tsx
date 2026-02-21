@@ -17,12 +17,13 @@ interface PropertyFormProps {
   property?: Property | null;
   listItem?: PropertyListItem | null;
   onSubmit: (data: PropertyUpdateRequest) => void;
+  onRefresh?: () => void;
   readOnly?: boolean;
   loading?: boolean;
   availableTags?: PropertyTag[];
 }
 
-export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit, readOnly = false, loading = false, availableTags = [] }: PropertyFormProps) {
+export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit, onRefresh, readOnly = false, loading = false, availableTags = [] }: PropertyFormProps) {
   const t = useTranslations('properties');
   const tCommon = useTranslations('common');
   const isMobile = useIsMobile();
@@ -112,6 +113,7 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
       toggleTag={toggleTag}
       availableTags={availableTags}
       readOnly={readOnly}
+      onRefresh={onRefresh}
     />
   );
 

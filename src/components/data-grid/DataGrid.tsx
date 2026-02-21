@@ -28,6 +28,7 @@ export function DataGrid<T>({
   onReload,
   sort,
   onSort,
+  rowHeight = 32,
 }: DataGridProps<T>) {
   const t = useTranslations("common");
 
@@ -236,15 +237,14 @@ export function DataGrid<T>({
                   <div
                     key={column.id}
                     className={cn(
-                      "px-3 py-1.5 text-sm truncate border-r border-border",
-                      column.align === "center" && "text-center",
-                      column.align === "right" && "text-right"
+                      "px-3 py-1.5 text-sm truncate border-r border-border flex items-center",
+                      column.align === "center" && "justify-center",
+                      column.align === "right" && "justify-end"
                     )}
                     style={{
                       width: getColumnWidth(column.id),
                       minWidth: MIN_COLUMN_WIDTH,
-                      height: 32,
-                      lineHeight: "20px",
+                      height: rowHeight,
                     }}
                   >
                     {getCellValue(row, column)}
@@ -257,7 +257,7 @@ export function DataGrid<T>({
                       "px-2 flex items-center justify-center sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]",
                       isSelected(row) ? "bg-accent" : "bg-card"
                     )}
-                    style={{ width: 80, minWidth: 80, height: 32 }}
+                    style={{ width: 80, minWidth: 80, height: rowHeight }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     {actions(row)}
