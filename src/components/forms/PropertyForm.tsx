@@ -135,7 +135,7 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="right" className="w-full p-0 flex flex-col h-full">
+        <SheetContent side="right" className="w-full h-full p-0 flex flex-col">
           <SheetHeader className="px-4 pt-4 pb-2 border-b shrink-0">
             <SheetTitle>
               {getBaseTitle()}
@@ -155,7 +155,7 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[100vw] w-[100vw] h-[100vh] rounded-none flex flex-col p-0 gap-0 [&~div[data-overlay]]:bg-background/60 [&~div[data-overlay]]:backdrop-blur-sm"
+        className="sm:max-w-[100vw] w-screen h-screen rounded-none flex flex-col p-0 gap-0 [&~div[data-overlay]]:bg-background/60 [&~div[data-overlay]]:backdrop-blur-sm"
         showCloseButton={false}
       >
         <DialogHeader className="px-6 py-4 border-b shrink-0">

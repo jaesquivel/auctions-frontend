@@ -13,17 +13,11 @@ export function PropertyRegistryPlanTab({ property }: PropertyRegistryPlanTabPro
 
   return (
     <div className="space-y-3">
-      {property?.rnpPlanUpdated && (
-        <p className="text-xs text-muted-foreground">{t('rnpPlanUpdated')}: {formatDate(property.rnpPlanUpdated)}</p>
-      )}
-      {property?.rnpPlan ? (
-        <div
-          className="prose prose-lg dark:prose-invert max-w-none rounded-md border p-4 overflow-auto"
-          dangerouslySetInnerHTML={{ __html: property.rnpPlan }}
-        />
-      ) : (
-        <p className="text-sm text-muted-foreground">{t('noData')}</p>
-      )}
+      <p className="text-sm text-muted-foreground">{t('rnpPlanUpdated')}: {formatDate(property?.rnpPlanUpdated)}</p>
+      <div
+        className="prose prose-lg dark:prose-invert max-w-none rounded-md border p-4 overflow-auto min-h-16"
+        dangerouslySetInnerHTML={{ __html: property?.rnpPlan ?? '' }}
+      />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { StringField } from '@/components/ui/string-field';
 import { PercentField } from '@/components/ui/percent-field';
 import type { Property } from '@/types';
+import { TextField } from '@/components/ui/text-field';
 
 interface PropertyEdictTabProps {
   property?: Property | null;
@@ -13,74 +14,53 @@ export function PropertyEdictTab({ property }: PropertyEdictTabProps) {
   const t = useTranslations('properties.form');
   const edict = property?.asset?.edict;
 
-  if (!edict) {
-    return <p className="text-sm text-muted-foreground py-4">{t('noData')}</p>;
-  }
+  const publicationValue = edict?.publication != null
+    ? `${edict.publication}/${edict.publicationCount ?? '?'}`
+    : undefined;
+
+  const bulletinValue = edict?.bulletin
+    ? `${edict.bulletin.year} vol. ${edict.bulletin.volume}`
+    : undefined;
 
   return (
     <div className="space-y-4">
       {/* Parties */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-md border p-3 space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">{t('creditor')}</p>
-          <StringField mode="readonly" label={t('name')} value={edict.creditor?.name} />
-          <PercentField mode="readonly" label={t('creditorMargin')} value={edict.creditor?.margin} decimals={0} />
+      <fieldset className="rounded-md border space-y-3 p-3">
+        <legend className="text-sm font-semibold">{t('parties')}</legend>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+          <StringField mode="readonly" label={t('creditor')} value={edict?.creditor?.name} />
+          <StringField mode="readonly" label={t('debtor')} value={edict?.debtor?.name} />
         </div>
-        <div className="rounded-md border p-3 space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">{t('debtor')}</p>
-          <StringField mode="readonly" label={t('name')} value={edict.debtor?.name} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+          <PercentField mode="readonly" label={t('creditorMargin')} value={edict?.creditor?.margin} decimals={0} />
         </div>
-      </div>
+      </fieldset>
 
-      {/* Case info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <StringField mode="readonly" label={t('caseNumber')} value={edict.caseNumber} />
-        <StringField mode="readonly" label={t('reference')} value={edict.reference} />
-        <StringField mode="readonly" label={t('court')} value={edict.court} />
-        <StringField
-          mode="readonly"
-          label={t('publication')}
-          value={edict.publication != null ? `${edict.publication}/${edict.publicationCount ?? '?'}` : undefined}
-        />
-      </div>
-
-      {/* Judiciary Office */}
-      {edict.judiciaryOffice && (
-        <div className="rounded-md border p-3 space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">{t('judiciaryOffice')}</p>
-          <StringField mode="readonly" label={t('sigapjCode')} value={edict.judiciaryOffice.sigapjCode != null ? String(edict.judiciaryOffice.sigapjCode) : undefined} />
-          <StringField mode="readonly" label={t('name')} value={edict.judiciaryOffice.officeName} />
+      <fieldset className="rounded-md border space-y-3 p-3">
+        <legend className="text-sm font-semibold">{t('case')}</legend>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <TextField mode="readonly" label={t('caseNumber')} value={edict?.caseNumber} className='max-w-50'/>
+          <StringField mode="readonly" label={t('reference')} value={edict?.reference}  className='max-w-50' />
+          <StringField mode="readonly" label={t('bulletinPub')} value={bulletinValue + ', ' + publicationValue}  className='max-w-50' />
+          <StringField mode="readonly" label={t('court')} value={edict?.court}  className='max-w-150'/>
         </div>
-      )}
 
-      {/* Bulletin */}
-      {edict.bulletin && (
-        <StringField
-          mode="readonly"
-          label={t('bulletin')}
-          value={`${edict.bulletin.year} vol. ${edict.bulletin.volume}`}
-        />
-      )}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <StringField mode="readonly" label={t('judiciaryOffice')} value={edict?.judiciaryOffice?.officeName}  className='max-w-150' />
+          <StringField mode="readonly" label={t('sigapjCode')} value={edict?.judiciaryOffice?.sigapjCode != null ? String(edict.judiciaryOffice.sigapjCode) : undefined}  className='max-w-50'/>
+        </div>
+
+      </fieldset>
 
       {/* Notes */}
-      {edict.notes && (
-        <div className="space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">{t('notes')}</p>
-          <div className="rounded-md border p-3 text-sm whitespace-pre-wrap max-h-40 overflow-y-auto bg-muted/30">
-            {edict.notes}
-          </div>
-        </div>
-      )}
+      <div className="space-y-1">
+        <TextField mode="readonly" label={t('notes')} value={edict?.notes != null ? edict?.notes : undefined} className='max-h-20'/>
+      </div>
 
       {/* Full text */}
-      {edict.fullText && (
-        <div className="space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">{t('fullText')}</p>
-          <div className="rounded-md border p-3 text-sm whitespace-pre-wrap max-h-60 overflow-y-auto bg-muted/30">
-            {edict.fullText}
-          </div>
-        </div>
-      )}
+      <div className="space-y-1">
+        <TextField mode="readonly" label={t('fullText')} value={edict?.fullText != null ? edict?.fullText : undefined} className='max-h-40'/>
+      </div>
     </div>
   );
 }

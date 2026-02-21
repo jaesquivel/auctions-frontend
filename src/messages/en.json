@@ -178,7 +178,7 @@
       "fullText": "Full Text",
       "notes": "Notes",
       "sigapjCode": "SIGAPJ Code",
-      "bulletin": "Bulletin",
+      "bulletinPub": "Bulletin, publication",
       "noData": "No data available",
       "registration": "Registration",
       "propertyNumber": "Property Number",
@@ -194,7 +194,7 @@
       "description": "Description",
       "location": "Location",
       "tdLocation": "Territorial Location",
-      "auctionSchedule": "Auction Schedule",
+      "auction": "Auction",
       "firstAuction": "1st Auction",
       "secondAuction": "2nd Auction",
       "thirdAuction": "3rd Auction",
@@ -206,7 +206,9 @@
       "longitude": "Longitude",
       "tags": "Tags",
       "selectTags": "Select tags...",
-      "noImages": "No images available"
+      "noImages": "No images available",
+      "parties": "Parties",
+      "case": "Case"
     }
   },
   "vehicles": {

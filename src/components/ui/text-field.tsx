@@ -1,6 +1,6 @@
 'use client';
 
-import { FieldDisplay, type FieldMode } from '@/components/ui/field';
+import { FieldDisplay, type FieldMode } from '@/components/ui/field-display';
 import { FieldWrapper } from '@/components/ui/field-wrapper';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -17,7 +17,7 @@ interface TextFieldProps {
 
 export function TextField({ value, onChange, mode = 'edit', label, labelPosition, placeholder, rows = 4, className }: TextFieldProps) {
   const field = mode === 'readonly' || mode === 'computed'
-    ? <FieldDisplay textAlign="left" multiline className="whitespace-pre-wrap">{value || '-'}</FieldDisplay>
+    ? <FieldDisplay textAlign="left" multiline className={`whitespace-pre-wrap ${className}`} >{value || '-'}</FieldDisplay>
     : (
       <Textarea
         value={value ?? ''}

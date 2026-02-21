@@ -1,6 +1,6 @@
 'use client';
 
-import { FieldDisplay, type FieldMode } from '@/components/ui/field';
+import { FieldDisplay, type FieldMode } from '@/components/ui/field-display';
 import { FieldWrapper } from '@/components/ui/field-wrapper';
 import { DateTimeInput } from '@/components/ui/datetime-input';
 import { formatDate } from '@/lib/formatters';

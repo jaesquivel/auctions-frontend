@@ -11,15 +11,17 @@ interface FieldDisplayProps {
 }
 
 export function FieldDisplay({ children, textAlign = 'right', multiline, className }: FieldDisplayProps) {
-  const base = 'rounded-md bg-muted/30 px-3 text-sm';
+  const base = 'rounded-md bg-muted/50 px-3 text-sm';
 
   if (multiline) {
     return (
-      <p className={`${base} py-2 ${className || ''}`}>
+      <p className={`${base} py-2 overflow-y-auto ${className || ''}`}>
         {children}
       </p>
     );
   }
+
+  // class="p-3 text-sm whitespace-pre-wrap max-h-60 overflow-y-auto bg-muted/30 min-h-9"
 
   const align = textAlign === 'left' ? 'justify-start' : 'justify-end max-w-50';
   return (

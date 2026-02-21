@@ -11,12 +11,11 @@ export function PropertyImagesTab({ property }: PropertyImagesTabProps) {
   const t = useTranslations('properties.form');
   const images = property?.images ?? [];
 
-  if (images.length === 0) {
-    return <p className="text-sm text-muted-foreground py-4">{t('noImages')}</p>;
-  }
-
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {images.length === 0 && (
+        <p className="text-sm text-muted-foreground py-4 col-span-full">{t('noImages')}</p>
+      )}
       {images.map((image) => (
         <div key={image.id} className="rounded-md border overflow-hidden">
           {image.thumbnailUrl ? (

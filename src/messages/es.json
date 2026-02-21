@@ -178,7 +178,7 @@
       "fullText": "Texto Completo",
       "notes": "Notas",
       "sigapjCode": "Código SIGAPJ",
-      "bulletin": "Boletín",
+      "bulletinPub": "Boletín, publicación",
       "noData": "No hay datos disponibles",
       "registration": "Matrícula",
       "propertyNumber": "Número de Propiedad",
@@ -194,7 +194,7 @@
       "description": "Descripción",
       "location": "Ubicación",
       "tdLocation": "Ubicación Territorial",
-      "auctionSchedule": "Calendario de Remates",
+      "auction": "Remate",
       "firstAuction": "1er Remate",
       "secondAuction": "2do Remate",
       "thirdAuction": "3er Remate",
@@ -206,7 +206,9 @@
       "longitude": "Longitud",
       "tags": "Etiquetas",
       "selectTags": "Seleccionar etiquetas...",
-      "noImages": "No hay imágenes disponibles"
+      "noImages": "No hay imágenes disponibles",
+      "parties": "Partes",
+      "case": "Caso"
     }
   },
   "vehicles": {

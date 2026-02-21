@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TagBadge } from '@/components/ui/tag-badge';
 import { Info, FileText, Building2, Map, ImageIcon } from 'lucide-react';
@@ -10,6 +12,7 @@ import { PropertyEdictTab } from './PropertyEdictTab';
 import { PropertyRegistryTab } from './PropertyRegistryTab';
 import { PropertyRegistryPlanTab } from './PropertyRegistryPlanTab';
 import { PropertyImagesTab } from './PropertyImagesTab';
+import { useIsMobile } from '@/hooks';
 import type { Property, PropertyTag } from '@/types';
 
 interface PropertyFormTabsProps {
@@ -22,8 +25,18 @@ interface PropertyFormTabsProps {
   readOnly: boolean;
 }
 
+const TABS = [
+  { value: 'information', icon: Info },
+  { value: 'edict',       icon: FileText },
+  { value: 'registry',    icon: Building2 },
+  { value: 'registryPlan', icon: Map },
+  { value: 'images',      icon: ImageIcon },
+] as const;
+
 export function PropertyFormTabs({ property, formData, setFormData, selectedTagIds, toggleTag, availableTags, readOnly }: PropertyFormTabsProps) {
   const t = useTranslations('properties.form');
+  const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState<string>('information');
 
   return (
     <div className="w-full space-y-4">
@@ -56,9 +69,7 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
                     type="button"
                     onClick={() => toggleTag(tag.id)}
                     className={`flex items-center w-full rounded-md px-2 py-1.5 text-sm transition-colors ${
-                      selectedTagIds.includes(tag.id)
-                        ? 'bg-accent'
-                        : 'hover:bg-accent/50'
+                      selectedTagIds.includes(tag.id) ? 'bg-accent' : 'hover:bg-accent/50'
                     }`}
                   >
                     <TagBadge name={tag.name} color={tag.color} />
@@ -70,14 +81,30 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
         )}
       </div>
 
-      <Tabs defaultValue="information" className="w-full">
-        <TabsList className="w-full overflow-x-auto">
-          <TabsTrigger value="information"><Info className="h-4 w-4 mr-1.5" />{t('tabInformation')}</TabsTrigger>
-          <TabsTrigger value="edict"><FileText className="h-4 w-4 mr-1.5" />{t('tabEdict')}</TabsTrigger>
-          <TabsTrigger value="registry"><Building2 className="h-4 w-4 mr-1.5" />{t('tabRegistry')}</TabsTrigger>
-          <TabsTrigger value="registryPlan"><Map className="h-4 w-4 mr-1.5" />{t('tabRegistryPlan')}</TabsTrigger>
-          <TabsTrigger value="images"><ImageIcon className="h-4 w-4 mr-1.5" />{t('tabImages')}</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        {isMobile ? (
+          <Select value={activeTab} onValueChange={setActiveTab}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TABS.map(({ value }) => (
+                <SelectItem key={value} value={value}>
+                  {t(`tab${value.charAt(0).toUpperCase() + value.slice(1)}` as Parameters<typeof t>[0])}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <TabsList className="w-full">
+            {TABS.map(({ value, icon: Icon }) => (
+              <TabsTrigger key={value} value={value}>
+                <Icon className="h-4 w-4 mr-1.5" />
+                {t(`tab${value.charAt(0).toUpperCase() + value.slice(1)}` as Parameters<typeof t>[0])}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        )}
 
         <TabsContent value="information" className="mt-4">
           <PropertyInfoTab
@@ -86,23 +113,23 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
             setFormData={setFormData}
             readOnly={readOnly}
           />
-      </TabsContent>
+        </TabsContent>
 
-      <TabsContent value="edict" className="mt-4">
-        <PropertyEdictTab property={property} />
-      </TabsContent>
+        <TabsContent value="edict" className="mt-4">
+          <PropertyEdictTab property={property} />
+        </TabsContent>
 
-      <TabsContent value="registry" className="mt-4">
-        <PropertyRegistryTab property={property} />
-      </TabsContent>
+        <TabsContent value="registry" className="mt-4">
+          <PropertyRegistryTab property={property} />
+        </TabsContent>
 
-      <TabsContent value="registryPlan" className="mt-4">
-        <PropertyRegistryPlanTab property={property} />
-      </TabsContent>
+        <TabsContent value="registryPlan" className="mt-4">
+          <PropertyRegistryPlanTab property={property} />
+        </TabsContent>
 
-      <TabsContent value="images" className="mt-4">
-        <PropertyImagesTab property={property} />
-      </TabsContent>
+        <TabsContent value="images" className="mt-4">
+          <PropertyImagesTab property={property} />
+        </TabsContent>
       </Tabs>
     </div>
   );

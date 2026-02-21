@@ -1,6 +1,6 @@
 'use client';
 
-import { FieldDisplay, type FieldMode } from '@/components/ui/field';
+import { FieldDisplay, type FieldMode } from '@/components/ui/field-display';
 import { FieldWrapper } from '@/components/ui/field-wrapper';
 import { Input } from '@/components/ui/input';
 
@@ -11,6 +11,7 @@ interface StringFieldProps {
   label?: string;
   labelPosition?: 'top' | 'left';
   placeholder?: string;
+  multiline?: boolean;               // omits h-9 fixed height; uses py-2 (for text fields)
   className?: string;
 }
 
