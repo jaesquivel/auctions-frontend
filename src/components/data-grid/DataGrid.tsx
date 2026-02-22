@@ -4,6 +4,8 @@ import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks";
 import { DataGridToolbar } from "./DataGridToolbar";
 import { FilterDialog, getFilterableColumns, hasActiveFilters, countActiveFilters } from "./filters";
 import type { DataGridProps, ColumnDef } from "./types";
@@ -32,6 +34,8 @@ export function DataGrid<T>({
   hideFooter = false,
 }: DataGridProps<T>) {
   const t = useTranslations("common");
+  const isMobile = useIsMobile();
+  const [mobileActionRow, setMobileActionRow] = useState<T | null>(null);
 
   // Track column widths (initialized from column definitions)
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
@@ -203,8 +207,8 @@ export function DataGrid<T>({
                 />
               </div>
             ))}
-            {/* Actions header - sticky to right */}
-            {actions && (
+            {/* Actions header - sticky to right, hidden on mobile */}
+            {actions && !isMobile && (
               <div
                 className="px-3 py-2 text-xs bg-muted sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]"
                 style={{ width: 80, minWidth: 80 }}
@@ -232,7 +236,7 @@ export function DataGrid<T>({
                   "hover:bg-accent/50",
                   isSelected(row) && "bg-accent"
                 )}
-                onClick={() => handleRowClick(row)}
+                onClick={() => isMobile && actions ? setMobileActionRow(row) : handleRowClick(row)}
               >
                 {columns.map((column) => (
                   <div
@@ -250,8 +254,8 @@ export function DataGrid<T>({
                     {getCellValue(row, column)}
                   </div>
                 ))}
-                {/* Actions cell - sticky to right */}
-                {actions && (
+                {/* Actions cell - sticky to right, hidden on mobile */}
+                {actions && !isMobile && (
                   <div
                     className={cn(
                       "px-2 flex items-center justify-center sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]",
@@ -281,6 +285,23 @@ export function DataGrid<T>({
           onDownload={onDownload}
           onReload={onReload}
         />
+      )}
+
+      {/* Mobile actions sheet */}
+      {isMobile && actions && (
+        <Sheet open={!!mobileActionRow} onOpenChange={(open) => !open && setMobileActionRow(null)}>
+          <SheetContent side="bottom" className="pb-safe">
+            <SheetHeader>
+              <SheetTitle className="sr-only">{t("actions")}</SheetTitle>
+            </SheetHeader>
+            <div
+              className="flex flex-col gap-1 py-2"
+              onClick={() => setMobileActionRow(null)}
+            >
+              {mobileActionRow && actions(mobileActionRow)}
+            </div>
+          </SheetContent>
+        </Sheet>
       )}
 
       {filterableColumns.length > 0 && onFilterApply && (
