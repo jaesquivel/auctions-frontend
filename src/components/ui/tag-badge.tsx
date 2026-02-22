@@ -1,14 +1,16 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TagBadgeProps {
   name: string;
   color: string;
   className?: string;
+  onRemove?: () => void;
 }
 
-export function TagBadge({ name, color, className }: TagBadgeProps) {
+export function TagBadge({ name, color, className, onRemove }: TagBadgeProps) {
   // Calculate if we need light or dark text based on background color
   const isLightColor = (hexColor: string): boolean => {
     const hex = hexColor.replace('#', '');
@@ -19,18 +21,27 @@ export function TagBadge({ name, color, className }: TagBadgeProps) {
     return brightness > 155;
   };
 
+  const textColor = isLightColor(color) ? '#1a1a1a' : '#ffffff';
+
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap',
+        'inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap',
         className
       )}
-      style={{
-        backgroundColor: color,
-        color: isLightColor(color) ? '#1a1a1a' : '#ffffff',
-      }}
+      style={{ backgroundColor: color, color: textColor }}
     >
       {name}
+      {onRemove && (
+        <button
+          type="button"
+          className="opacity-60 hover:opacity-100 transition-opacity leading-none"
+          style={{ color: textColor }}
+          onClick={(e) => { e.stopPropagation(); onRemove(); }}
+        >
+          <X className="h-3 w-3" />
+        </button>
+      )}
     </span>
   );
 }

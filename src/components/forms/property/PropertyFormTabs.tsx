@@ -56,7 +56,14 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
                 {selectedTagIds.length > 0 ? (
                   availableTags
                     .filter((tag) => selectedTagIds.includes(tag.id))
-                    .map((tag) => <TagBadge key={tag.id} name={tag.name} color={tag.color} />)
+                    .map((tag) => (
+                      <TagBadge
+                        key={tag.id}
+                        name={tag.name}
+                        color={tag.color}
+                        onRemove={!readOnly ? () => toggleTag(tag.id) : undefined}
+                      />
+                    ))
                 ) : (
                   <span className="text-muted-foreground">{t('selectTags')}</span>
                 )}
