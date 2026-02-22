@@ -7,6 +7,7 @@ export interface ColumnDef<T> {
   accessorKey?: keyof T;
   accessorFn?: (row: T) => ReactNode;
   width?: number; // Fixed width in pixels
+  grow?: boolean; // Flex-grow to fill remaining row width
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
   filterable?: boolean;
@@ -47,4 +48,5 @@ export interface DataGridProps<T> {
   sort?: SortState[];
   onSort?: (sort: SortState[]) => void;
   rowHeight?: number;
+  hideFooter?: boolean;
 }

@@ -216,6 +216,7 @@
       "confirmDeleteImage": "¿Eliminar imagen \"{name}\"?",
       "loadingImage": "Cargando imagen...",
       "imageNotAvailable": "Imagen no disponible",
+      "dropImagesHere": "Suelta las imágenes aquí",
       "parties": "Partes",
       "case": "Caso"
     }

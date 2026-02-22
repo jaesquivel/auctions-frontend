@@ -136,12 +136,13 @@ export function ImageLightbox({
   };
 
   const handleUploadChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
     setUploading(true);
     try {
-      const newImage = await onUpload(file);
-      if (newImage?.id) setPendingNavId(newImage.id);
+      const results = await Promise.all(files.map((f) => onUpload(f)));
+      const lastNew = results.filter(Boolean).at(-1);
+      if (lastNew?.id) setPendingNavId(lastNew.id);
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -153,7 +154,7 @@ export function ImageLightbox({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="inset-0 top-0 left-0 translate-x-0 translate-y-0 max-w-none w-screen h-screen rounded-none p-0 flex flex-col gap-0"
+        className="inset-0 top-0 left-0 translate-x-0 translate-y-0 max-w-none sm:max-w-none w-screen h-screen rounded-none p-0 flex flex-col gap-0"
         showCloseButton={false}
       >
         {/* Header */}
@@ -247,6 +248,7 @@ export function ImageLightbox({
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              multiple
               className="hidden"
               onChange={handleUploadChange}
             />

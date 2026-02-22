@@ -29,6 +29,7 @@ export function DataGrid<T>({
   sort,
   onSort,
   rowHeight = 32,
+  hideFooter = false,
 }: DataGridProps<T>) {
   const t = useTranslations("common");
 
@@ -165,7 +166,7 @@ export function DataGrid<T>({
     <div className="flex flex-col h-full border border-border rounded-md overflow-hidden bg-card">
       {/* Scrollable content area */}
       <div className="flex-1 overflow-auto min-h-0">
-        <div className="min-w-max">
+        <div className="min-w-max w-full">
           {/* Header */}
           <div className="flex bg-muted border-b border-border sticky top-0 z-10">
             {columns.map((column) => (
@@ -178,10 +179,10 @@ export function DataGrid<T>({
                   column.align === "right" && "text-right",
                   column.sortable && "cursor-pointer hover:bg-muted-foreground/10 select-none"
                 )}
-                style={{
-                  width: getColumnWidth(column.id),
-                  minWidth: MIN_COLUMN_WIDTH,
-                }}
+                style={column.grow
+                  ? { flex: 1, minWidth: MIN_COLUMN_WIDTH }
+                  : { width: getColumnWidth(column.id), minWidth: MIN_COLUMN_WIDTH }
+                }
                 onClick={column.sortable ? () => handleSort(column.id) : undefined}
               >
                 <div className={cn(
@@ -241,11 +242,10 @@ export function DataGrid<T>({
                       column.align === "center" && "justify-center",
                       column.align === "right" && "justify-end"
                     )}
-                    style={{
-                      width: getColumnWidth(column.id),
-                      minWidth: MIN_COLUMN_WIDTH,
-                      height: rowHeight,
-                    }}
+                    style={column.grow
+                      ? { flex: 1, minWidth: MIN_COLUMN_WIDTH, height: rowHeight }
+                      : { width: getColumnWidth(column.id), minWidth: MIN_COLUMN_WIDTH, height: rowHeight }
+                    }
                   >
                     {getCellValue(row, column)}
                   </div>
@@ -270,16 +270,18 @@ export function DataGrid<T>({
       </div>
 
       {/* Toolbar */}
-      <DataGridToolbar
-        pagination={pagination}
-        onPageChange={onPageChange}
-        onPageSizeChange={onPageSizeChange}
-        onFilterClick={filterableColumns.length > 0 ? () => setFilterDialogOpen(true) : undefined}
-        hasActiveFilters={hasActiveFilters(filterState)}
-        activeFilterCount={countActiveFilters(filterState)}
-        onDownload={onDownload}
-        onReload={onReload}
-      />
+      {!hideFooter && (
+        <DataGridToolbar
+          pagination={pagination}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+          onFilterClick={filterableColumns.length > 0 ? () => setFilterDialogOpen(true) : undefined}
+          hasActiveFilters={hasActiveFilters(filterState)}
+          activeFilterCount={countActiveFilters(filterState)}
+          onDownload={onDownload}
+          onReload={onReload}
+        />
+      )}
 
       {filterableColumns.length > 0 && onFilterApply && (
         <FilterDialog

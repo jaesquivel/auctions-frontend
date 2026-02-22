@@ -19,10 +19,11 @@ interface PropertyImagesTabProps {
 export function PropertyImagesTab({ property, propertyId, onRefresh }: PropertyImagesTabProps) {
   const t = useTranslations('properties.form');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
+  const [uploadingCount, setUploadingCount] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const images = property?.images ?? [];
 
@@ -43,6 +44,7 @@ export function PropertyImagesTab({ property, propertyId, onRefresh }: PropertyI
       id: 'name',
       header: t('imageName'),
       accessorKey: 'name',
+      grow: true,
     },
   ];
 
@@ -52,23 +54,50 @@ export function PropertyImagesTab({ property, propertyId, onRefresh }: PropertyI
     setLightboxOpen(true);
   };
 
-  const handleUploadFile = async (file: File): Promise<PropertyImage | null> => {
-    if (!propertyId) return null;
-    setUploading(true);
+  const uploadFiles = async (files: File[]) => {
+    if (!files.length || !propertyId) return;
+    setUploadingCount(files.length);
     try {
-      const image = await propertiesService.uploadImage(propertyId, file);
+      await Promise.all(
+        files.map((file) =>
+          propertiesService.uploadImage(propertyId, file).finally(() =>
+            setUploadingCount((c) => c - 1)
+          )
+        )
+      );
       onRefresh?.();
-      return image;
     } finally {
-      setUploading(false);
+      setUploadingCount(0);
     }
   };
 
+  const handleUploadFile = async (file: File): Promise<PropertyImage | null> => {
+    if (!propertyId) return null;
+    const image = await propertiesService.uploadImage(propertyId, file);
+    onRefresh?.();
+    return image;
+  };
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    await handleUploadFile(file);
+    const files = Array.from(e.target.files ?? []);
+    await uploadFiles(files);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (propertyId) setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) setIsDragOver(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith('image/'));
+    await uploadFiles(files);
   };
 
   const handleDeleteImage = async (image: PropertyImage) => {
@@ -95,6 +124,7 @@ export function PropertyImagesTab({ property, propertyId, onRefresh }: PropertyI
           ref={fileInputRef}
           type="file"
           accept="image/*"
+          multiple
           className="hidden"
           onChange={handleUpload}
         />
@@ -102,20 +132,31 @@ export function PropertyImagesTab({ property, propertyId, onRefresh }: PropertyI
           type="button"
           variant="outline"
           size="sm"
-          disabled={uploading || !propertyId}
+          disabled={uploadingCount > 0 || !propertyId}
           onClick={() => fileInputRef.current?.click()}
         >
           <Upload className="h-4 w-4 mr-1.5" />
-          {uploading ? t('uploading') : t('uploadImage')}
+          {uploadingCount > 0 ? t('uploading') : t('uploadImage')}
         </Button>
       </div>
 
-      <div className="h-64">
+      <div
+        className={`relative h-[calc(100vh-360px)] min-h-75 rounded-md transition-colors ${isDragOver ? 'ring-2 ring-primary ring-offset-1' : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {isDragOver && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-primary/10 border-2 border-dashed border-primary pointer-events-none">
+            <p className="text-sm font-medium text-primary">{t('dropImagesHere')}</p>
+          </div>
+        )}
         <DataGrid<PropertyImage>
           columns={columns}
           data={images}
           keyField="id"
           rowHeight={72}
+          hideFooter
           actions={(row) => (
             <div className="flex items-center gap-1">
               <Button
