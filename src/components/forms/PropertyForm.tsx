@@ -89,7 +89,7 @@ export function PropertyForm({ open, onOpenChange, property, listItem, onSubmit,
       locationCenterLon: formData.locationCenterLon ? Number(formData.locationCenterLon) : undefined,
       locationStLat: formData.locationStLat ? Number(formData.locationStLat) : undefined,
       locationStLon: formData.locationStLon ? Number(formData.locationStLon) : undefined,
-      tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+      tagIds: selectedTagIds,
     };
     onSubmit(data);
     onOpenChange(false);
