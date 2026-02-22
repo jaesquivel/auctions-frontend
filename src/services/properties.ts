@@ -11,7 +11,9 @@ export interface PropertyFilters {
   size?: number;
   sort?: string[];
   search?: string;
-  tags?: string[];
+  /** UUID-based tag filter → sent as tagIds[eq]=uuid1,uuid2 */
+  tagIds?: string[];
+  /** Name-based tag filter — goes through FilterState / applyFilterParams as tags[eq] or tags[contains] */
   filters?: FilterState;
 }
 
@@ -45,7 +47,7 @@ export const propertiesService = {
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.search) params.set('search', filters.search);
-    if (filters.tags?.length) params.set('tags', filters.tags.join(','));
+    if (filters.tagIds?.length) params.set('tagIds[eq]', filters.tagIds.join(','));
     applyFilterParams(params, filters.filters);
 
     return apiClient.get<SpringPage<PropertyListItem>>(`/properties?${params.toString()}`);
