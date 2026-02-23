@@ -52,7 +52,7 @@ export function PropertyInfoTab({ property, formData, setFormData, readOnly }: P
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-3">
           <CurrencyField mode="readonly" label={t('firstGuarantee')} value={property?.firstAuctionGuarantee} currency={cur} />
-          <CurrencyField mode="readonly" label={t('firstBaseAdj')} value={property?.firstAuctionBaseAdj} currency={cur} />
+          <CurrencyField mode="readonly" label={t('firstBaseAdj')} value={property?.firstAuctionBaseAdj} currency='USD' />
           <StringField mode="readonly" label={t('currency')} value={property?.asset?.currency} className="max-w-50" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-1 gap-x-4 gap-y-3">

@@ -82,6 +82,7 @@ export function FilterConditionRow({ condition, columns, onChange, onRemove }: F
             operator={condition.operator}
             value={condition.value}
             onChange={handleValueChange}
+            tagOptions={selectedColumn?.tagOptions}
           />
         )}
       </div>

@@ -48,6 +48,7 @@ export function getFilterableColumns<T>(columns: ColumnDef<T>[]): FilterableColu
       id: c.id,
       header: c.header,
       filterType: c.filterType ?? 'text',
+      tagOptions: c.tagOptions,
     }));
 }
 
@@ -79,7 +80,7 @@ export function applyFilterParams(params: URLSearchParams, state: FilterState | 
       params.append(`${c.field}[isEmpty]`, '');
     } else if (c.operator === 'isNotEmpty') {
       params.append(`${c.field}[isNotEmpty]`, '');
-    } else {
+    } else if (String(c.value).trim() !== '') {
       params.append(`${c.field}[${c.operator}]`, String(c.value));
     }
   }

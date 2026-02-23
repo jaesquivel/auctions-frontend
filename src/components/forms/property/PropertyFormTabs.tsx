@@ -43,8 +43,8 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
     <div className="w-full space-y-4">
       {/* Registration + Tags bar */}
       <div className="flex items-center gap-4">
-        {property?.registrationFull && (
-          <span className="text-base font-semibold">{property.registrationFull}</span>
+        {property?.fullRegistrationNumber && (
+          <span className="text-base font-semibold">{property.fullRegistrationNumber}</span>
         )}
         {availableTags.length > 0 && (
           <Popover>

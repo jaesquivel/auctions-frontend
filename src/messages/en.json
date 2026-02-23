@@ -36,6 +36,7 @@
       "selectColumn": "Select column",
       "selectOperator": "Select operator",
       "enterValue": "Enter value",
+      "selectTags": "Select tags...",
       "from": "From",
       "to": "To",
       "operators": {
@@ -52,7 +53,11 @@
         "lt": "Less than",
         "lte": "Less or equal",
         "isTrue": "Is true",
-        "isFalse": "Is false"
+        "isFalse": "Is false",
+        "anyOf": "Any of",
+        "allOf": "All of",
+        "noneOf": "None of",
+        "exactly": "Exactly"
       }
     }
   },
@@ -130,6 +135,8 @@
       "canton": "Canton",
       "district": "District",
       "firstDate": "1st Date",
+      "secondDate": "2nd Date",
+      "thirdDate": "3rd Date",
       "firstBase": "1st Base",
       "firstBaseAdj": "1st Base Adj.",
       "firstGuarantee": "1st Guarantee",

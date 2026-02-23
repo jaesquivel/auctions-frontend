@@ -47,7 +47,7 @@ export const propertiesService = {
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
     if (filters.search) params.set('search', filters.search);
-    if (filters.tagIds?.length) params.set('tagIds[eq]', filters.tagIds.join(','));
+    if (filters.tagIds?.length) params.set('tagIds[anyOf]', filters.tagIds.join(','));
     applyFilterParams(params, filters.filters);
 
     return apiClient.get<SpringPage<PropertyListItem>>(`/properties?${params.toString()}`);

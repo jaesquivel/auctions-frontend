@@ -36,6 +36,7 @@
       "selectColumn": "Seleccionar columna",
       "selectOperator": "Seleccionar operador",
       "enterValue": "Ingrese valor",
+      "selectTags": "Seleccionar etiquetas...",
       "from": "Desde",
       "to": "Hasta",
       "operators": {
@@ -52,7 +53,11 @@
         "lt": "Menor que",
         "lte": "Menor o igual",
         "isTrue": "Verdadero",
-        "isFalse": "Falso"
+        "isFalse": "Falso",
+        "anyOf": "Alguna de",
+        "allOf": "Todas de",
+        "noneOf": "Ninguna de",
+        "exactly": "Exactamente"
       }
     }
   },
@@ -130,6 +135,8 @@
       "canton": "Cantón",
       "district": "Distrito",
       "firstDate": "1ra Fecha",
+      "secondDate": "2da Fecha",
+      "thirdDate": "3ra Fecha",
       "firstBase": "1ra Base",
       "firstBaseAdj": "1ra Base Adj.",
       "firstGuarantee": "1ra Garantía",

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ColumnFilterType, FilterState } from './filters/filter-types';
+import type { ColumnFilterType, FilterState, TagOption } from './filters/filter-types';
 
 export interface ColumnDef<T> {
   id: string;
@@ -12,6 +12,8 @@ export interface ColumnDef<T> {
   sortable?: boolean;
   filterable?: boolean;
   filterType?: ColumnFilterType;
+  /** Required when filterType === 'tagId'. Provides the selectable tag options. */
+  tagOptions?: TagOption[];
 }
 
 export interface PaginationState {

@@ -1,4 +1,4 @@
-export type ColumnFilterType = 'text' | 'number' | 'boolean' | 'date';
+export type ColumnFilterType = 'text' | 'number' | 'boolean' | 'date' | 'datetime' | 'tagId';
 
 // Operators aligned with the backend API: field[op]=value
 export type FilterOperator =
@@ -7,7 +7,9 @@ export type FilterOperator =
   // number & date (shared)
   | 'gt' | 'gte' | 'lt' | 'lte'
   // boolean
-  | 'isTrue' | 'isFalse';
+  | 'isTrue' | 'isFalse'
+  // tagId
+  | 'anyOf' | 'allOf' | 'noneOf' | 'exactly';
 
 export const NO_VALUE_OPERATORS: FilterOperator[] = ['isEmpty', 'isNotEmpty', 'isTrue', 'isFalse'];
 
@@ -16,6 +18,8 @@ export const OPERATORS_BY_TYPE: Record<ColumnFilterType, FilterOperator[]> = {
   number: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte'],
   boolean: ['isTrue', 'isFalse'],
   date: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte'],
+  datetime: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte'],
+  tagId: ['anyOf', 'allOf', 'noneOf', 'exactly'],
 };
 
 export interface FilterCondition {
@@ -36,8 +40,15 @@ export interface FilterState {
   joinOperator: 'and' | 'or';
 }
 
+export interface TagOption {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export interface FilterableColumnDef {
   id: string;
   header: string;
   filterType: ColumnFilterType;
+  tagOptions?: TagOption[];
 }

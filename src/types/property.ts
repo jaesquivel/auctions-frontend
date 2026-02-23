@@ -29,7 +29,7 @@ export interface Property {
   fiscalValueUsd: number | null;
   firstAuctionBaseAdj: number | null;
   firstAuctionGuarantee: number | null;
-  registrationFull: string | null;
+  fullRegistrationNumber: string | null;
   fiscalBaseRatio: number | null;
   // Details
   observations: string | null;
@@ -60,8 +60,7 @@ export interface PropertyListItem {
   fiscalValueUsd: number | null;
   firstAuctionBaseAdj: number | null;
   firstAuctionGuarantee: number | null;
-  registrationFull: string | null;
-  // tdLocation: string | null;
+  fullRegistrationNumber: string | null;
   fiscalBaseRatio: number | null;
   edict: EdictListItem;
   asset: AssetListItem;
