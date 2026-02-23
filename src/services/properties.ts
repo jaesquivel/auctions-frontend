@@ -3,17 +3,13 @@ import { apiClient } from '@/lib/api-client';
 import { uuid } from '@/lib/utils';
 import { mockProperties } from '@/mocks';
 import type { Property, PropertyListItem, PropertyCreateRequest, PropertyUpdateRequest, SpringPage, PropertyImage } from '@/types';
-import { applyFilterParams } from '@/components/data-grid';
+import { buildSearchRequest } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
 export interface PropertyFilters {
   page?: number;  // 0-indexed
   size?: number;
   sort?: string[];
-  search?: string;
-  /** UUID-based tag filter → sent as tagIds[eq]=uuid1,uuid2 */
-  tagIds?: string[];
-  /** Name-based tag filter — goes through FilterState / applyFilterParams as tags[eq] or tags[contains] */
   filters?: FilterState;
 }
 
@@ -46,11 +42,9 @@ export const propertiesService = {
     params.set('page', page.toString());
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
-    if (filters.search) params.set('search', filters.search);
-    if (filters.tagIds?.length) params.set('tagIds[anyOf]', filters.tagIds.join(','));
-    applyFilterParams(params, filters.filters);
 
-    return apiClient.get<SpringPage<PropertyListItem>>(`/properties?${params.toString()}`);
+    const body = buildSearchRequest(filters.filters);
+    return apiClient.post<SpringPage<PropertyListItem>>(`/properties/search?${params.toString()}`, body);
   },
 
   async getById(id: string): Promise<Property | null> {
