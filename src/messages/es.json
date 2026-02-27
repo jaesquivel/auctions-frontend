@@ -37,6 +37,9 @@
       "selectOperator": "Seleccionar operador",
       "enterValue": "Ingrese valor",
       "selectTags": "Seleccionar etiquetas...",
+      "savedFilters": "Filtros guardados",
+      "filterNamePlaceholder": "Nombre del filtro...",
+      "noSavedFilters": "No hay filtros guardados",
       "from": "Desde",
       "to": "Hasta",
       "operators": {

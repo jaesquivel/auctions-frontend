@@ -26,6 +26,7 @@ export function DataGrid<T>({
   filterState,
   onFilterApply,
   filterMode = 'simple',
+  filterStorageKey,
   onDownload,
   onReload,
   sort,
@@ -312,6 +313,7 @@ export function DataGrid<T>({
           initialState={filterState}
           onApply={onFilterApply}
           mode={filterMode}
+          storageKey={filterStorageKey}
         />
       )}
     </div>

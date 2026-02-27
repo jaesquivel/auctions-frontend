@@ -1,7 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { uuid } from '@/lib/utils';
-import { mockAssets } from '@/mocks';
 import type { Asset, AssetListItem, AssetCreateRequest, AssetUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
@@ -18,27 +17,6 @@ export const assetsService = {
   async getAll(filters: AssetFilters = {}): Promise<SpringPage<AssetListItem>> {
     const { page = 0, size = 20 } = filters;
 
-    if (config.useMock.assets) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const startIndex = page * size;
-      const content = mockAssets.slice(startIndex, startIndex + size);
-      const totalElements = mockAssets.length;
-      const totalPages = Math.ceil(totalElements / size);
-
-      return {
-        content,
-        totalElements,
-        totalPages,
-        size,
-        number: page,
-        first: page === 0,
-        last: page >= totalPages - 1,
-        empty: content.length === 0,
-        numberOfElements: content.length,
-      };
-    }
-
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
@@ -50,37 +28,21 @@ export const assetsService = {
   },
 
   async getById(id: string): Promise<Asset | null> {
-    if (config.useMock.assets) {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      return null;
-    }
 
     return apiClient.get<Asset>(`/assets/${id}`);
   },
 
   async create(data: AssetCreateRequest): Promise<Asset> {
-    if (config.useMock.assets) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: uuid() } as unknown as Asset;
-    }
 
     return apiClient.post<Asset>('/assets', data);
   },
 
   async update(id: string, data: AssetUpdateRequest): Promise<Asset> {
-    if (config.useMock.assets) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      return { id, ...data } as unknown as Asset;
-    }
 
     return apiClient.put<Asset>(`/assets/${id}`, data);
   },
 
   async delete(id: string): Promise<void> {
-    if (config.useMock.assets) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      return;
-    }
 
     return apiClient.delete(`/assets/${id}`);
   },

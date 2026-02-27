@@ -45,6 +45,8 @@ export interface DataGridProps<T> {
   filterState?: FilterState;
   onFilterApply?: (state: FilterState) => void;
   filterMode?: 'simple' | 'advanced';
+  /** localStorage key for persisting saved filters. Required to enable the saved-filters dropdown. */
+  filterStorageKey?: string;
   onDownload?: () => void;
   onReload?: () => void;
   sort?: SortState[];

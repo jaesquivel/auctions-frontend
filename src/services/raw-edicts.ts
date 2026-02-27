@@ -1,7 +1,6 @@
 import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
 import { uuid } from '@/lib/utils';
-import { mockExtractedEdicts } from '@/mocks';
 import type { RawEdict, RawEdictCreateRequest, RawEdictUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
@@ -19,27 +18,6 @@ export const rawEdictsService = {
   async getAll(filters: RawEdictFilters = {}): Promise<SpringPage<RawEdict>> {
     const { page = 0, size = 20 } = filters;
 
-    if (config.useMock.rawEdicts) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const startIndex = page * size;
-      const content = mockExtractedEdicts.slice(startIndex, startIndex + size);
-      const totalElements = mockExtractedEdicts.length;
-      const totalPages = Math.ceil(totalElements / size);
-
-      return {
-        content,
-        totalElements,
-        totalPages,
-        size,
-        number: page,
-        first: page === 0,
-        last: page >= totalPages - 1,
-        empty: content.length === 0,
-        numberOfElements: content.length,
-      };
-    }
-
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
@@ -52,38 +30,21 @@ export const rawEdictsService = {
   },
 
   async getById(id: string): Promise<RawEdict | null> {
-    if (config.useMock.rawEdicts) {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      return mockExtractedEdicts.find((e) => e.id === id) || null;
-    }
 
     return apiClient.get<RawEdict>(`/raw-edicts/${id}`);
   },
 
   async create(data: RawEdictCreateRequest): Promise<RawEdict> {
-    if (config.useMock.rawEdicts) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      return { ...data, id: uuid(), createdAt: new Date().toISOString() } as unknown as RawEdict;
-    }
 
     return apiClient.post<RawEdict>('/raw-edicts', data);
   },
 
   async update(id: string, data: RawEdictUpdateRequest): Promise<RawEdict> {
-    if (config.useMock.rawEdicts) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      const existing = mockExtractedEdicts.find((e) => e.id === id);
-      return { ...existing, ...data } as RawEdict;
-    }
 
     return apiClient.put<RawEdict>(`/raw-edicts/${id}`, data);
   },
 
   async delete(id: string): Promise<void> {
-    if (config.useMock.rawEdicts) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      return;
-    }
 
     return apiClient.delete(`/raw-edicts/${id}`);
   },

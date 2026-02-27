@@ -101,7 +101,6 @@ src/
 │   └── forms/                  # CRUD form components
 ├── hooks/                      # Custom React hooks
 ├── lib/                        # Utilities (formatters, etc.)
-├── mocks/                      # Mock data for development
 ├── messages/                   # i18n translations (es.json, en.json)
 ├── services/                   # API service stubs
 ├── types/                      # TypeScript type definitions
@@ -164,21 +163,6 @@ The app supports Spanish (default) and English. Translations are in `src/message
 ## API Integration
 
 The frontend is designed to work with a REST API backend.
-
-### Mock vs Real API
-
-The application uses a global configuration to switch between mock data and real API calls:
-
-```typescript
-// src/lib/config.ts
-export const config = {
-  USE_MOCK_API: true,  // Set to false to use real backend
-  API_BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1',
-};
-```
-
-- **`USE_MOCK_API: true`** (default): All API calls return mock data from `src/mocks/`
-- **`USE_MOCK_API: false`**: All API calls go to the real backend API
 
 ### Services
 

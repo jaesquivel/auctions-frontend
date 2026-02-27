@@ -37,6 +37,9 @@
       "selectOperator": "Select operator",
       "enterValue": "Enter value",
       "selectTags": "Select tags...",
+      "savedFilters": "Saved filters",
+      "filterNamePlaceholder": "Filter name...",
+      "noSavedFilters": "No saved filters",
       "from": "From",
       "to": "To",
       "operators": {

@@ -4,6 +4,7 @@ export { edictsService, type EdictFilters } from './edicts';
 export { rawEdictsService, type RawEdictFilters } from './raw-edicts';
 export { rawAssetsService, type RawAssetFilters } from './raw-assets';
 export { tagsService } from './tags';
+export { savedFiltersService, type SavedFilterItem } from './saved-filters';
 export { vehiclesService, type VehicleFilters } from './vehicles';
 export { assetsService, type AssetFilters } from './assets';
 export { bulletinsService, type BulletinFilters } from './bulletins';

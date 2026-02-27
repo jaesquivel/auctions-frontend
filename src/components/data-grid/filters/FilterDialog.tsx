@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/button';
 import { FilterConditionRow } from './FilterConditionRow';
 import { FilterGroupPanel } from './FilterGroupPanel';
 import { FilterJoinToggle } from './FilterJoinToggle';
+import { SavedFiltersDropdown } from './SavedFiltersDropdown';
 import { useFilterState } from './useFilterState';
+import { useSavedFilters } from './useSavedFilters';
 import { createEmptyCondition } from './filter-utils';
 import type { FilterState, FilterableColumnDef } from './filter-types';
 
@@ -19,11 +21,13 @@ interface FilterDialogProps {
   initialState: FilterState | undefined;
   onApply: (state: FilterState) => void;
   mode: 'simple' | 'advanced';
+  storageKey?: string;
 }
 
-export function FilterDialog({ open, onOpenChange, columns, initialState, onApply, mode }: FilterDialogProps) {
+export function FilterDialog({ open, onOpenChange, columns, initialState, onApply, mode, storageKey }: FilterDialogProps) {
   const t = useTranslations('common.filters');
   const { state, setJoinOperator, addGroup, removeGroup, updateGroup, clearAll, reset } = useFilterState(initialState);
+  const { savedFilters, activeId, setActiveId, save, rename, remove } = useSavedFilters(!!storageKey);
 
   useEffect(() => {
     if (open) {
@@ -38,8 +42,14 @@ export function FilterDialog({ open, onOpenChange, columns, initialState, onAppl
 
   const handleClear = () => {
     clearAll();
+    setActiveId(null);
     onApply({ groups: [], joinOperator: 'and' });
     onOpenChange(false);
+  };
+
+  const handleLoadSaved = (filter: { state: FilterState; id: string }) => {
+    reset(filter.state);
+    setActiveId(filter.id);
   };
 
   const defaultField = columns[0]?.id;
@@ -55,6 +65,19 @@ export function FilterDialog({ open, onOpenChange, columns, initialState, onAppl
     </div>
   );
 
+  const savedFiltersBar = storageKey ? (
+    <div className="flex items-center gap-2 pb-1">
+      <SavedFiltersDropdown
+        savedFilters={savedFilters}
+        activeId={activeId}
+        onLoad={handleLoadSaved}
+        onSave={(name) => save(name, state)}
+        onRename={rename}
+        onDelete={remove}
+      />
+    </div>
+  ) : null;
+
   return (
     <Modal
       open={open}
@@ -65,6 +88,7 @@ export function FilterDialog({ open, onOpenChange, columns, initialState, onAppl
     >
       {mode === 'simple' ? (
         <div className="space-y-3">
+          {savedFiltersBar}
           <div className="flex items-center justify-end">
             <FilterJoinToggle
               value={state.groups[0]?.joinOperator ?? 'and'}
@@ -119,6 +143,7 @@ export function FilterDialog({ open, onOpenChange, columns, initialState, onAppl
         </div>
       ) : (
         <div className="space-y-3">
+          {savedFiltersBar}
           <div className="flex items-center justify-end">
             <FilterJoinToggle value={state.joinOperator} onChange={setJoinOperator} />
           </div>

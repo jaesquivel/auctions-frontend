@@ -371,6 +371,7 @@ export default function PropertiesPage() {
             setPagination((prev) => ({ ...prev, page: 1 }));
           }}
           filterMode="advanced"
+          filterStorageKey="filters:properties"
           onDownload={() => console.log('Download clicked')}
           onReload={fetchData}
           sort={sort}
