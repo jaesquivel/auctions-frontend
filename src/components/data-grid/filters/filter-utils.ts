@@ -1,0 +1,164 @@
+import { uuid } from '@/lib/utils';
+import type { ColumnDef } from '../types';
+import type { FilterCondition, FilterGroup, FilterState, FilterableColumnDef } from './filter-types';
+
+export function createEmptyCondition(defaultField?: string): FilterCondition {
+  return {
+    id: uuid(),
+    field: defaultField ?? '',
+    operator: 'contains',
+    value: '',
+  };
+}
+
+export function createEmptyGroup(defaultField?: string): FilterGroup {
+  return {
+    id: uuid(),
+    conditions: [createEmptyCondition(defaultField)],
+    joinOperator: 'and',
+  };
+}
+
+export function createEmptyFilterState(defaultField?: string): FilterState {
+  return {
+    groups: [createEmptyGroup(defaultField)],
+    joinOperator: 'and',
+  };
+}
+
+export function hasActiveFilters(state: FilterState | undefined): boolean {
+  if (!state) return false;
+  return state.groups.some((g) =>
+    g.conditions.some((c) => c.field !== '')
+  );
+}
+
+export function countActiveFilters(state: FilterState | undefined): number {
+  if (!state) return 0;
+  return state.groups.reduce(
+    (total, g) => total + g.conditions.filter((c) => c.field !== '').length,
+    0
+  );
+}
+
+export function getFilterableColumns<T>(columns: ColumnDef<T>[]): FilterableColumnDef[] {
+  return columns
+    .filter((c) => c.filterable)
+    .map((c) => ({
+      id: c.id,
+      header: c.header,
+      filterType: c.filterType ?? 'text',
+      tagOptions: c.tagOptions,
+    }));
+}
+
+// ──────────────── POST /search body builder ────────────────
+
+export interface SearchFilterLeaf {
+  field: string;
+  op: string;
+  value?: string;
+  values?: string[];
+}
+
+export interface SearchFilterGroup {
+  op: string;
+  items: Array<SearchFilterLeaf | SearchFilterGroup>;
+}
+
+export interface SearchRequest {
+  filter?: SearchFilterLeaf | SearchFilterGroup;
+}
+
+/**
+ * Converts a FilterState into a SearchRequest body for POST /search endpoints.
+ * Tags (field === 'tagIds') become leaf nodes with `values` (string[]) instead of `value`.
+ * All other conditions become regular leaf nodes with `value` (string).
+ */
+export function buildSearchRequest(state: FilterState | undefined): SearchRequest {
+  if (!state) return {};
+
+  const groupNodes: SearchFilterGroup[] = [];
+
+  for (const group of state.groups) {
+    const leaves: SearchFilterLeaf[] = [];
+
+    for (const c of group.conditions) {
+      if (!c.field) continue;
+
+      if (c.field === 'tagIds') {
+        const val = String(c.value).trim();
+        if (val) {
+          leaves.push({
+            field: 'tagIds',
+            op: c.operator,
+            values: val.split(',').filter(Boolean),
+          });
+        }
+        continue;
+      }
+
+      if (c.operator === 'isTrue') {
+        leaves.push({ field: c.field, op: 'eq', value: 'true' });
+      } else if (c.operator === 'isFalse') {
+        leaves.push({ field: c.field, op: 'eq', value: 'false' });
+      } else if (c.operator === 'isEmpty' || c.operator === 'isNotEmpty') {
+        leaves.push({ field: c.field, op: c.operator });
+      } else if (String(c.value).trim() !== '') {
+        leaves.push({ field: c.field, op: c.operator, value: String(c.value) });
+      }
+    }
+
+    if (leaves.length > 0) {
+      groupNodes.push({ op: group.joinOperator, items: leaves });
+    }
+  }
+
+  if (groupNodes.length === 0) return {};
+
+  if (groupNodes.length === 1 && groupNodes[0].items.length === 1) {
+    return { filter: groupNodes[0].items[0] as SearchFilterLeaf };
+  }
+
+  if (groupNodes.length === 1) {
+    return { filter: groupNodes[0] };
+  }
+
+  return { filter: { op: state.joinOperator, items: groupNodes } };
+}
+
+// ──────────────── URL params serializer (legacy GET) ────────────────
+
+/**
+ * Serializes FilterState into URLSearchParams using the backend format:
+ *   field[op]=value  +  match=all|any
+ *
+ * Boolean filters are sent as field[eq]=true/false.
+ * Only the first group is used (simple mode). The group's joinOperator
+ * maps to the `match` parameter (and → all, or → any).
+ */
+export function applyFilterParams(params: URLSearchParams, state: FilterState | undefined): void {
+  if (!state) return;
+
+  const conditions = state.groups.flatMap((g) => g.conditions);
+  const active = conditions.filter((c) => c.field !== '');
+  if (active.length === 0) return;
+
+  // Use first group's joinOperator for the match param
+  const match = state.groups[0]?.joinOperator === 'or' ? 'any' : 'all';
+  params.set('match', match);
+
+  for (const c of active) {
+    if (c.operator === 'isTrue') {
+      params.append(`${c.field}[eq]`, 'true');
+    } else if (c.operator === 'isFalse') {
+      params.append(`${c.field}[eq]`, 'false');
+    } else if (c.operator === 'isEmpty') {
+      params.append(`${c.field}[isEmpty]`, '');
+    } else if (c.operator === 'isNotEmpty') {
+      params.append(`${c.field}[isNotEmpty]`, '');
+    } else if (String(c.value).trim() !== '') {
+      params.append(`${c.field}[${c.operator}]`, String(c.value));
+    }
+  }
+}

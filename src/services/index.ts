@@ -1,0 +1,17 @@
+// Services
+export { propertiesService, type PropertyFilters } from './properties';
+export { edictsService, type EdictFilters } from './edicts';
+export { rawEdictsService, type RawEdictFilters } from './raw-edicts';
+export { rawAssetsService, type RawAssetFilters } from './raw-assets';
+export { tagsService } from './tags';
+export { savedFiltersService, type SavedFilterItem } from './saved-filters';
+export { vehiclesService, type VehicleFilters } from './vehicles';
+export { assetsService, type AssetFilters } from './assets';
+export { bulletinsService, type BulletinFilters } from './bulletins';
+export { territorialService } from './territorial';
+
+// Re-export config for convenience
+export { config } from '@/lib/config';
+
+// Re-export pagination types from common
+export type { SpringPage, SpringPageParams } from '@/types';
