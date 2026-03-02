@@ -4,8 +4,9 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
-  // Enable React strict mode for better development experience
   reactStrictMode: true,
+  // Produce a minimal self-contained server in .next/standalone for Docker
+  output: 'standalone',
 };
 
 export default withNextIntl(nextConfig);

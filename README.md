@@ -1,188 +1,198 @@
-# Remates Judiciales - Frontend
+# Remates Judiciales — Frontend
 
-A Next.js application for managing judicial auction assets with TypeScript, React, Tailwind CSS, and Clerk authentication.
-
-## Features
-
-- **Multi-language Support**: Spanish (default) and English
-- **Dark/Light Theme**: Dark blue-based UI with theme toggle
-- **Responsive Design**: Desktop sidebar and mobile hamburger menu
-- **Authentication**: Clerk-based authentication with 2FA support
-- **Data Management**: CRUD operations for properties, vehicles, assets, edicts, and more
+Next.js application for managing judicial auction assets with TypeScript, Tailwind CSS, and Clerk authentication.
 
 ## Tech Stack
 
-- **Framework**: Next.js 14+ (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
-- **UI Library**: React 18+
-- **Styling**: Tailwind CSS
-- **Components**: shadcn/ui
+- **Styling**: Tailwind CSS v4 + shadcn/ui
 - **Authentication**: Clerk
-- **Internationalization**: next-intl
-- **Package Manager**: pnpm
+- **Internationalization**: next-intl (Spanish default, English)
+- **Package Manager**: pnpm 10
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+- Node.js 22 LTS
+- pnpm 10
 
-- Node.js 18+
-- pnpm
+---
 
-### Installation
+## Development
+
+### 1. Install dependencies
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Copy environment variables
-cp .env.local.example .env.local
-# Edit .env.local with your Clerk keys
 ```
 
-### Environment Variables
+### 2. Configure environment
 
-Create a `.env.local` file with the following variables:
+Copy the example and fill in your values:
 
 ```bash
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/properties
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/properties
-NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+cp .env.local .env.local
 ```
 
-### Development
+Required variables:
+
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (baked at build time) |
+| `CLERK_SECRET_KEY` | Clerk secret key (server-side only, runtime) |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Sign-in route (default `/sign-in`) |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | Sign-up route (default `/sign-up`) |
+| `NEXT_PUBLIC_API_PORT` | Backend port (default `8080`) |
+| `NEXT_PUBLIC_API_BASE_PATH` | Backend base path (default `/api/v1`) |
+| `NEXT_PUBLIC_LOG_TOKENS` | Log auth tokens to console (default `false`) |
+
+The API base URL is derived at runtime from the browser's `window.location` hostname + `NEXT_PUBLIC_API_PORT` + `NEXT_PUBLIC_API_BASE_PATH`, so no separate URL variable is needed.
+
+### 3. Start the dev server
 
 ```bash
-# Start development server
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Open [http://localhost:3000](http://localhost:3000).
 
-### Build
+---
+
+## Production Build
 
 ```bash
-# Build for production
+# Build
 pnpm build
 
-# Start production server
+# Start
 pnpm start
 ```
 
+---
+
+## Docker
+
+The image uses a three-stage build (`deps → builder → runner`) and emits a minimal standalone server via `output: 'standalone'`.
+
+### Build
+
+`NEXT_PUBLIC_*` variables are baked into the JS bundle at build time — pass them as build args:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_xxx \
+  -t auctions-frontend:latest .
+```
+
+Or use the package.json shortcut (reads `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` from the current shell):
+
+```bash
+pnpm docker:build
+```
+
+### Run
+
+`CLERK_SECRET_KEY` is server-side only — pass it at runtime:
+
+```bash
+docker run -p 3000:3000 \
+  -e CLERK_SECRET_KEY=sk_live_xxx \
+  auctions-frontend:latest
+```
+
+Or:
+
+```bash
+pnpm docker:run
+```
+
+### Behind nginx (recommended for production)
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass         http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection 'upgrade';
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+---
+
 ## Project Structure
 
-```
+```text
 src/
 ├── app/
 │   ├── [locale]/
-│   │   ├── (public)/           # Public pages (no auth required)
-│   │   │   ├── page.tsx        # Home
-│   │   │   ├── info/           # Information
-│   │   │   ├── sign-in/        # Sign in
-│   │   │   └── sign-up/        # Sign up
-│   │   └── (app)/              # Protected pages (auth required)
-│   │       ├── properties/     # Properties management
-│   │       ├── vehicles/       # Vehicles management
-│   │       ├── assets/         # Assets management
-│   │       ├── edicts/         # Edicts management
+│   │   ├── (public)/           # Landing, sign-in, sign-up
+│   │   └── (app)/              # Protected pages
+│   │       ├── properties/     # Real estate properties
+│   │       ├── vehicles/       # Vehicle auctions
+│   │       ├── assets/         # General assets
+│   │       ├── edicts/         # Judicial edicts
 │   │       ├── bulletins/      # Judicial bulletins
-│   │       ├── extracted-*/    # Data extraction
+│   │       ├── extracted-*/    # Extraction results
 │   │       ├── tags/           # Property tags
-│   │       ├── territorial/    # Provinces, Cantons, Districts
-│   │       └── config/         # General configuration
-│   └── layout.tsx              # Root layout
+│   │       ├── territorial/    # Provinces / Cantons / Districts
+│   │       └── config/         # System configuration
 ├── components/
-│   ├── ui/                     # shadcn/ui components
-│   ├── data-grid/              # Reusable DataGrid component
-│   ├── layout/                 # Sidebar, MobileNav, etc.
-│   └── forms/                  # CRUD form components
+│   ├── ui/                     # shadcn/ui primitives
+│   ├── data-grid/              # DataGrid with filtering, sorting, pagination
+│   ├── layout/                 # Sidebar, MobileNav
+│   └── forms/                  # CRUD forms
 ├── hooks/                      # Custom React hooks
-├── lib/                        # Utilities (formatters, etc.)
-├── messages/                   # i18n translations (es.json, en.json)
-├── services/                   # API service stubs
-├── types/                      # TypeScript type definitions
-└── i18n/                       # Internationalization config
+├── lib/                        # api-client, formatters, utils
+├── messages/                   # Translations (es.json, en.json)
+├── services/                   # API service layer
+├── types/                      # TypeScript types
+└── i18n/                       # next-intl config
 ```
 
-## Pages
-
-### Public Pages (No Authentication)
-- **Home** (`/`): Landing page with sign in/up links
-- **Information** (`/info`): About the platform
-- **Sign In** (`/sign-in`): Clerk sign-in with 2FA
-- **Sign Up** (`/sign-up`): Clerk registration
-
-### Protected Pages (Requires Authentication)
-- **Properties**: Real estate property management
-- **Vehicles**: Vehicle auction tracking
-- **Assets**: General asset management
-- **Edicts**: Judicial edict management
-- **Bulletins**: Judicial bulletin processing
-- **Extracted Edicts/Assets**: Data extraction results
-- **Tags**: Property classification tags
-- **Territorial Division**: Provinces, Cantons, Districts
-- **Configuration**: System settings
+---
 
 ## Key Components
 
-### DataGrid
-A reusable, parameterized data grid component with:
-- Compact row height
-- Fixed-width columns with dividers
-- Single row selection
-- Actions column anchored to the right
-- Pagination with editable page input
-- Toolbar with filter, download, and reload buttons
+### DataGrid (`src/components/data-grid/`)
 
-### Sidebar
-Collapsible navigation sidebar with:
-- Grouped menu items with submenus
-- Icons-only collapsed mode
-- Theme toggle
-- Language selector
-- User profile menu
+Reusable data grid with:
 
-### Modal
-Semi-transparent modal dialog for CRUD operations.
+- Column sorting (multi-column)
+- Advanced filter dialog (multiple groups, AND/OR logic)
+- Saved filters — persist named filter sets via the API (`GET/POST/PUT/DELETE /saved_filters`)
+- Tag picker for tag-based filters
+- Datetime filter support
+- Resizable columns, pagination, row actions
 
-## Data Formats
+### API Client (`src/lib/api-client.ts`)
 
-- **Currency**: ISO 3-digit prefix (CRC, USD, EUR)
-- **Tags**: Colored badges with hex colors
-- **Timestamps**: YYYY-MM-DD HH:mm (24-hour)
+- Attaches Clerk JWT to every request (`Authorization: Bearer ...`)
+- Derives base URL from `window.location.hostname` + `NEXT_PUBLIC_API_PORT`
+- Configurable request timeout (default 30 s)
+- Shows toast notifications on API errors
 
-## Internationalization
+### Services (`src/services/`)
 
-The app supports Spanish (default) and English. Translations are in `src/messages/`:
-- `es.json`: Spanish translations ("Remates", "Bienes", etc.)
-- `en.json`: English translations ("Auctions", "Assets", etc.)
+| Service | Endpoint prefix |
+| --- | --- |
+| `propertiesService` | `/properties` |
+| `savedFiltersService` | `/saved_filters` |
+| `tagsService` | `/tags` |
+| `edictsService` | `/edicts` |
+| `assetsService` | `/assets` |
+| `vehiclesService` | `/vehicles` |
+| `bulletinsService` | `/bulletins` |
+| `territorialService` | `/provinces`, `/cantons`, `/districts` |
 
-## API Integration
-
-The frontend is designed to work with a REST API backend.
-
-### Services
-
-API services are located in `src/services/`:
-
-- `propertiesService` - Properties CRUD operations
-- `edictsService` - Edicts CRUD operations
-- `tagsService` - Property tags CRUD operations
-- `vehiclesService` - Vehicles CRUD operations
-- `assetsService` - Assets CRUD operations
-- `bulletinsService` - Bulletins CRUD operations
-- `territorialService` - Provinces, Cantons, Districts
-
-### API Client
-
-The API client (`src/lib/api-client.ts`) provides:
-- Bearer token authentication (Clerk JWT)
-- Request timeout handling
-- Error handling with `ApiError` class
-- Base URL configured via `NEXT_PUBLIC_API_URL`
+---
 
 ## License
 
