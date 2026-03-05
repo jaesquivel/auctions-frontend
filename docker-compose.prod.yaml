@@ -1,0 +1,41 @@
+# Production docker-compose for server deployment
+# Usage: docker compose -f docker-compose.prod.yaml up -d
+#
+# Prerequisites:
+#   - Image built with ./build.sh <version>
+#   - .env file on the server with runtime secrets (see .env.local for reference)
+#
+# NEXT_PUBLIC_* variables are baked into the image at build time (via build.sh).
+# Only server-side secrets are needed here at runtime.
+
+services:
+  auctions-frontend:
+    image: auctions-frontend:${IMAGE_TAG:-latest}
+    container_name: auctions-frontend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Server-side Clerk secret — not baked into the image
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:?Clerk secret key required}
+
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
