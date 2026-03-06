@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -319,18 +319,12 @@ export default function PropertiesPage() {
 
   const renderActions = (row: PropertyListItem) => (
     <div className="flex items-center gap-1">
-      {isAdmin ? (
-        <>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}>
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </>
-      ) : (
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}>
-          <Eye className="h-4 w-4" />
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}>
+        <Edit className="h-4 w-4" />
+      </Button>
+      {isAdmin && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}>
+          <Trash2 className="h-4 w-4" />
         </Button>
       )}
     </div>

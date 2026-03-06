@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -10,10 +10,12 @@ import { EdictForm } from '@/components/forms/EdictForm';
 import { edictsService } from '@/services/edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
+import { useUserRole } from '@/hooks';
 import type { Edict, EdictListItem, EdictUpdateRequest } from '@/types';
 
 export default function EdictsPage() {
   const t = useTranslations('edicts');
+  const { isAdmin } = useUserRole();
 
   const [data, setData] = useState<EdictListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +33,7 @@ export default function EdictsPage() {
   const [editingEdict, setEditingEdict] = useState<Edict | null>(null);
   const [editingListItem, setEditingListItem] = useState<EdictListItem | null>(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [formReadOnly, setFormReadOnly] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -54,15 +57,34 @@ export default function EdictsPage() {
     fetchData();
   }, [fetchData]);
 
+  const handleView = async (row: EdictListItem) => {
+    setEditingEdict(null);
+    setEditingListItem(row);
+    setFormReadOnly(true);
+    setFormOpen(true);
+    setFormLoading(true);
+    try {
+      const fullEdict = await edictsService.getById(row.id);
+      if (fullEdict) setEditingEdict(fullEdict);
+    } catch (error) {
+      console.error('Failed to fetch edict details:', error);
+      setFormOpen(false);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   const handleCreate = () => {
     setEditingEdict(null);
     setEditingListItem(null);
+    setFormReadOnly(false);
     setFormOpen(true);
   };
 
   const handleEdit = async (row: EdictListItem) => {
     setEditingEdict(null);
     setEditingListItem(row);
+    setFormReadOnly(false);
     setFormOpen(true);
     setFormLoading(true);
     try {
@@ -115,8 +137,14 @@ export default function EdictsPage() {
 
   const renderActions = (row: EdictListItem) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      {isAdmin ? (
+        <>
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+        </>
+      ) : (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
+      )}
     </div>
   );
 
@@ -124,7 +152,7 @@ export default function EdictsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>
+        {isAdmin && <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>}
       </div>
 
       {deleteError && (
@@ -160,6 +188,7 @@ export default function EdictsPage() {
         edict={editingEdict}
         listItem={editingListItem}
         onSubmit={handleSubmit}
+        readOnly={formReadOnly}
         loading={formLoading}
       />
     </div>

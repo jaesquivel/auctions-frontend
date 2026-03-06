@@ -54,6 +54,7 @@ const navItems: NavItem[] = [
   {
     titleKey: 'dataExtraction',
     icon: FileSearch,
+    adminOnly: true,
     children: [
       { titleKey: 'bulletins', href: '/bulletins', icon: Newspaper },
       { titleKey: 'extractedEdicts', href: '/extracted-edicts', icon: FileSearch },
@@ -85,10 +86,12 @@ export function Sidebar({ className }: SidebarProps) {
   const { isAdmin } = useUserRole();
 
   // Filter nav items based on user role
-  const filteredNavItems = navItems.map((group) => ({
-    ...group,
-    children: group.children?.filter((item) => !item.adminOnly || isAdmin),
-  }));
+  const filteredNavItems = navItems
+    .filter((group) => !group.adminOnly || isAdmin)
+    .map((group) => ({
+      ...group,
+      children: group.children?.filter((item) => !item.adminOnly || isAdmin),
+    }));
 
   const toggleGroup = (groupKey: string) => {
     setExpandedGroups((prev) =>
