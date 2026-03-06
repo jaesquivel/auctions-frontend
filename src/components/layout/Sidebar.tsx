@@ -28,14 +28,14 @@ import { Separator } from '@/components/ui/separator';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageSelector } from './LanguageSelector';
 import { UserMenu } from './UserMenu';
-import { useUserRole } from '@/hooks';
+import { usePermissions } from '@/hooks';
 
 interface NavItem {
   titleKey: string;
   href?: string;
   icon: React.ElementType;
   children?: NavItem[];
-  adminOnly?: boolean;
+  permissionKey?: string;
 }
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -44,30 +44,32 @@ const navItems: NavItem[] = [
   {
     titleKey: 'auctions',
     icon: Gavel,
+    permissionKey: 'auctions.menu',
     children: [
-      { titleKey: 'properties', href: '/properties', icon: Building2 },
-      { titleKey: 'vehicles', href: '/vehicles', icon: Car },
-      { titleKey: 'edicts', href: '/edicts', icon: FileText },
-      { titleKey: 'assets', href: '/assets', icon: Package },
+      { titleKey: 'properties', href: '/properties', icon: Building2, permissionKey: 'properties.menu' },
+      { titleKey: 'vehicles', href: '/vehicles', icon: Car, permissionKey: 'vehicles.menu' },
+      { titleKey: 'edicts', href: '/edicts', icon: FileText, permissionKey: 'edicts.menu' },
+      { titleKey: 'assets', href: '/assets', icon: Package, permissionKey: 'assets.menu' },
     ],
   },
   {
     titleKey: 'dataExtraction',
     icon: FileSearch,
-    adminOnly: true,
+    permissionKey: 'data_extraction.menu',
     children: [
-      { titleKey: 'bulletins', href: '/bulletins', icon: Newspaper },
-      { titleKey: 'extractedEdicts', href: '/extracted-edicts', icon: FileSearch },
-      { titleKey: 'extractedAssets', href: '/extracted-assets', icon: PackageSearch },
+      { titleKey: 'bulletins', href: '/bulletins', icon: Newspaper, permissionKey: 'bulletins.menu' },
+      { titleKey: 'extractedEdicts', href: '/extracted-edicts', icon: FileSearch, permissionKey: 'raw-edicts.menu' },
+      { titleKey: 'extractedAssets', href: '/extracted-assets', icon: PackageSearch, permissionKey: 'raw-assets.menu' },
     ],
   },
   {
     titleKey: 'configuration',
     icon: Settings,
+    permissionKey: 'configuration.menu',
     children: [
-      { titleKey: 'tags', href: '/tags', icon: Tags },
-      { titleKey: 'territorial', href: '/territorial', icon: MapPin },
-      { titleKey: 'generalConfig', href: '/config', icon: Settings, adminOnly: true },
+      { titleKey: 'tags', href: '/tags', icon: Tags, permissionKey: 'properties-tags.menu' },
+      { titleKey: 'territorial', href: '/territorial', icon: MapPin, permissionKey: 'territorial-division.menu' },
+      { titleKey: 'generalConfig', href: '/config', icon: Settings, permissionKey: 'general-configuration.menu' },
       ...(isDev ? [{ titleKey: 'dev', href: '/dev', icon: Code2 }] : []),
     ],
   },
@@ -83,14 +85,13 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations('nav');
-  const { isAdmin } = useUserRole();
+  const { can } = usePermissions();
 
-  // Filter nav items based on user role
   const filteredNavItems = navItems
-    .filter((group) => !group.adminOnly || isAdmin)
+    .filter((group) => !group.permissionKey || can(group.permissionKey))
     .map((group) => ({
       ...group,
-      children: group.children?.filter((item) => !item.adminOnly || isAdmin),
+      children: group.children?.filter((item) => !item.permissionKey || can(item.permissionKey)),
     }));
 
   const toggleGroup = (groupKey: string) => {

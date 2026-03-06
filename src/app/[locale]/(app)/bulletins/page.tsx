@@ -10,10 +10,12 @@ import { BulletinForm } from '@/components/forms/BulletinForm';
 import { bulletinsService } from '@/services/bulletins';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
+import { usePermissions } from '@/hooks';
 import type { Bulletin, BulletinCreateRequest, BulletinUpdateRequest } from '@/types';
 
 export default function BulletinsPage() {
   const t = useTranslations('bulletins');
+  const { can } = usePermissions();
 
   const [data, setData] = useState<Bulletin[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,8 +110,12 @@ export default function BulletinsPage() {
 
   const renderActions = (row: Bulletin) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      {can('bulletins.update') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
+      )}
+      {can('bulletins.delete') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      )}
     </div>
   );
 
@@ -117,7 +123,7 @@ export default function BulletinsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button size="icon" onClick={handleAdd}><Plus className="h-4 w-4" /></Button>
+        {can('bulletins.create') && <Button size="icon" onClick={handleAdd}><Plus className="h-4 w-4" /></Button>}
       </div>
 
       {deleteError && (

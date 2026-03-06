@@ -11,12 +11,12 @@ import { assetsService } from '@/services/assets';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatCurrency, formatDate, formatArea } from '@/lib/formatters';
-import { useUserRole } from '@/hooks';
+import { usePermissions } from '@/hooks';
 import type { Asset, AssetListItem, AssetUpdateRequest } from '@/types';
 
 export default function AssetsPage() {
   const t = useTranslations('assets');
-  const { isAdmin } = useUserRole();
+  const { can } = usePermissions();
 
   const [data, setData] = useState<AssetListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -148,13 +148,13 @@ export default function AssetsPage() {
 
   const renderActions = (row: AssetListItem) => (
     <div className="flex items-center gap-1">
-      {isAdmin ? (
-        <>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
-        </>
+      {can('assets.update') ? (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
       ) : (
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
+      )}
+      {can('assets.delete') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
       )}
     </div>
   );
@@ -163,7 +163,7 @@ export default function AssetsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        {isAdmin && <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>}
+        {can('assets.create') && <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>}
       </div>
 
       {deleteError && (

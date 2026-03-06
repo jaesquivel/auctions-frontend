@@ -11,10 +11,12 @@ import { rawAssetsService } from '@/services/raw-assets';
 import { rawEdictsService } from '@/services/raw-edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
+import { usePermissions } from '@/hooks';
 import type { RawAsset, RawAssetUpdateRequest } from '@/types';
 
 export default function ExtractedAssetsPage() {
   const t = useTranslations('extractedAssets');
+  const { can } = usePermissions();
 
   const [data, setData] = useState<RawAsset[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,8 +116,8 @@ export default function ExtractedAssetsPage() {
 
   const renderActions = (row: RawAsset) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      {can('raw-assets.update') && <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>}
+      {can('raw-assets.delete') && <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>}
     </div>
   );
 

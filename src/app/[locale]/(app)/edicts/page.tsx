@@ -10,12 +10,12 @@ import { EdictForm } from '@/components/forms/EdictForm';
 import { edictsService } from '@/services/edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
-import { useUserRole } from '@/hooks';
+import { usePermissions } from '@/hooks';
 import type { Edict, EdictListItem, EdictUpdateRequest } from '@/types';
 
 export default function EdictsPage() {
   const t = useTranslations('edicts');
-  const { isAdmin } = useUserRole();
+  const { can } = usePermissions();
 
   const [data, setData] = useState<EdictListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,13 +137,13 @@ export default function EdictsPage() {
 
   const renderActions = (row: EdictListItem) => (
     <div className="flex items-center gap-1">
-      {isAdmin ? (
-        <>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
-        </>
+      {can('edicts.update') ? (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
       ) : (
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
+      )}
+      {can('edicts.delete') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
       )}
     </div>
   );
@@ -152,7 +152,7 @@ export default function EdictsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        {isAdmin && <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>}
+        {can('edicts.create') && <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>}
       </div>
 
       {deleteError && (

@@ -11,10 +11,12 @@ import { rawEdictsService } from '@/services/raw-edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatDate } from '@/lib/formatters';
+import { usePermissions } from '@/hooks';
 import type { RawEdict, RawEdictUpdateRequest } from '@/types';
 
 export default function ExtractedEdictsPage() {
   const t = useTranslations('extractedEdicts');
+  const { can } = usePermissions();
 
   const [data, setData] = useState<RawEdict[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,8 +111,8 @@ export default function ExtractedEdictsPage() {
 
   const renderActions = (row: RawEdict) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      {can('raw-edicts.update') && <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>}
+      {can('raw-edicts.delete') && <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>}
     </div>
   );
 

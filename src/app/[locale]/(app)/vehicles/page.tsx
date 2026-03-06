@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -10,10 +10,12 @@ import { vehiclesService } from '@/services/vehicles';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatCurrency, formatDate } from '@/lib/formatters';
+import { usePermissions } from '@/hooks';
 import type { VehicleSummary } from '@/types';
 
 export default function VehiclesPage() {
   const t = useTranslations('vehicles');
+  const { can } = usePermissions();
 
   const [data, setData] = useState<VehicleSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,8 +77,14 @@ export default function VehiclesPage() {
 
   const renderActions = (row: VehicleSummary) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      {can('vehicles.update') ? (
+        <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
+      ) : (
+        <Button variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-4 w-4" /></Button>
+      )}
+      {can('vehicles.delete') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      )}
     </div>
   );
 
@@ -84,7 +92,7 @@ export default function VehiclesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button size="icon"><Plus className="h-4 w-4" /></Button>
+        {can('vehicles.create') && <Button size="icon"><Plus className="h-4 w-4" /></Button>}
       </div>
 
       {deleteError && (

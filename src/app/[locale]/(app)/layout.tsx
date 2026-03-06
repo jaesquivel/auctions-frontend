@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { PermissionsProvider } from '@/contexts/PermissionsContext';
 import { Gavel } from 'lucide-react';
 import Link from 'next/link';
 
@@ -13,6 +14,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   const { locale } = await params;
 
   return (
+    <PermissionsProvider>
     <div className="flex h-screen overflow-hidden">
       {/* Desktop Sidebar */}
       <div className="hidden md:flex">
@@ -38,5 +40,6 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
         </main>
       </div>
     </div>
+    </PermissionsProvider>
   );
 }
