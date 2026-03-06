@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Check, X, Edit, Trash2 } from 'lucide-react';
+import { Check, X, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -30,6 +30,7 @@ export default function ExtractedAssetsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingRawAsset, setEditingRawAsset] = useState<RawAsset | null>(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [formReadOnly, setFormReadOnly] = useState(false);
   const [edictFullText, setEdictFullText] = useState<string | null>(null);
   const [sort, setSort] = useState<SortState[]>([]);
   const [filterState, setFilterState] = useState<FilterState | undefined>();
@@ -56,9 +57,17 @@ export default function ExtractedAssetsPage() {
     fetchData();
   }, [fetchData]);
 
+  const handleView = (rawAsset: RawAsset) => {
+    setEditingRawAsset(rawAsset);
+    setEdictFullText(null);
+    setFormReadOnly(true);
+    setFormOpen(true);
+  };
+
   const handleEdit = async (rawAsset: RawAsset) => {
     setEditingRawAsset(rawAsset);
     setEdictFullText(null);
+    setFormReadOnly(false);
     setFormOpen(true);
     setFormLoading(true);
     try {
@@ -116,7 +125,11 @@ export default function ExtractedAssetsPage() {
 
   const renderActions = (row: RawAsset) => (
     <div className="flex items-center gap-1">
-      {can('raw-assets.update') && <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>}
+      {can('raw-assets.update') ? (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
+      ) : (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
+      )}
       {can('raw-assets.delete') && <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>}
     </div>
   );
@@ -159,6 +172,7 @@ export default function ExtractedAssetsPage() {
         onOpenChange={setFormOpen}
         rawAsset={editingRawAsset}
         onSubmit={handleSubmit}
+        readOnly={formReadOnly}
         loading={formLoading}
         edictFullText={edictFullText}
       />

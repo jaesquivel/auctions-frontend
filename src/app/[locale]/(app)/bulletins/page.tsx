@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Edit, Trash2, Check, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Check, X, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -22,6 +22,7 @@ export default function BulletinsPage() {
   const [selectedBulletin, setSelectedBulletin] = useState<Bulletin | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [formReadOnly, setFormReadOnly] = useState(false);
   const [editingBulletin, setEditingBulletin] = useState<Bulletin | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
@@ -54,13 +55,21 @@ export default function BulletinsPage() {
     fetchData();
   }, [fetchData]);
 
+  const handleView = (bulletin: Bulletin) => {
+    setEditingBulletin(bulletin);
+    setFormReadOnly(true);
+    setFormOpen(true);
+  };
+
   const handleAdd = () => {
     setEditingBulletin(null);
+    setFormReadOnly(false);
     setFormOpen(true);
   };
 
   const handleEdit = async (bulletin: Bulletin) => {
     setEditingBulletin(null);
+    setFormReadOnly(false);
     setFormOpen(true);
     setFormLoading(true);
     try {
@@ -110,8 +119,10 @@ export default function BulletinsPage() {
 
   const renderActions = (row: Bulletin) => (
     <div className="flex items-center gap-1">
-      {can('bulletins.update') && (
+      {can('bulletins.update') ? (
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
+      ) : (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
       )}
       {can('bulletins.delete') && (
         <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
@@ -142,6 +153,7 @@ export default function BulletinsPage() {
         onOpenChange={setFormOpen}
         bulletin={editingBulletin}
         onSubmit={handleSubmit}
+        readOnly={formReadOnly}
         loading={formLoading}
       />
     </div>
