@@ -13,12 +13,12 @@ import { tagsService } from '@/services/tags';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatCurrency, formatDate, formatArea, formatRatio } from '@/lib/formatters';
-import { useUserRole } from '@/hooks';
+import { usePermissions } from '@/hooks';
 import type { Property, PropertyListItem, PropertyUpdateRequest, PropertyTag } from '@/types';
 
 export default function PropertiesPage() {
   const t = useTranslations('properties');
-  const { isAdmin } = useUserRole();
+  const { can } = usePermissions();
 
   const [data, setData] = useState<PropertyListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -319,18 +319,18 @@ export default function PropertiesPage() {
 
   const renderActions = (row: PropertyListItem) => (
     <div className="flex items-center gap-1">
-      {isAdmin ? (
-        <>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}>
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </>
+      {can('properties.update') ? (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}>
+          <Edit className="h-4 w-4" />
+        </Button>
       ) : (
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}>
           <Eye className="h-4 w-4" />
+        </Button>
+      )}
+      {can('properties.delete') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}>
+          <Trash2 className="h-4 w-4" />
         </Button>
       )}
     </div>
@@ -340,7 +340,7 @@ export default function PropertiesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        {isAdmin && false && (
+        {can('properties.create') && (
           <Button size="icon" onClick={handleCreate}>
             <Plus className="h-4 w-4" />
           </Button>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -11,10 +11,12 @@ import { assetsService } from '@/services/assets';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
 import { formatCurrency, formatDate, formatArea } from '@/lib/formatters';
+import { usePermissions } from '@/hooks';
 import type { Asset, AssetListItem, AssetUpdateRequest } from '@/types';
 
 export default function AssetsPage() {
   const t = useTranslations('assets');
+  const { can } = usePermissions();
 
   const [data, setData] = useState<AssetListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,7 @@ export default function AssetsPage() {
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
   const [editingListItem, setEditingListItem] = useState<AssetListItem | null>(null);
   const [formLoading, setFormLoading] = useState(false);
+  const [formReadOnly, setFormReadOnly] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -55,15 +58,34 @@ export default function AssetsPage() {
     fetchData();
   }, [fetchData]);
 
+  const handleView = async (row: AssetListItem) => {
+    setEditingAsset(null);
+    setEditingListItem(row);
+    setFormReadOnly(true);
+    setFormOpen(true);
+    setFormLoading(true);
+    try {
+      const fullAsset = await assetsService.getById(row.id);
+      if (fullAsset) setEditingAsset(fullAsset);
+    } catch (error) {
+      console.error('Failed to fetch asset details:', error);
+      setFormOpen(false);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   const handleCreate = () => {
     setEditingAsset(null);
     setEditingListItem(null);
+    setFormReadOnly(false);
     setFormOpen(true);
   };
 
   const handleEdit = async (row: AssetListItem) => {
     setEditingAsset(null);
     setEditingListItem(row);
+    setFormReadOnly(false);
     setFormOpen(true);
     setFormLoading(true);
     try {
@@ -126,8 +148,14 @@ export default function AssetsPage() {
 
   const renderActions = (row: AssetListItem) => (
     <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      {can('assets.update') ? (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
+      ) : (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
+      )}
+      {can('assets.delete') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
+      )}
     </div>
   );
 
@@ -135,7 +163,7 @@ export default function AssetsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>
+        {can('assets.create') && <Button size="icon" onClick={handleCreate}><Plus className="h-4 w-4" /></Button>}
       </div>
 
       {deleteError && (
@@ -171,6 +199,7 @@ export default function AssetsPage() {
         asset={editingAsset}
         listItem={editingListItem}
         onSubmit={handleSubmit}
+        readOnly={formReadOnly}
         loading={formLoading}
       />
     </div>

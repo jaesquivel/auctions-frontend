@@ -11,12 +11,12 @@ import { TagForm } from '@/components/forms/TagForm';
 import { tagsService } from '@/services/tags';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
-import { useUserRole } from '@/hooks';
+import { usePermissions } from '@/hooks';
 import type { PropertyTag, PropertyTagCreateRequest, PropertyTagUpdateRequest } from '@/types';
 
 export default function TagsPage() {
   const t = useTranslations('tags');
-  const { canManageTags } = useUserRole();
+  const { can } = usePermissions();
 
   const [data, setData] = useState<PropertyTag[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,13 +90,13 @@ export default function TagsPage() {
 
   const renderActions = (row: PropertyTag) => (
     <div className="flex items-center gap-1">
-      {canManageTags ? (
-        <>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
-        </>
+      {can('properties-tags.update') ? (
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
       ) : (
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
+      )}
+      {can('properties-tags.delete') && (
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
       )}
     </div>
   );
@@ -105,7 +105,7 @@ export default function TagsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        {canManageTags && (
+        {can('properties-tags.create') && (
           <Button size="icon" onClick={handleAdd}><Plus className="h-4 w-4" /></Button>
         )}
       </div>
@@ -126,7 +126,7 @@ export default function TagsPage() {
         onOpenChange={setFormOpen}
         tag={editingTag}
         onSubmit={handleSubmit}
-        readOnly={!canManageTags}
+        readOnly={!can('properties-tags.update')}
       />
     </div>
   );

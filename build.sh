@@ -88,13 +88,12 @@ sudo docker build \
     --build-arg NEXT_PUBLIC_API_BASE_PATH="${NEXT_PUBLIC_API_BASE_PATH:-/api/v1}" \
     --build-arg NEXT_PUBLIC_LOG_TOKENS="${NEXT_PUBLIC_LOG_TOKENS:-false}" \
     -t "${FULL_IMAGE_NAME}" \
-    -t "${IMAGE_NAME}:latest" \
     .
 
-sudo docker tag "${FULL_IMAGE_NAME}" "docker.io/library/${FULL_IMAGE_NAME}" 2>/dev/null || true
-sudo docker rmi "localhost/${FULL_IMAGE_NAME}" 2>/dev/null || true
+# Podman compatibility: alias under docker.io/library
+# sudo docker tag "${FULL_IMAGE_NAME}" "docker.io/library/${FULL_IMAGE_NAME}" 2>/dev/null || true
+# sudo docker rmi "localhost/${FULL_IMAGE_NAME}" 2>/dev/null || true
 
 log_info "=========================================="
 log_info "Image built: ${FULL_IMAGE_NAME}"
-log_info "Next: make deploy REMOTE_HOST=your-server.com VERSION=${VERSION}"
 log_info "=========================================="
