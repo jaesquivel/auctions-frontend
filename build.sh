@@ -68,6 +68,8 @@ fi
 # CHECKOUT TAG
 # ============================================
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+log_info "Pulling latest changes..."
+git pull
 log_info "Checking out ${TAG}..."
 git checkout "${TAG}"
 

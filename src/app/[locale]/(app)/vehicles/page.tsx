@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState, type ActionItem } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { vehiclesService } from '@/services/vehicles';
@@ -15,6 +15,7 @@ import type { VehicleSummary } from '@/types';
 
 export default function VehiclesPage() {
   const t = useTranslations('vehicles');
+  const tc = useTranslations('common');
   const { can } = usePermissions();
 
   const [data, setData] = useState<VehicleSummary[]>([]);
@@ -75,18 +76,12 @@ export default function VehiclesPage() {
     { id: 'caseNumber', header: 'Caso', width: 160, filterable: true, filterType: 'text', accessorFn: (row) => row.edict?.caseNumber || '-' },
   ];
 
-  const renderActions = (row: VehicleSummary) => (
-    <div className="flex items-center gap-1">
-      {can('vehicles.update') ? (
-        <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
-      ) : (
-        <Button variant="ghost" size="icon" className="h-7 w-7"><Eye className="h-4 w-4" /></Button>
-      )}
-      {can('vehicles.delete') && (
-        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
-      )}
-    </div>
-  );
+  const renderActions = (row: VehicleSummary): ActionItem[] => [
+    can('vehicles.update')
+      ? { icon: Edit, label: tc('edit'), onClick: () => {} }
+      : { icon: Eye, label: tc('view'), onClick: () => {} },
+    ...(can('vehicles.delete') ? [{ icon: Trash2, label: tc('delete'), onClick: () => handleDelete(row), destructive: true }] : []),
+  ];
 
   return (
     <div className="space-y-4">
