@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
-import { formatDate } from '@/lib/formatters';
+import { formatTimestamp } from '@/lib/formatters';
 
 interface DateTimeInputProps {
   value: string;           // ISO string (e.g. "2026-01-22T10:20:00Z") or empty
@@ -52,7 +52,7 @@ export function DateTimeInput({ value, onChange, className, disabled }: DateTime
     <Input
       type={focused ? 'datetime-local' : 'text'}
       className={`text-right max-w-50 ${className || ''}`}
-      value={focused ? toInputValue(value) : formatDate(value)}
+      value={focused ? toInputValue(value) : formatTimestamp(value)}
       onChange={handleChange}
       onFocus={handleFocus}
       onBlur={handleBlur}

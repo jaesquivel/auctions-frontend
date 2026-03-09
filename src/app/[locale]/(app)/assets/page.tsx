@@ -10,7 +10,7 @@ import { AssetForm } from '@/components/forms/AssetForm';
 import { assetsService } from '@/services/assets';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
-import { formatCurrency, formatDate, formatArea } from '@/lib/formatters';
+import { formatCurrency, formatTimestamp, formatArea } from '@/lib/formatters';
 import { usePermissions } from '@/hooks';
 import type { Asset, AssetListItem, AssetUpdateRequest } from '@/types';
 
@@ -128,11 +128,11 @@ export default function AssetsPage() {
 
   const columns: ColumnDef<AssetListItem>[] = [
     { id: 'type', header: t('columns.type'), width: 100, filterable: true, filterType: 'text', accessorFn: (row) => row.type || '-' },
-    { id: 'firstAuctionTs', header: t('columns.firstAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.firstAuctionTs) },
+    { id: 'firstAuctionTs', header: t('columns.firstAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatTimestamp(row.firstAuctionTs) },
     { id: 'firstAuctionBase', header: t('columns.firstBase'), width: 170, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
-    { id: 'secondAuctionTs', header: t('columns.secondAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.secondAuctionTs) },
+    { id: 'secondAuctionTs', header: t('columns.secondAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatTimestamp(row.secondAuctionTs) },
     { id: 'secondAuctionBase', header: t('columns.secondBase'), width: 170, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.secondAuctionBase, row.currency) },
-    { id: 'thirdAuctionTs', header: t('columns.thirdAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.thirdAuctionTs) },
+    { id: 'thirdAuctionTs', header: t('columns.thirdAuction'), width: 150, filterable: true, filterType: 'date', accessorFn: (row) => formatTimestamp(row.thirdAuctionTs) },
     { id: 'thirdAuctionBase', header: t('columns.thirdBase'), width: 170, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.thirdAuctionBase, row.currency) },
     { id: 'currency', header: t('columns.currency'), width: 80, filterable: true, filterType: 'text', accessorFn: (row) => row.currency || '-' },
     { id: 'registration', header: t('columns.registration'), width: 130, filterable: true, filterType: 'text', accessorFn: (row) => row.registration || '-' },

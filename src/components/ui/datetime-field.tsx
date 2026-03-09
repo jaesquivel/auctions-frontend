@@ -3,7 +3,7 @@
 import { FieldDisplay, type FieldMode } from '@/components/ui/field-display';
 import { FieldWrapper } from '@/components/ui/field-wrapper';
 import { DateTimeInput } from '@/components/ui/datetime-input';
-import { formatDate } from '@/lib/formatters';
+import { formatTimestamp } from '@/lib/formatters';
 
 interface DateTimeFieldProps {
   value: string | null | undefined;
@@ -16,7 +16,7 @@ interface DateTimeFieldProps {
 
 export function DateTimeField({ value, onChange, mode = 'edit', label, labelPosition, className }: DateTimeFieldProps) {
   const field = mode === 'readonly' || mode === 'computed'
-    ? <FieldDisplay>{formatDate(value)}</FieldDisplay>
+    ? <FieldDisplay>{formatTimestamp(value)}</FieldDisplay>
     : (
       <DateTimeInput
         value={value ?? ''}

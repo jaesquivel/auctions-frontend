@@ -44,7 +44,7 @@ frontend-fai/
 ### File Naming
 - Components: PascalCase (`Button.tsx`, `UserCard.tsx`)
 - Hooks: camelCase with `use` prefix (`useAuth.ts`, `useFetch.ts`)
-- Utilities: camelCase (`formatDate.ts`, `cn.ts`)
+- Utilities: camelCase (`formatTimestamp.ts`, `cn.ts`)
 - Types: PascalCase (`User.ts`, `ApiResponse.ts`)
 
 ### Component Structure

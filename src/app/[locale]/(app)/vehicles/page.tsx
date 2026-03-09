@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { vehiclesService } from '@/services/vehicles';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
-import { formatCurrency, formatDate } from '@/lib/formatters';
+import { formatCurrency, formatTimestamp } from '@/lib/formatters';
 import { usePermissions } from '@/hooks';
 import type { VehicleSummary } from '@/types';
 
@@ -70,7 +70,7 @@ export default function VehiclesPage() {
     { id: 'brand', header: 'Marca', width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.brand || '-' },
     { id: 'model', header: 'Modelo', width: 120, filterable: true, filterType: 'text', accessorFn: (row) => row.model || '-' },
     { id: 'year', header: 'Año', width: 80, align: 'center', filterable: true, filterType: 'number', accessorFn: (row) => row.year?.toString() || '-' },
-    { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, filterable: true, filterType: 'date', accessorFn: (row) => formatDate(row.firstAuctionTs) },
+    { id: 'firstAuctionTs', header: 'Primera Subasta', width: 140, filterable: true, filterType: 'date', accessorFn: (row) => formatTimestamp(row.firstAuctionTs) },
     { id: 'firstAuctionBase', header: 'Base', width: 170, align: 'right', filterable: true, filterType: 'number', accessorFn: (row) => formatCurrency(row.firstAuctionBase, row.currency) },
     { id: 'caseNumber', header: 'Caso', width: 160, filterable: true, filterType: 'text', accessorFn: (row) => row.edict?.caseNumber || '-' },
   ];

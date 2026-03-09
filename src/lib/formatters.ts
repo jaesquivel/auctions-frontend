@@ -1,6 +1,7 @@
 // Global formatting locale — change this to update separators across the app.
 // ',' for thousands, '.' for decimals (en-US convention)
 const NUMBER_LOCALE = 'en-US';
+const TIME_ZONE = '-6';
 
 export function formatCurrency(value: number | null | undefined, currency?: string): string {
   if (value === null || value === undefined) return '-';
@@ -13,26 +14,26 @@ export function formatCurrency(value: number | null | undefined, currency?: stri
   return currency ? `${currency} ${formatted}` : formatted;
 }
 
-export function formatDate(dateString: string | null | undefined): string {
+export function formatTimestamp(dateString: string | null | undefined): string {
   if (!dateString) return '-';
 
   const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
 
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
-export function formatDateOnly(dateString: string | null | undefined): string {
+export function formatDate(dateString: string | null | undefined): string {
   if (!dateString) return '-';
 
   const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 }

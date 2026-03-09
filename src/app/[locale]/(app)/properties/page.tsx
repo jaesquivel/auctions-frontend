@@ -12,7 +12,7 @@ import { propertiesService } from '@/services/properties';
 import { tagsService } from '@/services/tags';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
-import { formatCurrency, formatDate, formatArea, formatRatio } from '@/lib/formatters';
+import { formatCurrency, formatTimestamp, formatArea, formatRatio } from '@/lib/formatters';
 import { usePermissions } from '@/hooks';
 import type { Property, PropertyListItem, PropertyUpdateRequest, PropertyTag } from '@/types';
 
@@ -196,7 +196,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'datetime',
-      accessorFn: (row) => formatDate(row.asset.firstAuctionTs),
+      accessorFn: (row) => formatTimestamp(row.asset.firstAuctionTs),
     },
     {
       id: 'secondAuctionTs',
@@ -205,7 +205,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'datetime',
-      accessorFn: (row) => formatDate(row.asset.secondAuctionTs),
+      accessorFn: (row) => formatTimestamp(row.asset.secondAuctionTs),
     },
     {
       id: 'thirdAuctionTs',
@@ -214,7 +214,7 @@ export default function PropertiesPage() {
       sortable: true,
       filterable: true,
       filterType: 'datetime',
-      accessorFn: (row) => formatDate(row.asset.thirdAuctionTs),
+      accessorFn: (row) => formatTimestamp(row.asset.thirdAuctionTs),
     },
     {
       id: 'firstAuctionBase',

@@ -10,7 +10,7 @@ import { RawEdictForm } from '@/components/forms/RawEdictForm';
 import { rawEdictsService } from '@/services/raw-edicts';
 import { ApiError } from '@/lib/api-client';
 import { getErrorMessage } from '@/lib/toast';
-import { formatDate } from '@/lib/formatters';
+import { formatTimestamp } from '@/lib/formatters';
 import { usePermissions } from '@/hooks';
 import type { RawEdict, RawEdictUpdateRequest } from '@/types';
 
