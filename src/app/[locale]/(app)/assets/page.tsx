@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState, type ActionItem } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AssetForm } from '@/components/forms/AssetForm';
@@ -16,6 +16,7 @@ import type { Asset, AssetListItem, AssetUpdateRequest } from '@/types';
 
 export default function AssetsPage() {
   const t = useTranslations('assets');
+  const tc = useTranslations('common');
   const { can } = usePermissions();
 
   const [data, setData] = useState<AssetListItem[]>([]);
@@ -146,18 +147,12 @@ export default function AssetsPage() {
     { id: 'bulletin', header: t('columns.bulletin'), width: 120, align: 'center', accessorFn: (row) => row.edict?.bulletin ? `${row.edict.bulletin.volume}-${row.edict.bulletin.year}` : '-' },
   ];
 
-  const renderActions = (row: AssetListItem) => (
-    <div className="flex items-center gap-1">
-      {can('assets.update') ? (
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      ) : (
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
-      )}
-      {can('assets.delete') && (
-        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>
-      )}
-    </div>
-  );
+  const renderActions = (row: AssetListItem): ActionItem[] => [
+    can('assets.update')
+      ? { icon: Edit, label: tc('edit'), onClick: () => handleEdit(row) }
+      : { icon: Eye, label: tc('view'), onClick: () => handleView(row) },
+    ...(can('assets.delete') ? [{ icon: Trash2, label: tc('delete'), onClick: () => handleDelete(row), destructive: true }] : []),
+  ];
 
   return (
     <div className="space-y-4">

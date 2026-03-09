@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, ElementType } from 'react';
 import type { ColumnFilterType, FilterState, TagOption } from './filters/filter-types';
 
 export interface ColumnDef<T> {
@@ -31,6 +31,13 @@ export interface SortState {
 
 export const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
 
+export interface ActionItem {
+  icon: ElementType;
+  label: string;
+  onClick: () => void;
+  destructive?: boolean;
+}
+
 export interface DataGridProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
@@ -41,7 +48,7 @@ export interface DataGridProps<T> {
   onPageSizeChange?: (pageSize: number) => void;
   onRowSelect?: (row: T) => void;
   selectedRow?: T | null;
-  actions?: (row: T) => ReactNode;
+  actions?: (row: T) => ActionItem[];
   filterState?: FilterState;
   onFilterApply?: (state: FilterState) => void;
   filterMode?: 'simple' | 'advanced';

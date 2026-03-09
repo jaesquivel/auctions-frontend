@@ -2,13 +2,14 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowUpDown, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useIsMobile } from "@/hooks";
 import { DataGridToolbar } from "./DataGridToolbar";
 import { FilterDialog, getFilterableColumns, hasActiveFilters, countActiveFilters } from "./filters";
-import type { DataGridProps, ColumnDef } from "./types";
+import type { DataGridProps, ColumnDef, ActionItem } from "./types";
 
 const MIN_COLUMN_WIDTH = 50;
 
@@ -36,8 +37,6 @@ export function DataGrid<T>({
 }: DataGridProps<T>) {
   const t = useTranslations("common");
   const isMobile = useIsMobile();
-  const [mobileActionRow, setMobileActionRow] = useState<T | null>(null);
-
   // Track column widths (initialized from column definitions)
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
     columns.reduce(
@@ -122,7 +121,9 @@ export function DataGrid<T>({
   };
 
   const handleRowClick = (row: T) => {
-    if (onRowSelect) {
+    if (isMobile) {
+      onRowSelect?.(row);
+    } else if (onRowSelect) {
       onRowSelect(row);
     }
   };
@@ -148,6 +149,7 @@ export function DataGrid<T>({
     }
   };
 
+  const [openMenuRow, setOpenMenuRow] = useState<string | null>(null);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
 
   const filterableColumns = useMemo(
@@ -168,10 +170,10 @@ export function DataGrid<T>({
   };
 
   return (
-    <div className="flex flex-col h-full border border-border rounded-md overflow-hidden bg-card">
+    <div className="flex flex-col h-full w-fit max-w-full border border-border rounded-md overflow-hidden bg-card">
       {/* Scrollable content area */}
       <div className="flex-1 overflow-auto min-h-0">
-        <div className="min-w-max w-full">
+        <div className="min-w-max">
           {/* Header */}
           <div className="flex bg-muted border-b border-border sticky top-0 z-10">
             {columns.map((column) => (
@@ -208,11 +210,11 @@ export function DataGrid<T>({
                 />
               </div>
             ))}
-            {/* Actions header - sticky to right, hidden on mobile */}
-            {actions && !isMobile && (
+            {/* Actions header */}
+            {actions && (
               <div
                 className="px-3 py-2 text-xs bg-muted sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]"
-                style={{ width: 80, minWidth: 80 }}
+                style={{ width: 40, minWidth: 40 }}
               >
                 &nbsp;
               </div>
@@ -237,7 +239,7 @@ export function DataGrid<T>({
                   "hover:bg-accent/50",
                   isSelected(row) && "bg-accent"
                 )}
-                onClick={() => isMobile && actions ? setMobileActionRow(row) : handleRowClick(row)}
+                onClick={() => handleRowClick(row)}
               >
                 {columns.map((column) => (
                   <div
@@ -255,17 +257,38 @@ export function DataGrid<T>({
                     {getCellValue(row, column)}
                   </div>
                 ))}
-                {/* Actions cell - sticky to right, hidden on mobile */}
-                {actions && !isMobile && (
+                {/* Actions cell */}
+                {actions && (
                   <div
                     className={cn(
                       "px-2 flex items-center justify-center sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]",
                       isSelected(row) ? "bg-accent" : "bg-card"
                     )}
-                    style={{ width: 80, minWidth: 80, height: rowHeight }}
+                    style={{ width: 40, minWidth: 40, height: rowHeight }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {actions(row)}
+                    <DropdownMenu
+                      open={openMenuRow === String(row[keyField])}
+                      onOpenChange={(open) => setOpenMenuRow(open ? String(row[keyField]) : null)}
+                    >
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {actions(row).map((item: ActionItem, idx: number) => (
+                          <DropdownMenuItem
+                            key={idx}
+                            onClick={() => { item.onClick(); setOpenMenuRow(null); }}
+                            className={item.destructive ? "text-destructive focus:text-destructive" : ""}
+                          >
+                            <item.icon className="h-4 w-4 mr-2" />
+                            {item.label}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 )}
               </div>
@@ -286,23 +309,6 @@ export function DataGrid<T>({
           onDownload={onDownload}
           onReload={onReload}
         />
-      )}
-
-      {/* Mobile actions sheet */}
-      {isMobile && actions && (
-        <Sheet open={!!mobileActionRow} onOpenChange={(open) => !open && setMobileActionRow(null)}>
-          <SheetContent side="bottom" className="pb-safe">
-            <SheetHeader>
-              <SheetTitle className="sr-only">{t("actions")}</SheetTitle>
-            </SheetHeader>
-            <div
-              className="flex flex-col gap-1 py-2"
-              onClick={() => setMobileActionRow(null)}
-            >
-              {mobileActionRow && actions(mobileActionRow)}
-            </div>
-          </SheetContent>
-        </Sheet>
       )}
 
       {filterableColumns.length > 0 && onFilterApply && (

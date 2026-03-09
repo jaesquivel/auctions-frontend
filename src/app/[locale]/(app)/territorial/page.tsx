@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
-import { DataGrid, type ColumnDef } from '@/components/data-grid';
+import { DataGrid, type ColumnDef, type ActionItem } from '@/components/data-grid';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -26,6 +26,7 @@ import type { TdProvince, TdCanton, TdDistrict, TdProvinceCreateRequest, TdCanto
 export default function TerritorialPage() {
   const t = useTranslations('territorial');
   const tCommon = useTranslations('common');
+  const tc = tCommon;
   const { can } = usePermissions();
 
   const [tdProvinces, setTdProvinces] = useState<TdProvince[]>([]);
@@ -144,18 +145,12 @@ export default function TerritorialPage() {
     setDeleteConfirmOpen(true);
   };
 
-  const renderTdProvinceActions = (tdProvince: TdProvince) => (
-    <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdProvince(tdProvince)}>
-        {can('territorial-division.update') ? <Edit className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      </Button>
-      {can('territorial-division.delete') && (
-        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdProvince(tdProvince)}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      )}
-    </div>
-  );
+  const renderTdProvinceActions = (tdProvince: TdProvince): ActionItem[] => [
+    can('territorial-division.update')
+      ? { icon: Edit, label: tc('edit'), onClick: () => handleEditTdProvince(tdProvince) }
+      : { icon: Eye, label: tc('view'), onClick: () => handleEditTdProvince(tdProvince) },
+    ...(can('territorial-division.delete') ? [{ icon: Trash2, label: tc('delete'), onClick: () => handleDeleteTdProvince(tdProvince), destructive: true }] : []),
+  ];
 
   // TdCanton handlers
   const handleAddTdCanton = () => {
@@ -184,18 +179,12 @@ export default function TerritorialPage() {
     setDeleteConfirmOpen(true);
   };
 
-  const renderTdCantonActions = (tdCanton: TdCanton) => (
-    <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdCanton(tdCanton)}>
-        {can('territorial-division.update') ? <Edit className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      </Button>
-      {can('territorial-division.delete') && (
-        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdCanton(tdCanton)}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      )}
-    </div>
-  );
+  const renderTdCantonActions = (tdCanton: TdCanton): ActionItem[] => [
+    can('territorial-division.update')
+      ? { icon: Edit, label: tc('edit'), onClick: () => handleEditTdCanton(tdCanton) }
+      : { icon: Eye, label: tc('view'), onClick: () => handleEditTdCanton(tdCanton) },
+    ...(can('territorial-division.delete') ? [{ icon: Trash2, label: tc('delete'), onClick: () => handleDeleteTdCanton(tdCanton), destructive: true }] : []),
+  ];
 
   // TdDistrict handlers
   const handleAddTdDistrict = () => {
@@ -224,18 +213,12 @@ export default function TerritorialPage() {
     setDeleteConfirmOpen(true);
   };
 
-  const renderTdDistrictActions = (tdDistrict: TdDistrict) => (
-    <div className="flex items-center gap-1">
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEditTdDistrict(tdDistrict)}>
-        {can('territorial-division.update') ? <Edit className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      </Button>
-      {can('territorial-division.delete') && (
-        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDeleteTdDistrict(tdDistrict)}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      )}
-    </div>
-  );
+  const renderTdDistrictActions = (tdDistrict: TdDistrict): ActionItem[] => [
+    can('territorial-division.update')
+      ? { icon: Edit, label: tc('edit'), onClick: () => handleEditTdDistrict(tdDistrict) }
+      : { icon: Eye, label: tc('view'), onClick: () => handleEditTdDistrict(tdDistrict) },
+    ...(can('territorial-division.delete') ? [{ icon: Trash2, label: tc('delete'), onClick: () => handleDeleteTdDistrict(tdDistrict), destructive: true }] : []),
+  ];
 
   const handleTdProvinceSelect = (tdProvince: TdProvince) => {
     setSelectedTdProvince(tdProvince);

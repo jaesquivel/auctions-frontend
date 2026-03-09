@@ -3,8 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, X, Edit, Trash2, Eye } from 'lucide-react';
-import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState } from '@/components/data-grid';
-import { Button } from '@/components/ui/button';
+import { DataGrid, type ColumnDef, type PaginationState, type SortState, type FilterState, type ActionItem } from '@/components/data-grid';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RawEdictForm } from '@/components/forms/RawEdictForm';
 import { rawEdictsService } from '@/services/raw-edicts';
@@ -16,6 +15,7 @@ import type { RawEdict, RawEdictUpdateRequest } from '@/types';
 
 export default function ExtractedEdictsPage() {
   const t = useTranslations('extractedEdicts');
+  const tc = useTranslations('common');
   const { can } = usePermissions();
 
   const [data, setData] = useState<RawEdict[]>([]);
@@ -129,16 +129,12 @@ export default function ExtractedEdictsPage() {
     { id: 'processed', header: t('columns.processed'), width: 100, align: 'center', sortable: true, filterable: true, filterType: 'boolean', accessorFn: (row) => row.processed ? <Check className="h-4 w-4 text-green-500 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" /> },
   ];
 
-  const renderActions = (row: RawEdict) => (
-    <div className="flex items-center gap-1">
-      {can('raw-edicts.update') ? (
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(row)}><Edit className="h-4 w-4" /></Button>
-      ) : (
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleView(row)}><Eye className="h-4 w-4" /></Button>
-      )}
-      {can('raw-edicts.delete') && <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => handleDelete(row)}><Trash2 className="h-4 w-4" /></Button>}
-    </div>
-  );
+  const renderActions = (row: RawEdict): ActionItem[] => [
+    can('raw-edicts.update')
+      ? { icon: Edit, label: tc('edit'), onClick: () => handleEdit(row) }
+      : { icon: Eye, label: tc('view'), onClick: () => handleView(row) },
+    ...(can('raw-edicts.delete') ? [{ icon: Trash2, label: tc('delete'), onClick: () => handleDelete(row), destructive: true }] : []),
+  ];
 
   return (
     <div className="space-y-4">
