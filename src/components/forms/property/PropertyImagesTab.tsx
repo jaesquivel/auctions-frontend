@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Eye, Trash2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataGrid } from '@/components/data-grid';
-import type { ColumnDef } from '@/components/data-grid';
+import type { ColumnDef, ActionItem } from '@/components/data-grid';
 import { ImageLightbox } from './ImageLightbox';
 import { propertiesService } from '@/services/properties';
 import type { Property, PropertyImage } from '@/types';
@@ -157,31 +157,10 @@ export function PropertyImagesTab({ property, propertyId, onRefresh }: PropertyI
           keyField="id"
           rowHeight={72}
           hideFooter
-          actions={(row) => (
-            <div className="flex items-center gap-1">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => openLightbox(row)}
-                title={t('viewImage')}
-              >
-                <Eye className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-destructive hover:text-destructive"
-                disabled={deletingId === row.id || !propertyId}
-                onClick={() => handleGridDelete(row)}
-                title={t('deleteImage')}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          )}
+          actions={(row): ActionItem[] => [
+            { icon: Eye, label: t('viewImage'), onClick: () => openLightbox(row) },
+            { icon: Trash2, label: t('deleteImage'), onClick: () => handleGridDelete(row), destructive: true },
+          ]}
         />
       </div>
 
