@@ -214,7 +214,7 @@ export function DataGrid<T>({
             {actions && (
               <div
                 className="px-3 py-2 text-xs bg-muted sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]"
-                style={{ width: isMobile ? 40 : 80, minWidth: isMobile ? 40 : 80 }}
+                style={{ width: 40, minWidth: 40 }}
               >
                 &nbsp;
               </div>
@@ -264,47 +264,31 @@ export function DataGrid<T>({
                       "px-2 flex items-center justify-center sticky right-0 border-l border-border shadow-[-2px_0_4px_rgba(0,0,0,0.1)]",
                       isSelected(row) ? "bg-accent" : "bg-card"
                     )}
-                    style={{ width: isMobile ? 40 : 80, minWidth: isMobile ? 40 : 80, height: rowHeight }}
+                    style={{ width: 40, minWidth: 40, height: rowHeight }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {isMobile ? (
-                      <DropdownMenu
-                        open={openMenuRow === String(row[keyField])}
-                        onOpenChange={(open) => setOpenMenuRow(open ? String(row[keyField]) : null)}
-                      >
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-7 w-7">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {actions(row).map((item: ActionItem, idx: number) => (
-                            <DropdownMenuItem
-                              key={idx}
-                              onClick={() => { item.onClick(); setOpenMenuRow(null); }}
-                              className={item.destructive ? "text-destructive focus:text-destructive" : ""}
-                            >
-                              <item.icon className="h-4 w-4 mr-2" />
-                              {item.label}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : (
-                      <div className="flex items-center gap-1">
+                    <DropdownMenu
+                      open={openMenuRow === String(row[keyField])}
+                      onOpenChange={(open) => setOpenMenuRow(open ? String(row[keyField]) : null)}
+                    >
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
                         {actions(row).map((item: ActionItem, idx: number) => (
-                          <Button
+                          <DropdownMenuItem
                             key={idx}
-                            variant="ghost"
-                            size="icon"
-                            className={cn("h-7 w-7", item.destructive && "text-destructive hover:text-destructive")}
-                            onClick={item.onClick}
+                            onClick={() => { item.onClick(); setOpenMenuRow(null); }}
+                            className={item.destructive ? "text-destructive focus:text-destructive" : ""}
                           >
-                            <item.icon className="h-4 w-4" />
-                          </Button>
+                            <item.icon className="h-4 w-4 mr-2" />
+                            {item.label}
+                          </DropdownMenuItem>
                         ))}
-                      </div>
-                    )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 )}
               </div>
