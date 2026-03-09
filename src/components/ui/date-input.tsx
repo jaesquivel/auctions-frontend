@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
-import { formatDate, formatDateOnly } from '@/lib/formatters';
+import { formatTimestamp, formatDate } from '@/lib/formatters';
 
 interface DateInputProps {
   value: string;           // ISO string (e.g. "2026-01-22T10:20:00Z") or empty
@@ -31,7 +31,7 @@ export function DateInput({ value, onChange, className, disabled, dateOnly = fal
   const [focused, setFocused] = useState(false);
 
   const formatDisplay = useCallback((iso: string): string => {
-    return dateOnly ? formatDateOnly(iso) : formatDate(iso);
+    return dateOnly ? formatDate(iso) : formatTimestamp(iso);
   }, [dateOnly]);
 
   const handleFocus = useCallback(() => {

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Property } from '@/types';
-import { formatCurrency, formatDate, formatArea, formatPercent } from '@/lib/formatters';
+import { formatCurrency, formatTimestamp, formatArea, formatPercent } from '@/lib/formatters';
 
 interface PropertySummaryTabProps {
   property?: Property | null;
@@ -32,13 +32,13 @@ export function PropertySummaryTab({ property }: PropertySummaryTabProps) {
   // Auction
   rows.push(`=== ${t('auction').toUpperCase()} ===`);
   rows.push(
-    `${t('firstAuction')}: ${formatDate(property.asset?.firstAuctionTs)}   ${t('firstAuction')} Base: ${formatCurrency(property.asset?.firstAuctionBase, cur)}`
+    `${t('firstAuction')}: ${formatTimestamp(property.asset?.firstAuctionTs)}   ${t('firstAuction')} Base: ${formatCurrency(property.asset?.firstAuctionBase, cur)}`
   );
   rows.push(
-    `${t('secondAuction')}: ${formatDate(property.asset?.secondAuctionTs)}   ${t('secondAuction')} Base: ${formatCurrency(property.asset?.secondAuctionBase, cur)}`
+    `${t('secondAuction')}: ${formatTimestamp(property.asset?.secondAuctionTs)}   ${t('secondAuction')} Base: ${formatCurrency(property.asset?.secondAuctionBase, cur)}`
   );
   rows.push(
-    `${t('thirdAuction')}: ${formatDate(property.asset?.thirdAuctionTs)}   ${t('thirdAuction')} Base: ${formatCurrency(property.asset?.thirdAuctionBase, cur)}`
+    `${t('thirdAuction')}: ${formatTimestamp(property.asset?.thirdAuctionTs)}   ${t('thirdAuction')} Base: ${formatCurrency(property.asset?.thirdAuctionBase, cur)}`
   );
   rows.push(`${t('firstGuarantee')}: ${formatCurrency(property.firstAuctionGuarantee, 'USD')}`);
   rows.push(`${t('firstBaseAdj')}: ${formatCurrency(property.firstAuctionBaseAdj, 'USD')}`);

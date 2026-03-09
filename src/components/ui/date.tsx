@@ -1,4 +1,4 @@
-import { formatDate, formatDateOnly } from '@/lib/formatters';
+import { formatTimestamp, formatDate } from '@/lib/formatters';
 
 interface DateProps {
   value: string | null | undefined;
@@ -6,6 +6,6 @@ interface DateProps {
 }
 
 export function DateDisplay({ value, dateOnly = false }: DateProps) {
-  const display = dateOnly ? formatDateOnly(value) : formatDate(value);
+  const display = dateOnly ? formatDate(value) : formatTimestamp(value);
   return <p className="rounded-md border text-right max-w-50 bg-muted/50 px-3 py-1.5">{display}</p>;
 }

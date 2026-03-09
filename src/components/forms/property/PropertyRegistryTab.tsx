@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { formatDate } from '@/lib/formatters';
+import { formatTimestamp } from '@/lib/formatters';
 import type { Property } from '@/types';
 
 interface PropertyRegistryTabProps {
@@ -13,7 +13,7 @@ export function PropertyRegistryTab({ property }: PropertyRegistryTabProps) {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">{t('rnpCertUpdated')}: {formatDate(property?.rnpCertUpdated)}</p>
+      <p className="text-sm text-muted-foreground">{t('rnpCertUpdated')}: {formatTimestamp(property?.rnpCertUpdated)}</p>
       <div
         className="prose prose-lg dark:prose-invert max-w-none rounded-md border p-4 overflow-auto min-h-16"
         dangerouslySetInnerHTML={{ __html: property?.rnpCert ?? '' }}
