@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { LanguageSelector } from '@/components/layout/LanguageSelector';
+import { UserMenu } from '@/components/layout/UserMenu';
 import { PermissionsProvider } from '@/contexts/PermissionsContext';
 import { Gavel } from 'lucide-react';
 import Link from 'next/link';
@@ -31,7 +34,12 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
               {locale === 'es' ? 'Remates' : 'Auctions'}
             </span>
           </Link>
-          <MobileNav />
+          <div className="flex items-center gap-1">
+            <ThemeToggle collapsed />
+            <LanguageSelector collapsed />
+            <UserMenu collapsed />
+            <MobileNav />
+          </div>
         </header>
 
         {/* Page Content */}

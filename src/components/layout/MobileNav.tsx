@@ -4,67 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import {
-  Building2,
-  Car,
-  Package,
-  FileText,
-  Newspaper,
-  FileSearch,
-  PackageSearch,
-  Tags,
-  MapPin,
-  Settings,
-  ChevronDown,
-  Menu,
-  Gavel,
-} from 'lucide-react';
+import { ChevronDown, Menu, Gavel } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { ThemeToggle } from './ThemeToggle';
-import { LanguageSelector } from './LanguageSelector';
-import { UserMenu } from './UserMenu';
-
-interface NavItem {
-  titleKey: string;
-  href?: string;
-  icon: React.ElementType;
-  children?: NavItem[];
-}
-
-const navItems: NavItem[] = [
-  {
-    titleKey: 'auctions',
-    icon: Gavel,
-    children: [
-      { titleKey: 'properties', href: '/properties', icon: Building2 },
-      { titleKey: 'vehicles', href: '/vehicles', icon: Car },
-      { titleKey: 'edicts', href: '/edicts', icon: FileText },
-      { titleKey: 'assets', href: '/assets', icon: Package },
-    ],
-  },
-  {
-    titleKey: 'dataExtraction',
-    icon: FileSearch,
-    children: [
-      { titleKey: 'bulletins', href: '/bulletins', icon: Newspaper },
-      { titleKey: 'extractedEdicts', href: '/extracted-edicts', icon: FileSearch },
-      { titleKey: 'extractedAssets', href: '/extracted-assets', icon: PackageSearch },
-    ],
-  },
-  {
-    titleKey: 'configuration',
-    icon: Settings,
-    children: [
-      { titleKey: 'tags', href: '/tags', icon: Tags },
-      { titleKey: 'territorial', href: '/territorial', icon: MapPin },
-      { titleKey: 'generalConfig', href: '/config', icon: Settings },
-    ],
-  },
-];
+import { usePermissions } from '@/hooks';
+import { navItems } from './nav-items';
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -72,6 +18,14 @@ export function MobileNav() {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations('nav');
+  const { can } = usePermissions();
+
+  const filteredNavItems = navItems
+    .filter((group) => !group.permissionKey || can(group.permissionKey))
+    .map((group) => ({
+      ...group,
+      children: group.children?.filter((item) => !item.permissionKey || can(item.permissionKey)),
+    }));
 
   const toggleGroup = (groupKey: string) => {
     setExpandedGroups((prev) =>
@@ -101,7 +55,7 @@ export function MobileNav() {
 
         <ScrollArea className="flex-1 h-[calc(100vh-8rem)]">
           <nav className="p-4 space-y-2">
-            {navItems.map((group) => (
+            {filteredNavItems.map((group) => (
               <div key={group.titleKey} className="space-y-1">
                 <button
                   onClick={() => toggleGroup(group.titleKey)}
@@ -147,12 +101,6 @@ export function MobileNav() {
           </nav>
         </ScrollArea>
 
-        <Separator className="bg-sidebar-border" />
-        <div className="p-4 space-y-2">
-          <ThemeToggle />
-          <LanguageSelector />
-          <UserMenu />
-        </div>
       </SheetContent>
     </Sheet>
   );

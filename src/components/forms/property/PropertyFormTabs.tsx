@@ -6,12 +6,13 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TagBadge } from '@/components/ui/tag-badge';
-import { Info, FileText, Building2, Map, ImageIcon } from 'lucide-react';
+import { Info, FileText, Building2, Map, ImageIcon, ClipboardList } from 'lucide-react';
 import { PropertyInfoTab } from './PropertyInfoTab';
 import { PropertyEdictTab } from './PropertyEdictTab';
 import { PropertyRegistryTab } from './PropertyRegistryTab';
 import { PropertyRegistryPlanTab } from './PropertyRegistryPlanTab';
 import { PropertyImagesTab } from './PropertyImagesTab';
+import { PropertySummaryTab } from './PropertySummaryTab';
 import { useIsMobile } from '@/hooks';
 import type { Property, PropertyTag } from '@/types';
 
@@ -32,6 +33,7 @@ const TABS = [
   { value: 'registry',    icon: Building2 },
   { value: 'registryPlan', icon: Map },
   { value: 'images',      icon: ImageIcon },
+  { value: 'summary',     icon: ClipboardList },
 ] as const;
 
 export function PropertyFormTabs({ property, formData, setFormData, selectedTagIds, toggleTag, availableTags, readOnly, onRefresh }: PropertyFormTabsProps) {
@@ -137,6 +139,10 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
 
         <TabsContent value="images" className="mt-4">
           <PropertyImagesTab property={property} propertyId={property?.id} onRefresh={onRefresh} />
+        </TabsContent>
+
+        <TabsContent value="summary" className="mt-4">
+          <PropertySummaryTab property={property} />
         </TabsContent>
       </Tabs>
     </div>
