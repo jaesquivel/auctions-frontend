@@ -170,10 +170,10 @@ export function DataGrid<T>({
   };
 
   return (
-    <div className="flex flex-col h-full border border-border rounded-md overflow-hidden bg-card">
+    <div className="flex flex-col h-full w-fit max-w-full border border-border rounded-md overflow-hidden bg-card">
       {/* Scrollable content area */}
       <div className="flex-1 overflow-auto min-h-0">
-        <div className="min-w-max w-full">
+        <div className="min-w-max">
           {/* Header */}
           <div className="flex bg-muted border-b border-border sticky top-0 z-10">
             {columns.map((column) => (
