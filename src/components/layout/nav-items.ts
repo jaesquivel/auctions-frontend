@@ -30,7 +30,7 @@ export const navItems: NavItem[] = [
     permissionKey: 'auctions.menu',
     children: [
       { titleKey: 'properties', href: '/properties', icon: Building2, permissionKey: 'properties.menu' },
-      { titleKey: 'vehicles', href: '/vehicles', icon: Car, permissionKey: 'vehicles.menu' },
+      // { titleKey: 'vehicles', href: '/vehicles', icon: Car, permissionKey: 'vehicles.menu' },
       { titleKey: 'edicts', href: '/edicts', icon: FileText, permissionKey: 'edicts.menu' },
       { titleKey: 'assets', href: '/assets', icon: Package, permissionKey: 'assets.menu' },
     ],
