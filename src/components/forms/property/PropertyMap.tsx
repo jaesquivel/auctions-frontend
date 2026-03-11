@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, GeoJSON, useMap } from 'react-leaflet';
-import type { LatLngExpression } from 'leaflet';
+import { useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, GeoJSON, useMap, useMapEvents } from 'react-leaflet';
+import type { LatLngExpression, LeafletMouseEvent } from 'leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -14,40 +14,102 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-interface FitBoundsProps {
-  markerLat: number | null;
-  markerLon: number | null;
+const streetIcon = new L.Icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+// Green-tinted icon for center marker
+const centerIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+export interface LatLon { lat: number; lon: number; }
+
+interface MapControllerProps {
+  initialLat: number | null;
+  initialLon: number | null;
   outline: object | null;
 }
 
-function MapController({ markerLat, markerLon, outline }: FitBoundsProps) {
+function MapController({ initialLat, initialLon, outline }: MapControllerProps) {
   const map = useMap();
+  const fitted = useRef(false);
 
   useEffect(() => {
-    if (markerLat !== null && markerLon !== null) {
-      map.setView([markerLat, markerLon], 14);
+    if (fitted.current) return;
+    if (initialLat !== null && initialLon !== null) {
+      map.setView([initialLat, initialLon], 14);
+      fitted.current = true;
     } else if (outline) {
       try {
         const layer = L.geoJSON(outline as Parameters<typeof L.geoJSON>[0]);
         const bounds = layer.getBounds();
-        if (bounds.isValid()) map.fitBounds(bounds);
+        if (bounds.isValid()) { map.fitBounds(bounds); fitted.current = true; }
       } catch { /* invalid geojson */ }
     }
-  }, [map, markerLat, markerLon, outline]);
+  }, [map, initialLat, initialLon, outline]);
 
   return null;
 }
 
-interface PropertyMapProps {
-  markerLat: number | null;
-  markerLon: number | null;
-  outline: object | null;
+interface MapClickHandlerProps {
+  editStreet: boolean;
+  editCenter: boolean;
+  onMapClick: (lat: number, lon: number) => void;
 }
 
-export default function PropertyMap({ markerLat, markerLon, outline }: PropertyMapProps) {
-  const defaultCenter: LatLngExpression = [9.7489, -83.7534]; // Costa Rica center
-  const markerPosition: LatLngExpression | null =
-    markerLat !== null && markerLon !== null ? [markerLat, markerLon] : null;
+function MapClickHandler({ editStreet, editCenter, onMapClick }: MapClickHandlerProps) {
+  useMapEvents({
+    click(e: LeafletMouseEvent) {
+      if (editStreet || editCenter) {
+        onMapClick(e.latlng.lat, e.latlng.lng);
+      }
+    },
+  });
+  return null;
+}
+
+export interface PropertyMapProps {
+  // View mode
+  outline: object | null;
+  initialLat: number | null;
+  initialLon: number | null;
+  // Edit mode
+  editMode?: boolean;
+  editStreet?: boolean;
+  editCenter?: boolean;
+  streetCoords?: LatLon | null;
+  centerCoords?: LatLon | null;
+  onStreetDrag?: (lat: number, lon: number) => void;
+  onCenterDrag?: (lat: number, lon: number) => void;
+  onMapClick?: (lat: number, lon: number) => void;
+}
+
+export default function PropertyMap({
+  outline,
+  initialLat,
+  initialLon,
+  editMode = false,
+  editStreet = false,
+  editCenter = false,
+  streetCoords,
+  centerCoords,
+  onStreetDrag,
+  onCenterDrag,
+  onMapClick,
+}: PropertyMapProps) {
+  const defaultCenter: LatLngExpression = [9.7489, -83.7534];
 
   return (
     <MapContainer
@@ -63,12 +125,52 @@ export default function PropertyMap({ markerLat, markerLon, outline }: PropertyM
       {outline && (
         <GeoJSON
           key={JSON.stringify(outline).slice(0, 50)}
-          data={outline as Parameters<typeof L.geoJSON>[0]}
+          data={outline as GeoJSON.GeoJsonObject}
           style={{ color: '#3b82f6', weight: 2, fillOpacity: 0.1 }}
         />
       )}
-      {markerPosition && <Marker position={markerPosition} />}
-      <MapController markerLat={markerLat} markerLon={markerLon} outline={outline} />
+
+      {editMode ? (
+        <>
+          {streetCoords && (
+            <Marker
+              position={[streetCoords.lat, streetCoords.lon]}
+              icon={streetIcon}
+              draggable={editStreet}
+              eventHandlers={editStreet && onStreetDrag ? {
+                dragend(e) {
+                  const { lat, lng } = e.target.getLatLng();
+                  onStreetDrag(lat, lng);
+                },
+              } : {}}
+            />
+          )}
+          {centerCoords && (
+            <Marker
+              position={[centerCoords.lat, centerCoords.lon]}
+              icon={centerIcon}
+              draggable={editCenter}
+              eventHandlers={editCenter && onCenterDrag ? {
+                dragend(e) {
+                  const { lat, lng } = e.target.getLatLng();
+                  onCenterDrag(lat, lng);
+                },
+              } : {}}
+            />
+          )}
+          <MapClickHandler
+            editStreet={editStreet}
+            editCenter={editCenter}
+            onMapClick={onMapClick ?? (() => {})}
+          />
+        </>
+      ) : (
+        initialLat !== null && initialLon !== null && (
+          <Marker position={[initialLat, initialLon]} icon={streetIcon} />
+        )
+      )}
+
+      <MapController initialLat={initialLat} initialLon={initialLon} outline={outline} />
     </MapContainer>
   );
 }

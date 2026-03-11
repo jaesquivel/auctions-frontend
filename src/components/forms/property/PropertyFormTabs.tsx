@@ -140,7 +140,7 @@ export function PropertyFormTabs({ property, formData, setFormData, selectedTagI
         </TabsContent>
 
         <TabsContent value="location" className="mt-4">
-          <PropertyLocationTab property={property} />
+          <PropertyLocationTab property={property} formData={formData} setFormData={setFormData} readOnly={readOnly} />
         </TabsContent>
 
         <TabsContent value="images" className="mt-4">
