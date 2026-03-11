@@ -5,6 +5,9 @@ import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { MapPin, LocateFixed, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { NumericField } from '@/components/ui/numeric-field';
+import { StringField } from '@/components/ui/string-field';
+import { UnitField } from '@/components/ui/unit-field';
 import { territorialService } from '@/services/territorial';
 import type { Property } from '@/types';
 import type { LatLon } from './PropertyMap';
@@ -88,6 +91,12 @@ export function PropertyLocationTab({ property, formData, setFormData, readOnly 
     fetchGeoJson();
   }, [tdDistrictId, tdCantonId]);
 
+  const tdLocationLabel = [
+    asset?.tdProvince?.name,
+    asset?.tdCanton?.name,
+    asset?.tdDistrict?.name,
+  ].filter(Boolean).join(', ') || null;
+
   const outline = districtGeoJson ?? cantonGeoJson;
   const outlineLabel = districtGeoJson
     ? `${t('district')}: ${asset?.tdDistrict?.name ?? ''}`
@@ -159,6 +168,26 @@ export function PropertyLocationTab({ property, formData, setFormData, readOnly 
 
       {!loading && (hasData || editMode) && (
         <div className="space-y-2">
+          <div className="h-[500px] rounded-md overflow-hidden border border-border">
+            <PropertyMap
+              outline={outline}
+              initialLat={initialLat}
+              initialLon={initialLon}
+              editMode={editMode}
+              editStreet={editStreet}
+              editCenter={editCenter}
+              streetCoords={editMode ? pendingStreet : null}
+              centerCoords={editMode ? pendingCenter : null}
+              onStreetDrag={(lat, lon) => setPendingStreet({ lat, lon })}
+              onCenterDrag={(lat, lon) => setPendingCenter({ lat, lon })}
+              onMapClick={handleMapClick}
+            />
+          </div>
+
+          {outlineLabel && (
+            <p className="text-xs text-muted-foreground">{outlineLabel}</p>
+          )}
+
           {/* Toolbar */}
           {!editMode && !readOnly && (
             <div className="flex justify-end">
@@ -220,28 +249,44 @@ export function PropertyLocationTab({ property, formData, setFormData, readOnly 
           {editMode && (editStreet || editCenter) && (
             <p className="text-xs text-muted-foreground">{t('setLocationHint')}</p>
           )}
-
-          <div className="h-[500px] rounded-md overflow-hidden border border-border">
-            <PropertyMap
-              outline={outline}
-              initialLat={initialLat}
-              initialLon={initialLon}
-              editMode={editMode}
-              editStreet={editStreet}
-              editCenter={editCenter}
-              streetCoords={editMode ? pendingStreet : null}
-              centerCoords={editMode ? pendingCenter : null}
-              onStreetDrag={(lat, lon) => setPendingStreet({ lat, lon })}
-              onCenterDrag={(lat, lon) => setPendingCenter({ lat, lon })}
-              onMapClick={handleMapClick}
-            />
-          </div>
-
-          {outlineLabel && (
-            <p className="text-xs text-muted-foreground">{outlineLabel}</p>
-          )}
         </div>
       )}
+
+      {/* Location details */}
+      <fieldset className="rounded-md border space-y-3 p-3">
+        <legend className="text-sm font-semibold text-muted-foreground">{t('location')}</legend>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <StringField mode="readonly" label={t('tdLocation')} value={tdLocationLabel ?? undefined} className="max-w-150" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">{t('locationStreet')}</p>
+            <NumericField mode={readOnly ? 'readonly' : 'edit'} label={t('latitude')} value={formData.locationStLat} onChange={(v) => setFormData((p) => ({ ...p, locationStLat: v }))} decimals={8} />
+            <NumericField mode={readOnly ? 'readonly' : 'edit'} label={t('longitude')} value={formData.locationStLon} onChange={(v) => setFormData((p) => ({ ...p, locationStLon: v }))} decimals={8} />
+          </div>
+          <div className="space-y-4 self-end">
+            <p className="text-sm text-muted-foreground">
+              {formData.locationStLat || '0.00000000'},{formData.locationStLon || '0.00000000'}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Waze:{' '}
+              <a
+                href={`https://waze.com/ul?ll=${formData.locationStLat || '0'},${formData.locationStLon || '0'}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline break-all"
+              >
+                {`https://waze.com/ul?ll=${formData.locationStLat || '0'},${formData.locationStLon || '0'}`}
+              </a>
+            </p>
+          </div>
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">{t('locationCenter')}</p>
+            <NumericField mode={readOnly ? 'readonly' : 'edit'} label={t('latitude')} value={formData.locationCenterLat} onChange={(v) => setFormData((p) => ({ ...p, locationCenterLat: v }))} decimals={8} />
+            <NumericField mode={readOnly ? 'readonly' : 'edit'} label={t('longitude')} value={formData.locationCenterLon} onChange={(v) => setFormData((p) => ({ ...p, locationCenterLon: v }))} decimals={8} />
+          </div>
+        </div>
+      </fieldset>
     </div>
   );
 }
