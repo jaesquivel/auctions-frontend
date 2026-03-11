@@ -22,10 +22,12 @@ export interface TdCanton {
   nameSearch: string;
   tdProvinceId: string;
   tdProvince?: TdProvinceSummary;
+  geojson: string | null;
   createdAt: string;
 }
 
 export interface TdCantonSummary {
+  id: string;
   num: number;
   name: string;
 }
@@ -40,10 +42,12 @@ export interface TdDistrict {
   altitude: number | null;
   tdCantonId: string;
   tdCanton?: TdCantonSummary;
+  geojson: string | null;
   createdAt: string;
 }
 
 export interface TdDistrictSummary {
+  id: string;
   num: number;
   name: string;
 }
