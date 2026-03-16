@@ -42,6 +42,8 @@ export interface Property {
   locationCenterLon: number | null;
   locationStLat: number | null;
   locationStLon: number | null;
+  locationRnpLat: number | null;
+  locationRnpLon: number | null;
   // Relations
   asset: Asset;
   tags: PropertyTagSummary[];

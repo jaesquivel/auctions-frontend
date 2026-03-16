@@ -7,7 +7,6 @@ import { MapPin, LocateFixed, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NumericField } from '@/components/ui/numeric-field';
 import { StringField } from '@/components/ui/string-field';
-import { UnitField } from '@/components/ui/unit-field';
 import { territorialService } from '@/services/territorial';
 import type { Property } from '@/types';
 import type { LatLon } from './PropertyMap';
@@ -61,6 +60,9 @@ export function PropertyLocationTab({ property, formData, setFormData, readOnly 
   const stLon = validCoord(formData.locationStLon);
   const centerLat = validCoord(formData.locationCenterLat);
   const centerLon = validCoord(formData.locationCenterLon);
+  const rnpLat = validCoord(property?.locationRnpLat?.toString());
+  const rnpLon = validCoord(property?.locationRnpLon?.toString());
+  const rnpCoords = (rnpLat !== null && rnpLon !== null) ? { lat: rnpLat, lon: rnpLon } : null;
   const viewLat = (stLat !== null && stLon !== null) ? stLat : centerLat;
   const viewLon = (stLat !== null && stLon !== null) ? stLon : centerLon;
 
@@ -178,6 +180,7 @@ export function PropertyLocationTab({ property, formData, setFormData, readOnly 
               editCenter={editCenter}
               streetCoords={editMode ? pendingStreet : null}
               centerCoords={editMode ? pendingCenter : null}
+              rnpCoords={rnpCoords}
               onStreetDrag={(lat, lon) => setPendingStreet({ lat, lon })}
               onCenterDrag={(lat, lon) => setPendingCenter({ lat, lon })}
               onMapClick={handleMapClick}
@@ -284,6 +287,11 @@ export function PropertyLocationTab({ property, formData, setFormData, readOnly 
             <p className="text-sm font-semibold">{t('locationCenter')}</p>
             <NumericField mode={readOnly ? 'readonly' : 'edit'} label={t('latitude')} value={formData.locationCenterLat} onChange={(v) => setFormData((p) => ({ ...p, locationCenterLat: v }))} decimals={8} />
             <NumericField mode={readOnly ? 'readonly' : 'edit'} label={t('longitude')} value={formData.locationCenterLon} onChange={(v) => setFormData((p) => ({ ...p, locationCenterLon: v }))} decimals={8} />
+          </div>
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">{t('locationRnp')}</p>
+            <NumericField mode="readonly" label={t('latitude')} value={property?.locationRnpLat?.toString() ?? ''} decimals={8} />
+            <NumericField mode="readonly" label={t('longitude')} value={property?.locationRnpLon?.toString() ?? ''} decimals={8} />
           </div>
         </div>
       </fieldset>

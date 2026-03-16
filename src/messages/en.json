@@ -224,6 +224,7 @@
       "auctionBase": "Base",
       "locationCenter": "Center Location",
       "locationStreet": "Street Location",
+      "locationRnp": "RNP Location",
       "latitude": "Latitude",
       "longitude": "Longitude",
       "tags": "Tags",

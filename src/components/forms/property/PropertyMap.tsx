@@ -24,6 +24,15 @@ const streetIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
+const rnpIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
 // Green-tinted icon for center marker
 const centerIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -91,6 +100,7 @@ export interface PropertyMapProps {
   editCenter?: boolean;
   streetCoords?: LatLon | null;
   centerCoords?: LatLon | null;
+  rnpCoords?: LatLon | null;
   onStreetDrag?: (lat: number, lon: number) => void;
   onCenterDrag?: (lat: number, lon: number) => void;
   onMapClick?: (lat: number, lon: number) => void;
@@ -105,6 +115,7 @@ export default function PropertyMap({
   editCenter = false,
   streetCoords,
   centerCoords,
+  rnpCoords,
   onStreetDrag,
   onCenterDrag,
   onMapClick,
@@ -168,6 +179,10 @@ export default function PropertyMap({
         initialLat !== null && initialLon !== null && (
           <Marker position={[initialLat, initialLon]} icon={streetIcon} />
         )
+      )}
+
+      {rnpCoords && (
+        <Marker position={[rnpCoords.lat, rnpCoords.lon]} icon={rnpIcon} />
       )}
 
       <MapController initialLat={initialLat} initialLon={initialLon} outline={outline} />
