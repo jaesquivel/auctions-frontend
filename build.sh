@@ -49,6 +49,9 @@ if [ ! -f "package.json" ]; then
     exit 1
 fi
 
+log_info "Pulling latest changes..."
+git pull
+
 if ! git tag | grep -q "^${TAG}$"; then
     log_error "Tag ${TAG} not found. Run ./release.sh ${VERSION} first."
     exit 1
@@ -68,8 +71,6 @@ fi
 # CHECKOUT TAG
 # ============================================
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-log_info "Pulling latest changes..."
-git pull
 log_info "Checking out ${TAG}..."
 git checkout "${TAG}"
 
