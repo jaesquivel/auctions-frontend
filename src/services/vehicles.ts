@@ -1,7 +1,5 @@
-import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
-import { uuid } from '@/lib/utils';
-import type { VehicleSummary, SpringPage } from '@/types';
+import type { Vehicle, VehicleListItem, VehicleUpdateRequest, SpringPage } from '@/types';
 import { applyFilterParams } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
@@ -14,7 +12,7 @@ export interface VehicleFilters {
 }
 
 export const vehiclesService = {
-  async getAll(filters: VehicleFilters = {}): Promise<SpringPage<VehicleSummary>> {
+  async getAll(filters: VehicleFilters = {}): Promise<SpringPage<VehicleListItem>> {
     const { page = 0, size = 20 } = filters;
 
     const params = new URLSearchParams();
@@ -24,26 +22,18 @@ export const vehiclesService = {
     if (filters.search) params.set('search', filters.search);
     applyFilterParams(params, filters.filters);
 
-    return apiClient.get<SpringPage<VehicleSummary>>(`/vehicles?${params.toString()}`);
+    return apiClient.get<SpringPage<VehicleListItem>>(`/vehicles?${params.toString()}`);
   },
 
-  async getById(id: string): Promise<VehicleSummary | null> {
-
-    return apiClient.get<VehicleSummary>(`/vehicles/${id}`);
+  async getById(id: string): Promise<Vehicle | null> {
+    return apiClient.get<Vehicle>(`/vehicles/${id}`);
   },
 
-  async create(data: Partial<VehicleSummary>): Promise<VehicleSummary> {
-
-    return apiClient.post<VehicleSummary>('/vehicles', data);
-  },
-
-  async update(id: string, data: Partial<VehicleSummary>): Promise<VehicleSummary> {
-
-    return apiClient.put<VehicleSummary>(`/vehicles/${id}`, data);
+  async update(id: string, data: VehicleUpdateRequest): Promise<Vehicle> {
+    return apiClient.put<Vehicle>(`/vehicles/${id}`, data);
   },
 
   async delete(id: string): Promise<void> {
-
     return apiClient.delete(`/vehicles/${id}`);
   },
 };
