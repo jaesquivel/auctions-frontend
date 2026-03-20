@@ -30,7 +30,7 @@ export const navItems: NavItem[] = [
     permissionKey: 'auctions.menu',
     children: [
       { titleKey: 'properties', href: '/properties', icon: Building2, permissionKey: 'properties.menu' },
-      // { titleKey: 'vehicles', href: '/vehicles', icon: Car, permissionKey: 'vehicles.menu' },
+      { titleKey: 'vehicles', href: '/vehicles', icon: Car, permissionKey: 'vehicles.menu' },
       { titleKey: 'edicts', href: '/edicts', icon: FileText, permissionKey: 'edicts.menu' },
       { titleKey: 'assets', href: '/assets', icon: Package, permissionKey: 'assets.menu' },
     ],
@@ -51,6 +51,7 @@ export const navItems: NavItem[] = [
     permissionKey: 'configuration.menu',
     children: [
       { titleKey: 'tags', href: '/tags', icon: Tags, permissionKey: 'properties-tags.menu' },
+      { titleKey: 'vehicleTags', href: '/vehicle-tags', icon: Tags, permissionKey: 'vehicles-tags.menu' },
       { titleKey: 'territorial', href: '/territorial', icon: MapPin, permissionKey: 'territorial-division.menu' },
       { titleKey: 'generalConfig', href: '/config', icon: Settings, permissionKey: 'general-configuration.menu' },
       ...(isDev ? [{ titleKey: 'dev', href: '/dev', icon: Code2 }] : []),

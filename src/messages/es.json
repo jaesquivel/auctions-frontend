@@ -92,6 +92,7 @@
     "extractedAssets": "Bienes Extraídos",
     "configuration": "Configuración",
     "tags": "Etiquetas de Propiedades",
+    "vehicleTags": "Etiquetas de Vehículos",
     "territorial": "División Territorial",
     "generalConfig": "Configuración General",
     "dev": "Dev",
@@ -401,6 +402,17 @@
   },
   "tags": {
     "title": "Etiquetas de Propiedades",
+    "addTag": "Agregar Etiqueta",
+    "editTag": "Editar Etiqueta",
+    "viewTag": "Ver Etiqueta",
+    "columns": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "color": "Color"
+    }
+  },
+  "vehicleTags": {
+    "title": "Etiquetas de Vehículos",
     "addTag": "Agregar Etiqueta",
     "editTag": "Editar Etiqueta",
     "viewTag": "Ver Etiqueta",

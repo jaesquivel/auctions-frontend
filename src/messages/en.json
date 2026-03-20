@@ -92,6 +92,7 @@
     "extractedAssets": "Extracted Assets",
     "configuration": "Configuration",
     "tags": "Property Tags",
+    "vehicleTags": "Vehicle Tags",
     "territorial": "Territorial Division",
     "generalConfig": "General Configuration",
     "dev": "Dev",
@@ -401,6 +402,17 @@
   },
   "tags": {
     "title": "Property Tags",
+    "addTag": "Add Tag",
+    "editTag": "Edit Tag",
+    "viewTag": "View Tag",
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "color": "Color"
+    }
+  },
+  "vehicleTags": {
+    "title": "Vehicle Tags",
     "addTag": "Add Tag",
     "editTag": "Edit Tag",
     "viewTag": "View Tag",
