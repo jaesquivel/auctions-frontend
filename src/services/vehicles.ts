@@ -1,49 +1,37 @@
-import { config } from '@/lib/config';
 import { apiClient } from '@/lib/api-client';
-import { uuid } from '@/lib/utils';
-import type { VehicleSummary, SpringPage } from '@/types';
-import { applyFilterParams } from '@/components/data-grid';
+import type { Vehicle, VehicleListItem, VehicleUpdateRequest, SpringPage } from '@/types';
+import { buildSearchRequest } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
 export interface VehicleFilters {
   page?: number;  // 0-indexed
   size?: number;
   sort?: string[];
-  search?: string;
   filters?: FilterState;
 }
 
 export const vehiclesService = {
-  async getAll(filters: VehicleFilters = {}): Promise<SpringPage<VehicleSummary>> {
+  async getAll(filters: VehicleFilters = {}): Promise<SpringPage<VehicleListItem>> {
     const { page = 0, size = 20 } = filters;
 
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
-    if (filters.search) params.set('search', filters.search);
-    applyFilterParams(params, filters.filters);
 
-    return apiClient.get<SpringPage<VehicleSummary>>(`/vehicles?${params.toString()}`);
+    const body = buildSearchRequest(filters.filters);
+    return apiClient.post<SpringPage<VehicleListItem>>(`/vehicles/search?${params.toString()}`, body);
   },
 
-  async getById(id: string): Promise<VehicleSummary | null> {
-
-    return apiClient.get<VehicleSummary>(`/vehicles/${id}`);
+  async getById(id: string): Promise<Vehicle | null> {
+    return apiClient.get<Vehicle>(`/vehicles/${id}`);
   },
 
-  async create(data: Partial<VehicleSummary>): Promise<VehicleSummary> {
-
-    return apiClient.post<VehicleSummary>('/vehicles', data);
-  },
-
-  async update(id: string, data: Partial<VehicleSummary>): Promise<VehicleSummary> {
-
-    return apiClient.put<VehicleSummary>(`/vehicles/${id}`, data);
+  async update(id: string, data: VehicleUpdateRequest): Promise<Vehicle> {
+    return apiClient.put<Vehicle>(`/vehicles/${id}`, data);
   },
 
   async delete(id: string): Promise<void> {
-
     return apiClient.delete(`/vehicles/${id}`);
   },
 };

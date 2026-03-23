@@ -7,5 +7,6 @@ export * from './bulletin';
 export * from './raw-asset';
 export * from './raw-edict';
 export * from './tag';
+export * from './vehicle-tag';
 export * from './territorial';
 export * from './common';
