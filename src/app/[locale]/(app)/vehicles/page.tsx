@@ -112,6 +112,15 @@ export default function VehiclesPage() {
       accessorFn: (row) => <TagList tags={row.tags} max={10} />,
     },
     {
+      id: 'plateClass',
+      header: t('columns.plateClass'),
+      width: 90,
+      sortable: true,
+      filterable: true,
+      filterType: 'text',
+      accessorFn: (row) => row.plateClass,
+    },
+    {
       id: 'plate',
       header: t('columns.plate'),
       width: 110,

@@ -253,6 +253,7 @@
     "confirmDelete": "¿Está seguro de que desea eliminar este vehículo?",
     "columns": {
       "tags": "Etiquetas",
+      "plateClass": "Clase",
       "plate": "Placa",
       "make": "Marca",
       "model": "Modelo",
@@ -300,8 +301,6 @@
       "plateCode": "Código de Placa",
       "vin": "VIN",
       "chassisNumber": "Número de Chasis",
-      "rnpRecord": "Registro RNP",
-      "rnpRecordUpdated": "RNP Actualizado",
       "registration": "Matrícula",
       "registrationVolume": "Tomo",
       "registrationEntry": "Asiento",

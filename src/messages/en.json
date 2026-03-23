@@ -253,6 +253,7 @@
     "confirmDelete": "Are you sure you want to delete this vehicle?",
     "columns": {
       "tags": "Tags",
+      "plateClass": "Class",
       "plate": "Plate",
       "make": "Make",
       "model": "Model",
@@ -300,8 +301,6 @@
       "plateCode": "Plate Code",
       "vin": "VIN",
       "chassisNumber": "Chassis Number",
-      "rnpRecord": "RNP Record",
-      "rnpRecordUpdated": "RNP Updated",
       "registration": "Registration",
       "registrationVolume": "Volume",
       "registrationEntry": "Entry",
