@@ -276,6 +276,8 @@
       "tabDetails": "Details",
       "tabEdict": "Edict",
       "tabSummary": "Summary",
+      "tabRnp": "RNP",
+      "noRnpRecord": "No RNP record available.",
       "selectTags": "Select tags...",
       "auction": "Auction",
       "firstAuction": "1st Auction",

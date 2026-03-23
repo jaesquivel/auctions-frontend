@@ -276,6 +276,8 @@
       "tabDetails": "Detalles",
       "tabEdict": "Edicto",
       "tabSummary": "Resumen",
+      "tabRnp": "RNP",
+      "noRnpRecord": "No hay registro RNP disponible.",
       "selectTags": "Seleccionar etiquetas...",
       "auction": "Remate",
       "firstAuction": "1er Remate",

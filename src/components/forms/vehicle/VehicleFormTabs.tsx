@@ -6,11 +6,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TagBadge } from '@/components/ui/tag-badge';
-import { Info, Car, FileText, ClipboardList } from 'lucide-react';
+import { Info, Car, FileText, ClipboardList, ScrollText } from 'lucide-react';
 import { VehicleInfoTab } from './VehicleInfoTab';
 import { VehicleDetailsTab } from './VehicleDetailsTab';
 import { VehicleEdictTab } from './VehicleEdictTab';
 import { VehicleSummaryTab } from './VehicleSummaryTab';
+import { VehicleRnpTab } from './VehicleRnpTab';
 import { useIsMobile } from '@/hooks';
 import type { Vehicle, VehicleTag } from '@/types';
 
@@ -28,6 +29,7 @@ const TABS = [
   { value: 'information', icon: Info },
   { value: 'details',     icon: Car },
   { value: 'edict',       icon: FileText },
+  { value: 'rnp',         icon: ScrollText },
   { value: 'summary',     icon: ClipboardList },
 ] as const;
 
@@ -130,6 +132,10 @@ export function VehicleFormTabs({ vehicle, formData, setFormData, selectedTagIds
 
         <TabsContent value="summary" className="mt-4">
           <VehicleSummaryTab vehicle={vehicle} />
+        </TabsContent>
+
+        <TabsContent value="rnp" className="mt-4">
+          <VehicleRnpTab vehicle={vehicle} />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,13 +1,12 @@
 import { apiClient } from '@/lib/api-client';
 import type { Vehicle, VehicleListItem, VehicleUpdateRequest, SpringPage } from '@/types';
-import { applyFilterParams } from '@/components/data-grid';
+import { buildSearchRequest } from '@/components/data-grid';
 import type { FilterState } from '@/components/data-grid';
 
 export interface VehicleFilters {
   page?: number;  // 0-indexed
   size?: number;
   sort?: string[];
-  search?: string;
   filters?: FilterState;
 }
 
@@ -19,10 +18,9 @@ export const vehiclesService = {
     params.set('page', page.toString());
     params.set('size', size.toString());
     filters.sort?.forEach((s) => params.append('sort', s));
-    if (filters.search) params.set('search', filters.search);
-    applyFilterParams(params, filters.filters);
 
-    return apiClient.get<SpringPage<VehicleListItem>>(`/vehicles?${params.toString()}`);
+    const body = buildSearchRequest(filters.filters);
+    return apiClient.post<SpringPage<VehicleListItem>>(`/vehicles/search?${params.toString()}`, body);
   },
 
   async getById(id: string): Promise<Vehicle | null> {
