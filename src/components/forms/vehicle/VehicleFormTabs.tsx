@@ -1,19 +1,29 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { TagBadge } from '@/components/ui/tag-badge';
-import { Info, Car, FileText, ClipboardList, ScrollText } from 'lucide-react';
-import { VehicleInfoTab } from './VehicleInfoTab';
-import { VehicleDetailsTab } from './VehicleDetailsTab';
-import { VehicleEdictTab } from './VehicleEdictTab';
-import { VehicleSummaryTab } from './VehicleSummaryTab';
-import { VehicleRnpTab } from './VehicleRnpTab';
-import { useIsMobile } from '@/hooks';
-import type { Vehicle, VehicleTag } from '@/types';
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { TagBadge } from "@/components/ui/tag-badge";
+import { Info, Car, FileText, ClipboardList, ScrollText } from "lucide-react";
+import { VehicleInfoTab } from "./VehicleInfoTab";
+import { VehicleEdictTab } from "./VehicleEdictTab";
+import { VehicleDetailsTab } from "./VehicleDetailsTab";
+import { VehicleRnpTab } from "./VehicleRnpTab";
+import { VehicleSummaryTab } from "./VehicleSummaryTab";
+import { useIsMobile } from "@/hooks";
+import type { Vehicle, VehicleTag } from "@/types";
 
 interface VehicleFormTabsProps {
   vehicle?: Vehicle | null;
@@ -26,17 +36,25 @@ interface VehicleFormTabsProps {
 }
 
 const TABS = [
-  { value: 'information', icon: Info },
-  { value: 'details',     icon: Car },
-  { value: 'edict',       icon: FileText },
-  { value: 'rnp',         icon: ScrollText },
-  { value: 'summary',     icon: ClipboardList },
+  { value: "information", icon: Info },
+  { value: "edict", icon: FileText },
+  { value: "details", icon: Car },
+  { value: "rnp", icon: ScrollText },
+  { value: "summary", icon: ClipboardList },
 ] as const;
 
-export function VehicleFormTabs({ vehicle, formData, setFormData, selectedTagIds, toggleTag, availableTags, readOnly }: VehicleFormTabsProps) {
-  const t = useTranslations('vehicles.form');
+export function VehicleFormTabs({
+  vehicle,
+  formData,
+  setFormData,
+  selectedTagIds,
+  toggleTag,
+  availableTags,
+  readOnly,
+}: VehicleFormTabsProps) {
+  const t = useTranslations("vehicles.form");
   const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState<string>('information');
+  const [activeTab, setActiveTab] = useState<string>("information");
 
   return (
     <div className="w-full space-y-4">
@@ -47,7 +65,9 @@ export function VehicleFormTabs({ vehicle, formData, setFormData, selectedTagIds
         )}
         {vehicle?.make && vehicle?.model && (
           <span className="text-sm text-muted-foreground">
-            {[vehicle.make, vehicle.model, vehicle.year].filter(Boolean).join(' ')}
+            {[vehicle.make, vehicle.model, vehicle.year]
+              .filter(Boolean)
+              .join(" ")}
           </span>
         )}
         {availableTags.length > 0 && (
@@ -65,15 +85,23 @@ export function VehicleFormTabs({ vehicle, formData, setFormData, selectedTagIds
                         key={tag.id}
                         name={tag.name}
                         color={tag.color}
-                        onRemove={!readOnly ? () => toggleTag(tag.id) : undefined}
+                        onRemove={
+                          !readOnly ? () => toggleTag(tag.id) : undefined
+                        }
                       />
                     ))
                 ) : (
-                  <span className="text-muted-foreground">{t('selectTags')}</span>
+                  <span className="text-muted-foreground">
+                    {t("selectTags")}
+                  </span>
                 )}
               </button>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-64 p-0" onWheel={(e) => e.stopPropagation()}>
+            <PopoverContent
+              align="start"
+              className="w-64 p-0"
+              onWheel={(e) => e.stopPropagation()}
+            >
               <div className="space-y-1 p-2 max-h-60 overflow-y-auto">
                 {availableTags.map((tag) => (
                   <button
@@ -81,7 +109,9 @@ export function VehicleFormTabs({ vehicle, formData, setFormData, selectedTagIds
                     type="button"
                     onClick={() => toggleTag(tag.id)}
                     className={`flex items-center w-full rounded-md px-2 py-1.5 text-sm transition-colors ${
-                      selectedTagIds.includes(tag.id) ? 'bg-accent' : 'hover:bg-accent/50'
+                      selectedTagIds.includes(tag.id)
+                        ? "bg-accent"
+                        : "hover:bg-accent/50"
                     }`}
                   >
                     <TagBadge name={tag.name} color={tag.color} />
@@ -102,7 +132,11 @@ export function VehicleFormTabs({ vehicle, formData, setFormData, selectedTagIds
             <SelectContent>
               {TABS.map(({ value }) => (
                 <SelectItem key={value} value={value}>
-                  {t(`tab${value.charAt(0).toUpperCase() + value.slice(1)}` as Parameters<typeof t>[0])}
+                  {t(
+                    `tab${value.charAt(0).toUpperCase() + value.slice(1)}` as Parameters<
+                      typeof t
+                    >[0],
+                  )}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -112,30 +146,44 @@ export function VehicleFormTabs({ vehicle, formData, setFormData, selectedTagIds
             {TABS.map(({ value, icon: Icon }) => (
               <TabsTrigger key={value} value={value}>
                 <Icon className="h-4 w-4 mr-1.5" />
-                {t(`tab${value.charAt(0).toUpperCase() + value.slice(1)}` as Parameters<typeof t>[0])}
+                {t(
+                  `tab${value.charAt(0).toUpperCase() + value.slice(1)}` as Parameters<
+                    typeof t
+                  >[0],
+                )}
               </TabsTrigger>
             ))}
           </TabsList>
         )}
 
         <TabsContent value="information" className="mt-4">
-          <VehicleInfoTab vehicle={vehicle} formData={formData} setFormData={setFormData} readOnly={readOnly} />
-        </TabsContent>
-
-        <TabsContent value="details" className="mt-4">
-          <VehicleDetailsTab vehicle={vehicle} formData={formData} setFormData={setFormData} readOnly={readOnly} />
+          <VehicleInfoTab
+            vehicle={vehicle}
+            formData={formData}
+            setFormData={setFormData}
+            readOnly={readOnly}
+          />
         </TabsContent>
 
         <TabsContent value="edict" className="mt-4">
           <VehicleEdictTab vehicle={vehicle} />
         </TabsContent>
 
-        <TabsContent value="summary" className="mt-4">
-          <VehicleSummaryTab vehicle={vehicle} />
+        <TabsContent value="details" className="mt-4">
+          <VehicleDetailsTab
+            vehicle={vehicle}
+            formData={formData}
+            setFormData={setFormData}
+            readOnly={readOnly}
+          />
         </TabsContent>
 
         <TabsContent value="rnp" className="mt-4">
           <VehicleRnpTab vehicle={vehicle} />
+        </TabsContent>
+
+        <TabsContent value="summary" className="mt-4">
+          <VehicleSummaryTab vehicle={vehicle} />
         </TabsContent>
       </Tabs>
     </div>
