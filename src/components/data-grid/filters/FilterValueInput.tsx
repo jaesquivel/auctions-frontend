@@ -55,7 +55,10 @@ export function FilterValueInput({ filterType, operator, value, onChange, tagOpt
           </button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-56 p-0" onWheel={(e) => e.stopPropagation()}>
-          <div className="space-y-1 p-2 max-h-60 overflow-y-auto">
+          <div
+            className="space-y-1 p-2 max-h-60 overflow-y-auto overscroll-contain"
+            onTouchMove={(e) => e.stopPropagation()}
+          >
             {(tagOptions ?? []).map((tag) => (
               <button
                 key={tag.id}
