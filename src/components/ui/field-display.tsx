@@ -25,7 +25,7 @@ export function FieldDisplay({ children, textAlign = 'right', multiline, classNa
 
   const align = textAlign === 'left' ? 'justify-start' : 'justify-end max-w-50';
   return (
-    <p className={`${base} flex items-center h-9 overflow-hidden whitespace-nowrap ${align} ${className || ''}`}>
+    <p className={`${base} flex items-center h-9 overflow-x-auto whitespace-nowrap ${align} ${className || ''}`}>
       {children}
     </p>
   );
